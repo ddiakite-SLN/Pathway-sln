@@ -35,28 +35,35 @@ if 'ran_match' not in st.session_state:
     st.session_state.ran_match = False
 
 # ── DATA ──────────────────────────────────────────────────────
-SCHOOLS = [
-    {"id":190688,"name":"Barnard College","city":"New York","state":"NY","ctrl":2,"size":2,"sat25":1420,"sat75":1540,"act25":32,"act75":35,"grad":94,"adm":11.6,"tin":64076,"hbcu":False,"yr2":False,"web":"https://barnard.edu"},
-    {"id":190150,"name":"Columbia University","city":"New York","state":"NY","ctrl":2,"size":4,"sat25":1510,"sat75":1570,"act25":34,"act75":36,"grad":96,"adm":3.9,"tin":65524,"hbcu":False,"yr2":False,"web":"https://columbia.edu"},
-    {"id":193900,"name":"New York University","city":"New York","state":"NY","ctrl":2,"size":5,"sat25":1370,"sat75":1530,"act25":31,"act75":34,"grad":87,"adm":12.8,"tin":60438,"hbcu":False,"yr2":False,"web":"https://nyu.edu"},
-    {"id":190415,"name":"Cornell University","city":"Ithaca","state":"NY","ctrl":2,"size":4,"sat25":1480,"sat75":1560,"act25":34,"act75":35,"grad":95,"adm":7.3,"tin":63200,"hbcu":False,"yr2":False,"web":"https://cornell.edu"},
-    {"id":196413,"name":"Syracuse University","city":"Syracuse","state":"NY","ctrl":2,"size":4,"sat25":1230,"sat75":1420,"act25":28,"act75":33,"grad":83,"adm":60.0,"tin":57966,"hbcu":False,"yr2":False,"web":"https://syracuse.edu"},
-    {"id":192439,"name":"Fordham University","city":"Bronx","state":"NY","ctrl":2,"size":4,"sat25":1330,"sat75":1490,"act25":30,"act75":33,"grad":83,"adm":56.3,"tin":60335,"hbcu":False,"yr2":False,"web":"https://fordham.edu"},
-    {"id":196097,"name":"Stony Brook University","city":"Stony Brook","state":"NY","ctrl":1,"size":5,"sat25":1320,"sat75":1500,"act25":30,"act75":34,"grad":77,"adm":49.0,"tin":7070,"hbcu":False,"yr2":False,"web":"https://stonybrook.edu"},
-    {"id":196060,"name":"Binghamton University (SUNY)","city":"Binghamton","state":"NY","ctrl":1,"size":4,"sat25":1310,"sat75":1480,"act25":29,"act75":33,"grad":83,"adm":40.0,"tin":7070,"hbcu":False,"yr2":False,"web":"https://binghamton.edu"},
+@st.cache_data
+def load_schools():
+    import pandas as pd, os
+    csv_path = 'schools_full.csv'
+    if not os.path.exists(csv_path):
+        # Fallback to small sample if CSV not found
+        return SAMPLE_SCHOOLS
+    df = pd.read_csv(csv_path)
+    df = df.where(pd.notnull(df), None)
+    schools = df.to_dict('records')
+    for s in schools:
+        for k in ['hbcu','womens','yr2']:
+            s[k] = bool(s.get(k,0))
+        for k in ['tin','sat25','sat75','act25','act75','grad','adm']:
+            v = s.get(k)
+            s[k] = float(v) if v is not None else None
+        if s.get('tin'): s['tin'] = int(s['tin'])
+        if s.get('sat25'): s['sat25'] = int(s['sat25'])
+        if s.get('sat75'): s['sat75'] = int(s['sat75'])
+    return schools
+
+SAMPLE_SCHOOLS = [
     {"id":190637,"name":"City College of New York (CUNY)","city":"New York","state":"NY","ctrl":1,"size":4,"sat25":1050,"sat75":1270,"grad":52,"adm":47.0,"tin":6930,"hbcu":False,"yr2":False,"web":"https://ccny.cuny.edu"},
-    {"id":190512,"name":"Brooklyn College (CUNY)","city":"Brooklyn","state":"NY","ctrl":1,"size":4,"sat25":1080,"sat75":1270,"grad":55,"adm":40.0,"tin":6930,"hbcu":False,"yr2":False,"web":"https://brooklyn.cuny.edu"},
-    {"id":190549,"name":"Hunter College (CUNY)","city":"New York","state":"NY","ctrl":1,"size":4,"sat25":1110,"sat75":1310,"grad":57,"adm":32.0,"tin":6930,"hbcu":False,"yr2":False,"web":"https://hunter.cuny.edu"},
-    {"id":190558,"name":"Queens College (CUNY)","city":"Queens","state":"NY","ctrl":1,"size":4,"sat25":1080,"sat75":1280,"grad":56,"adm":42.0,"tin":6930,"hbcu":False,"yr2":False,"web":"https://qc.cuny.edu"},
-    {"id":196185,"name":"SUNY New Paltz","city":"New Paltz","state":"NY","ctrl":1,"size":3,"sat25":1150,"sat75":1340,"grad":73,"adm":52.0,"tin":7070,"hbcu":False,"yr2":False,"web":"https://newpaltz.edu"},
-    {"id":196079,"name":"University at Buffalo (SUNY)","city":"Buffalo","state":"NY","ctrl":1,"size":5,"sat25":1200,"sat75":1390,"act25":26,"act75":31,"grad":75,"adm":55.0,"tin":7070,"hbcu":False,"yr2":False,"web":"https://buffalo.edu"},
-    {"id":131520,"name":"Howard University","city":"Washington","state":"DC","ctrl":2,"size":3,"sat25":1100,"sat75":1290,"act25":22,"act75":28,"grad":67,"adm":37.0,"tin":29780,"hbcu":True,"yr2":False,"web":"https://howard.edu"},
-    {"id":166027,"name":"Harvard University","city":"Cambridge","state":"MA","ctrl":2,"size":4,"sat25":1510,"sat75":1580,"act25":34,"act75":36,"grad":98,"adm":3.2,"tin":57261,"hbcu":False,"yr2":False,"web":"https://harvard.edu"},
-    {"id":198419,"name":"Duke University","city":"Durham","state":"NC","ctrl":2,"size":4,"sat25":1500,"sat75":1570,"act25":34,"act75":35,"grad":95,"adm":6.0,"tin":62688,"hbcu":False,"yr2":False,"web":"https://duke.edu"},
-    {"id":195003,"name":"Rochester Institute of Technology","city":"Rochester","state":"NY","ctrl":2,"size":4,"sat25":1240,"sat75":1430,"act25":28,"act75":33,"grad":70,"adm":64.0,"tin":54888,"hbcu":False,"yr2":False,"web":"https://rit.edu"},
-    {"id":193353,"name":"Marist College","city":"Poughkeepsie","state":"NY","ctrl":2,"size":3,"sat25":1220,"sat75":1360,"act25":27,"act75":30,"grad":79,"adm":64.7,"tin":45330,"hbcu":False,"yr2":False,"web":"https://marist.edu"},
-    {"id":192323,"name":"Hofstra University","city":"Hempstead","state":"NY","ctrl":2,"size":3,"sat25":1210,"sat75":1380,"act25":27,"act75":31,"grad":72,"adm":70.6,"tin":54335,"hbcu":False,"yr2":False,"web":"https://hofstra.edu"},
+    {"id":196097,"name":"Stony Brook University","city":"Stony Brook","state":"NY","ctrl":1,"size":5,"sat25":1320,"sat75":1500,"grad":77,"adm":49.0,"tin":7070,"hbcu":False,"yr2":False,"web":"https://stonybrook.edu"},
+    {"id":193900,"name":"New York University","city":"New York","state":"NY","ctrl":2,"size":5,"sat25":1370,"sat75":1530,"grad":87,"adm":12.8,"tin":60438,"hbcu":False,"yr2":False,"web":"https://nyu.edu"},
 ]
+
+SCHOOLS = load_schools()
+
 
 CAREERS = [
     {"id":"rn","name":"Registered Nurse","icon":"🏥","field":"Healthcare","salary_entry":55000,"salary_mid":77600,"salary_senior":100000,"growth":"6%","demand":"High","why":"You want to help people directly and build a stable career.","day":"Check on patients, administer medications, coordinate with doctors.","majors":["Nursing (BSN)","Health Sciences","Biology"],"traits":{"people":5,"helping":5,"science":4,"creativity":2,"data":2,"physical":3,"leadership":3,"outdoors":1},"values":{"impact":5,"stability":5,"income":3,"creativity":2,"autonomy":3,"prestige":3},"styles":{"solo":1,"team":5,"variety":4,"routine":2,"indoors":5,"outdoors":1}},
@@ -326,7 +333,7 @@ YRS_MAP   = {"Any":"any","2 years (Associate)":"2yr","4 years (Bachelor's+)":"4y
 col_h1, col_h2 = st.columns([3,1])
 with col_h1:
     st.markdown("# 🎓 Pathways by SLN")
-    st.markdown("*Your college list, built around your life.*")
+    st.markdown(f"*Your college list, built around your life. Browsing **{len(SCHOOLS):,} US colleges** from IPEDS 2023-24.*")
 with col_h2:
     st.caption("Built by SLN RITA Tech & Data Intern\nIPEDS 2023-24 · Aid thresholds 2025-26")
 st.divider()
@@ -593,6 +600,3 @@ with tab4:
 
 st.divider()
 st.caption("Pathways by SLN · IPEDS 2023-24 · Aid thresholds 2025-26 · Verify all deadlines on official college websites")
-# Footer
-st.divider()
-st.caption("Pathways by SLN · Built on IPEDS 2023-24 Federal Data · Aid thresholds: 2025-26 · Always verify deadlines on official college websites")
