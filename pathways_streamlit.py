@@ -51,9 +51,20 @@ def load_schools():
         for k in ['tin','sat25','sat75','act25','act75','grad','adm']:
             v = s.get(k)
             s[k] = float(v) if v is not None else None
-        if s.get('tin'): s['tin'] = int(s['tin'])
-        if s.get('sat25'): s['sat25'] = int(s['sat25'])
-        if s.get('sat75'): s['sat75'] = int(s['sat75'])
+        try: s['tin'] = int(s['tin']) if s.get('tin') else None
+        except: s['tin'] = None
+        try: s['sat25'] = int(s['sat25']) if s.get('sat25') else None
+        except: s['sat25'] = None
+        try: s['sat75'] = int(s['sat75']) if s.get('sat75') else None
+        except: s['sat75'] = None
+        try: s['act25'] = int(s['act25']) if s.get('act25') else None
+        except: s['act25'] = None
+        try: s['act75'] = int(s['act75']) if s.get('act75') else None
+        except: s['act75'] = None
+        try: s['grad'] = int(s['grad']) if s.get('grad') else None
+        except: s['grad'] = None
+        try: s['adm'] = float(s['adm']) if s.get('adm') else None
+        except: s['adm'] = None
     return schools
 
 SAMPLE_SCHOOLS = [
