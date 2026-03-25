@@ -156,12 +156,13 @@ def run_match(gpa, sat, act, state, size, ctrl, need, env, study_yrs, aid, n):
         if state!='any' and s['state'].lower()!=state.lower(): continue
         if s['size'] not in size_codes: continue
         if s['ctrl'] not in ctrl_codes: continue
-        if need=='full' and s['tin']>55000: continue
+        tin = s.get('tin') or 0
+        if need=='full' and tin > 55000: continue
         if env=='hbcu' and not s.get('hbcu'): continue
         if study_yrs=='2yr' and not s.get('yr2'): continue
         if study_yrs=='4yr' and s.get('yr2'): continue
         fit=get_fit(sat,act,s)
-        net=max(0,s['tin']-aid['total']) if s.get('tin') else None
+        net=max(0, tin - aid['total']) if tin > 0 else None
         results.append({**s,'fit':fit,'net':net})
     results.sort(key=lambda x:(x['net'] is None, x['net'] or 999999))
     return results[:n]
@@ -463,7 +464,7 @@ with tab1:
                         if aid['heop'] and s['state']=='NY': chips += "  `HEOP`"
                         st.markdown(chips)
                     with cb:
-                        sticker = s.get('tin',0)
+                        sticker = s.get('tin') or 0
                         st.markdown(f"**Sticker:** ${sticker:,}" if sticker else "")
                         if net==0 and aid['total']>0:
                             st.markdown("**You pay:** :green[Fully covered 🎉]")
