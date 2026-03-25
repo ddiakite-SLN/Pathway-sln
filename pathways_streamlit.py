@@ -1,12 +1,11 @@
 # ═══════════════════════════════════════════════════════════════
-#  PATHWAYS BY SLN — Streamlit App
-#  pip install streamlit
-#  Run: streamlit run pathways_streamlit.py
+#  PATHWAYS BY SLN — Streamlit App v2
+#  Fixed: persistent college list + PDF export
 # ═══════════════════════════════════════════════════════════════
 
 import streamlit as st
+from io import BytesIO
 
-# ── PAGE CONFIG ───────────────────────────────────────────────
 st.set_page_config(
     page_title="Pathways by SLN",
     page_icon="🎓",
@@ -14,50 +13,28 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# ── CUSTOM CSS ────────────────────────────────────────────────
 st.markdown("""
 <style>
-    .main { background-color: #F7F3EE; }
-    .stApp { background-color: #F7F3EE; }
-    h1 { color: #0D1B2A; font-family: Georgia, serif; }
-    h2 { color: #0D1B2A; font-family: Georgia, serif; }
-    h3 { color: #0D1B2A; }
-    .metric-card {
-        background: white;
-        border-radius: 12px;
-        padding: 20px;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-        border-left: 4px solid #C9923A;
-        margin-bottom: 12px;
-    }
-    .college-card {
-        background: white;
-        border-radius: 12px;
-        padding: 16px 20px;
-        margin-bottom: 12px;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-    }
-    .safety { border-left: 4px solid #4CAF50; }
-    .match  { border-left: 4px solid #FFC107; }
-    .reach  { border-left: 4px solid #EF5350; }
-    .unknown{ border-left: 4px solid #ccc; }
-    .big-number {
-        font-size: 2.5rem;
-        font-weight: 700;
-        color: #C9923A;
-        font-family: Georgia, serif;
-    }
-    .section-header {
-        background: #0D1B2A;
-        color: white;
-        padding: 12px 20px;
-        border-radius: 10px;
-        margin: 20px 0 12px 0;
-    }
+.main { background-color: #F7F3EE; }
+.stApp { background-color: #F7F3EE; }
+div[data-testid="metric-container"] { background:white; border-radius:10px; padding:10px; box-shadow:0 1px 4px rgba(0,0,0,.07); }
+.college-row { background:white; border-radius:10px; padding:14px 18px; margin-bottom:10px; box-shadow:0 1px 6px rgba(0,0,0,.06); }
 </style>
 """, unsafe_allow_html=True)
 
-# ── COLLEGE DATA ──────────────────────────────────────────────
+# ── SESSION STATE INIT ────────────────────────────────────────
+if 'my_list' not in st.session_state:
+    st.session_state.my_list = []
+if 'matches' not in st.session_state:
+    st.session_state.matches = []
+if 'aid' not in st.session_state:
+    st.session_state.aid = {"pell":0,"tap":0,"dream":0,"heop":False,"total":0}
+if 'career_results' not in st.session_state:
+    st.session_state.career_results = []
+if 'ran_match' not in st.session_state:
+    st.session_state.ran_match = False
+
+# ── DATA ──────────────────────────────────────────────────────
 SCHOOLS = [
     {"id":190688,"name":"Barnard College","city":"New York","state":"NY","ctrl":2,"size":2,"sat25":1420,"sat75":1540,"act25":32,"act75":35,"grad":94,"adm":11.6,"tin":64076,"hbcu":False,"yr2":False,"web":"https://barnard.edu"},
     {"id":190150,"name":"Columbia University","city":"New York","state":"NY","ctrl":2,"size":4,"sat25":1510,"sat75":1570,"act25":34,"act75":36,"grad":96,"adm":3.9,"tin":65524,"hbcu":False,"yr2":False,"web":"https://columbia.edu"},
@@ -82,35 +59,42 @@ SCHOOLS = [
 ]
 
 CAREERS = [
-    {"id":"rn","name":"Registered Nurse","icon":"🏥","field":"Healthcare","cip":"51","salary_entry":55000,"salary_mid":77600,"salary_senior":100000,"growth":"6%","demand":"High","why":"You want to help people directly and build a stable career.","day":"Check on patients, administer medications, coordinate with doctors. No two days the same.","majors":["Nursing (BSN)","Health Sciences","Biology"],"traits":{"people":5,"helping":5,"science":4,"creativity":2,"data":2,"physical":3,"leadership":3,"outdoors":1},"values":{"impact":5,"stability":5,"income":3,"creativity":2,"autonomy":3,"prestige":3},"styles":{"solo":1,"team":5,"variety":4,"routine":2,"indoors":5,"outdoors":1}},
-    {"id":"cs","name":"Software Developer","icon":"💻","field":"Technology","cip":"11","salary_entry":75000,"salary_mid":124200,"salary_senior":180000,"growth":"25%","demand":"Very High","why":"You like solving complex problems and want strong income.","day":"Write code, debug systems, build apps. Remote work is common.","majors":["Computer Science","Software Engineering","IT"],"traits":{"people":2,"helping":2,"science":4,"creativity":4,"data":5,"physical":1,"leadership":3,"outdoors":1},"values":{"impact":3,"stability":4,"income":5,"creativity":4,"autonomy":5,"prestige":4},"styles":{"solo":4,"team":3,"variety":4,"routine":3,"indoors":5,"outdoors":1}},
-    {"id":"teacher","name":"K-12 Teacher","icon":"📚","field":"Education","cip":"13","salary_entry":42000,"salary_mid":62360,"salary_senior":82000,"growth":"1%","demand":"Steady","why":"You want to shape the next generation.","day":"Plan lessons, teach, grade work, mentor students.","majors":["Education (K-12)","English Education","Math Education"],"traits":{"people":5,"helping":5,"science":2,"creativity":4,"data":2,"physical":2,"leadership":4,"outdoors":2},"values":{"impact":5,"stability":5,"income":2,"creativity":4,"autonomy":3,"prestige":2},"styles":{"solo":2,"team":4,"variety":3,"routine":4,"indoors":5,"outdoors":2}},
-    {"id":"social_worker","name":"Social Worker","icon":"🤝","field":"Social Services","cip":"19","salary_entry":38000,"salary_mid":55350,"salary_senior":75000,"growth":"7%","demand":"High","why":"You care about communities and want work that makes a real difference.","day":"Meet families in crisis, connect them to resources, advocate for their rights.","majors":["Social Work (BSW)","Psychology","Sociology"],"traits":{"people":5,"helping":5,"science":2,"creativity":3,"data":2,"physical":2,"leadership":3,"outdoors":2},"values":{"impact":5,"stability":4,"income":2,"creativity":3,"autonomy":3,"prestige":2},"styles":{"solo":2,"team":4,"variety":5,"routine":2,"indoors":4,"outdoors":3}},
-    {"id":"engineer","name":"Engineer","icon":"🏗️","field":"Engineering","cip":"14","salary_entry":65000,"salary_mid":88050,"salary_senior":130000,"growth":"5%","demand":"High","why":"You want to build real things and earn strong income.","day":"Design systems, review blueprints, manage contractors, visit sites.","majors":["Civil Engineering","Mechanical Engineering","Environmental Engineering"],"traits":{"people":2,"helping":2,"science":5,"creativity":4,"data":5,"physical":3,"leadership":3,"outdoors":4},"values":{"impact":4,"stability":5,"income":4,"creativity":4,"autonomy":3,"prestige":3},"styles":{"solo":3,"team":4,"variety":4,"routine":3,"indoors":3,"outdoors":4}},
-    {"id":"finance","name":"Financial Analyst","icon":"📊","field":"Business & Finance","cip":"52","salary_entry":58000,"salary_mid":95080,"salary_senior":155000,"growth":"8%","demand":"High","why":"You want financial security and a clear advancement path.","day":"Analyze data, build financial models, advise on money decisions.","majors":["Finance","Accounting","Business Administration","Economics"],"traits":{"people":2,"helping":2,"science":3,"creativity":2,"data":5,"physical":1,"leadership":3,"outdoors":1},"values":{"impact":2,"stability":5,"income":5,"creativity":2,"autonomy":3,"prestige":4},"styles":{"solo":4,"team":3,"variety":3,"routine":4,"indoors":5,"outdoors":1}},
-    {"id":"therapist","name":"Counselor / Therapist","icon":"🧠","field":"Mental Health","cip":"42","salary_entry":42000,"salary_mid":58510,"salary_senior":90000,"growth":"18%","demand":"Very High","why":"You want to help people through their hardest moments.","day":"Sit with people during difficult times, help them build coping skills.","majors":["Psychology","Counseling (MS)","Social Work (MSW)"],"traits":{"people":5,"helping":5,"science":3,"creativity":3,"data":3,"physical":1,"leadership":2,"outdoors":1},"values":{"impact":5,"stability":4,"income":3,"creativity":3,"autonomy":4,"prestige":3},"styles":{"solo":3,"team":2,"variety":3,"routine":4,"indoors":5,"outdoors":1}},
-    {"id":"data_scientist","name":"Data Scientist","icon":"📈","field":"Technology & Analytics","cip":"11","salary_entry":70000,"salary_mid":105000,"salary_senior":165000,"growth":"35%","demand":"Very High","why":"You love finding patterns in data and turning numbers into decisions.","day":"Collect, clean and analyze datasets. Mix of statistics, programming, storytelling.","majors":["Data Science","Statistics","Computer Science","Mathematics"],"traits":{"people":2,"helping":2,"science":5,"creativity":4,"data":5,"physical":1,"leadership":3,"outdoors":1},"values":{"impact":3,"stability":4,"income":5,"creativity":4,"autonomy":4,"prestige":4},"styles":{"solo":4,"team":3,"variety":4,"routine":3,"indoors":5,"outdoors":1}},
-    {"id":"pa","name":"Physician Assistant / NP","icon":"⚕️","field":"Healthcare","cip":"51","salary_entry":85000,"salary_mid":121530,"salary_senior":150000,"growth":"28%","demand":"Very High","why":"Top-level healthcare without a 10-year medical school commitment.","day":"Diagnose illnesses, prescribe medications, treat patients with high autonomy.","majors":["Pre-Medicine","Biology","Health Sciences","Nursing (BSN)"],"traits":{"people":4,"helping":5,"science":5,"creativity":3,"data":4,"physical":3,"leadership":4,"outdoors":1},"values":{"impact":5,"stability":4,"income":5,"creativity":3,"autonomy":4,"prestige":5},"styles":{"solo":2,"team":4,"variety":4,"routine":3,"indoors":5,"outdoors":1}},
-    {"id":"marketing","name":"Marketing Manager","icon":"📣","field":"Marketing","cip":"52","salary_entry":48000,"salary_mid":85000,"salary_senior":145000,"growth":"6%","demand":"Moderate","why":"You love creating and communicating.","day":"Craft campaigns, manage social media, analyze results, tell brand stories.","majors":["Marketing","Communications","Business Administration"],"traits":{"people":4,"helping":2,"science":2,"creativity":5,"data":4,"physical":1,"leadership":4,"outdoors":2},"values":{"impact":3,"stability":3,"income":4,"creativity":5,"autonomy":4,"prestige":3},"styles":{"solo":2,"team":4,"variety":5,"routine":2,"indoors":4,"outdoors":2}},
-    {"id":"lawyer","name":"Attorney / Lawyer","icon":"⚖️","field":"Law & Justice","cip":"22","salary_entry":72000,"salary_mid":126000,"salary_senior":220000,"growth":"4%","demand":"Moderate","why":"You are drawn to justice and how society rules work.","day":"Research legal questions, write arguments, advise clients, negotiate deals.","majors":["Pre-Law","Political Science","Criminal Justice","English"],"traits":{"people":3,"helping":3,"science":2,"creativity":4,"data":4,"physical":1,"leadership":4,"outdoors":1},"values":{"impact":4,"stability":4,"income":5,"creativity":4,"autonomy":4,"prestige":5},"styles":{"solo":4,"team":3,"variety":4,"routine":3,"indoors":5,"outdoors":1}},
-    {"id":"cybersecurity","name":"Cybersecurity Analyst","icon":"🔐","field":"Technology","cip":"11","salary_entry":70000,"salary_mid":112000,"salary_senior":175000,"growth":"32%","demand":"Critical","why":"One of the fastest-growing and most in-demand fields in tech.","day":"Monitor networks for threats, investigate breaches, stay ahead of hackers.","majors":["Cybersecurity","Computer Science","Information Technology"],"traits":{"people":2,"helping":3,"science":4,"creativity":4,"data":5,"physical":1,"leadership":3,"outdoors":1},"values":{"impact":4,"stability":5,"income":5,"creativity":4,"autonomy":4,"prestige":4},"styles":{"solo":4,"team":3,"variety":4,"routine":3,"indoors":5,"outdoors":1}},
+    {"id":"rn","name":"Registered Nurse","icon":"🏥","field":"Healthcare","salary_entry":55000,"salary_mid":77600,"salary_senior":100000,"growth":"6%","demand":"High","why":"You want to help people directly and build a stable career.","day":"Check on patients, administer medications, coordinate with doctors.","majors":["Nursing (BSN)","Health Sciences","Biology"],"traits":{"people":5,"helping":5,"science":4,"creativity":2,"data":2,"physical":3,"leadership":3,"outdoors":1},"values":{"impact":5,"stability":5,"income":3,"creativity":2,"autonomy":3,"prestige":3},"styles":{"solo":1,"team":5,"variety":4,"routine":2,"indoors":5,"outdoors":1}},
+    {"id":"cs","name":"Software Developer","icon":"💻","field":"Technology","salary_entry":75000,"salary_mid":124200,"salary_senior":180000,"growth":"25%","demand":"Very High","why":"You like solving complex problems and want strong income.","day":"Write code, debug systems, build apps. Remote work is common.","majors":["Computer Science","Software Engineering","IT"],"traits":{"people":2,"helping":2,"science":4,"creativity":4,"data":5,"physical":1,"leadership":3,"outdoors":1},"values":{"impact":3,"stability":4,"income":5,"creativity":4,"autonomy":5,"prestige":4},"styles":{"solo":4,"team":3,"variety":4,"routine":3,"indoors":5,"outdoors":1}},
+    {"id":"teacher","name":"K-12 Teacher","icon":"📚","field":"Education","salary_entry":42000,"salary_mid":62360,"salary_senior":82000,"growth":"1%","demand":"Steady","why":"You want to shape the next generation.","day":"Plan lessons, teach, grade work, mentor students.","majors":["Education (K-12)","English Education","Math Education"],"traits":{"people":5,"helping":5,"science":2,"creativity":4,"data":2,"physical":2,"leadership":4,"outdoors":2},"values":{"impact":5,"stability":5,"income":2,"creativity":4,"autonomy":3,"prestige":2},"styles":{"solo":2,"team":4,"variety":3,"routine":4,"indoors":5,"outdoors":2}},
+    {"id":"social_worker","name":"Social Worker","icon":"🤝","field":"Social Services","salary_entry":38000,"salary_mid":55350,"salary_senior":75000,"growth":"7%","demand":"High","why":"You care about communities and want work that makes a real difference.","day":"Meet families in crisis, connect them to resources, advocate.","majors":["Social Work (BSW)","Psychology","Sociology"],"traits":{"people":5,"helping":5,"science":2,"creativity":3,"data":2,"physical":2,"leadership":3,"outdoors":2},"values":{"impact":5,"stability":4,"income":2,"creativity":3,"autonomy":3,"prestige":2},"styles":{"solo":2,"team":4,"variety":5,"routine":2,"indoors":4,"outdoors":3}},
+    {"id":"engineer","name":"Engineer","icon":"🏗️","field":"Engineering","salary_entry":65000,"salary_mid":88050,"salary_senior":130000,"growth":"5%","demand":"High","why":"You want to build real things and earn strong income.","day":"Design systems, review blueprints, manage contractors, visit sites.","majors":["Civil Engineering","Mechanical Engineering","Environmental Engineering"],"traits":{"people":2,"helping":2,"science":5,"creativity":4,"data":5,"physical":3,"leadership":3,"outdoors":4},"values":{"impact":4,"stability":5,"income":4,"creativity":4,"autonomy":3,"prestige":3},"styles":{"solo":3,"team":4,"variety":4,"routine":3,"indoors":3,"outdoors":4}},
+    {"id":"finance","name":"Financial Analyst","icon":"📊","field":"Business & Finance","salary_entry":58000,"salary_mid":95080,"salary_senior":155000,"growth":"8%","demand":"High","why":"You want financial security and a clear advancement path.","day":"Analyze data, build financial models, advise on money decisions.","majors":["Finance","Accounting","Business Administration","Economics"],"traits":{"people":2,"helping":2,"science":3,"creativity":2,"data":5,"physical":1,"leadership":3,"outdoors":1},"values":{"impact":2,"stability":5,"income":5,"creativity":2,"autonomy":3,"prestige":4},"styles":{"solo":4,"team":3,"variety":3,"routine":4,"indoors":5,"outdoors":1}},
+    {"id":"therapist","name":"Counselor / Therapist","icon":"🧠","field":"Mental Health","salary_entry":42000,"salary_mid":58510,"salary_senior":90000,"growth":"18%","demand":"Very High","why":"You want to help people through their hardest moments.","day":"Sit with people during difficult times, help them build coping skills.","majors":["Psychology","Counseling (MS)","Social Work (MSW)"],"traits":{"people":5,"helping":5,"science":3,"creativity":3,"data":3,"physical":1,"leadership":2,"outdoors":1},"values":{"impact":5,"stability":4,"income":3,"creativity":3,"autonomy":4,"prestige":3},"styles":{"solo":3,"team":2,"variety":3,"routine":4,"indoors":5,"outdoors":1}},
+    {"id":"data_scientist","name":"Data Scientist","icon":"📈","field":"Technology & Analytics","salary_entry":70000,"salary_mid":105000,"salary_senior":165000,"growth":"35%","demand":"Very High","why":"You love finding patterns in data and turning numbers into decisions.","day":"Collect, clean and analyze datasets. Mix of statistics and programming.","majors":["Data Science","Statistics","Computer Science","Mathematics"],"traits":{"people":2,"helping":2,"science":5,"creativity":4,"data":5,"physical":1,"leadership":3,"outdoors":1},"values":{"impact":3,"stability":4,"income":5,"creativity":4,"autonomy":4,"prestige":4},"styles":{"solo":4,"team":3,"variety":4,"routine":3,"indoors":5,"outdoors":1}},
+    {"id":"pa","name":"Physician Assistant / NP","icon":"⚕️","field":"Healthcare","salary_entry":85000,"salary_mid":121530,"salary_senior":150000,"growth":"28%","demand":"Very High","why":"Top-level healthcare without a 10-year medical school commitment.","day":"Diagnose illnesses, prescribe medications, treat patients.","majors":["Pre-Medicine","Biology","Health Sciences","Nursing (BSN)"],"traits":{"people":4,"helping":5,"science":5,"creativity":3,"data":4,"physical":3,"leadership":4,"outdoors":1},"values":{"impact":5,"stability":4,"income":5,"creativity":3,"autonomy":4,"prestige":5},"styles":{"solo":2,"team":4,"variety":4,"routine":3,"indoors":5,"outdoors":1}},
+    {"id":"marketing","name":"Marketing Manager","icon":"📣","field":"Marketing","salary_entry":48000,"salary_mid":85000,"salary_senior":145000,"growth":"6%","demand":"Moderate","why":"You love creating and communicating.","day":"Craft campaigns, manage social media, analyze results, tell brand stories.","majors":["Marketing","Communications","Business Administration"],"traits":{"people":4,"helping":2,"science":2,"creativity":5,"data":4,"physical":1,"leadership":4,"outdoors":2},"values":{"impact":3,"stability":3,"income":4,"creativity":5,"autonomy":4,"prestige":3},"styles":{"solo":2,"team":4,"variety":5,"routine":2,"indoors":4,"outdoors":2}},
+    {"id":"lawyer","name":"Attorney / Lawyer","icon":"⚖️","field":"Law & Justice","salary_entry":72000,"salary_mid":126000,"salary_senior":220000,"growth":"4%","demand":"Moderate","why":"You are drawn to justice and how society rules work.","day":"Research legal questions, write arguments, advise clients, negotiate.","majors":["Pre-Law","Political Science","Criminal Justice","English"],"traits":{"people":3,"helping":3,"science":2,"creativity":4,"data":4,"physical":1,"leadership":4,"outdoors":1},"values":{"impact":4,"stability":4,"income":5,"creativity":4,"autonomy":4,"prestige":5},"styles":{"solo":4,"team":3,"variety":4,"routine":3,"indoors":5,"outdoors":1}},
+    {"id":"cybersecurity","name":"Cybersecurity Analyst","icon":"🔐","field":"Technology","salary_entry":70000,"salary_mid":112000,"salary_senior":175000,"growth":"32%","demand":"Critical","why":"One of the fastest-growing and most in-demand fields in tech.","day":"Monitor networks for threats, investigate breaches, stay ahead of hackers.","majors":["Cybersecurity","Computer Science","Information Technology"],"traits":{"people":2,"helping":3,"science":4,"creativity":4,"data":5,"physical":1,"leadership":3,"outdoors":1},"values":{"impact":4,"stability":5,"income":5,"creativity":4,"autonomy":4,"prestige":4},"styles":{"solo":4,"team":3,"variety":4,"routine":3,"indoors":5,"outdoors":1}},
 ]
 
 DEADLINES = {
-    190637:{"rd":"Feb 1","ea":"Nov 21","sys":"CUNY"},190512:{"rd":"Feb 1","ea":"Nov 21","sys":"CUNY"},
-    190549:{"rd":"Feb 1","ea":"Nov 21","sys":"CUNY"},190558:{"rd":"Feb 1","ea":"Nov 21","sys":"CUNY"},
-    196097:{"rd":"Feb 1","ea":"Nov 1","sys":"SUNY"},196060:{"rd":"Rolling","ea":"Nov 15","sys":"SUNY"},
-    196079:{"rd":"Rolling","sys":"SUNY"},196185:{"rd":"Rolling","ea":"Nov 15","sys":"SUNY"},
-    192439:{"rd":"Jan 3","ed":"Nov 1"},193900:{"rd":"Jan 1","ed":"Nov 1"},
-    190688:{"rd":"Jan 1","ed":"Nov 1"},190150:{"rd":"Jan 1","ed":"Nov 1"},
-    190415:{"rd":"Jan 2","ed":"Nov 1"},166027:{"rd":"Jan 1","ea":"Nov 1"},
-    131520:{"rd":"Feb 15","ed":"Nov 1"},198419:{"rd":"Jan 5","ed":"Nov 3"},
+    190637:{"rd":"Feb 1","ea":"Nov 21","sys":"CUNY"},
+    190512:{"rd":"Feb 1","ea":"Nov 21","sys":"CUNY"},
+    190549:{"rd":"Feb 1","ea":"Nov 21","sys":"CUNY"},
+    190558:{"rd":"Feb 1","ea":"Nov 21","sys":"CUNY"},
+    196097:{"rd":"Feb 1","ea":"Nov 1","sys":"SUNY"},
+    196060:{"rd":"Rolling","ea":"Nov 15","sys":"SUNY"},
+    196079:{"rd":"Rolling","sys":"SUNY"},
+    196185:{"rd":"Rolling","ea":"Nov 15","sys":"SUNY"},
+    192439:{"rd":"Jan 3","ed":"Nov 1"},
+    193900:{"rd":"Jan 1","ed":"Nov 1"},
+    190688:{"rd":"Jan 1","ed":"Nov 1"},
+    190150:{"rd":"Jan 1","ed":"Nov 1"},
+    190415:{"rd":"Jan 2","ed":"Nov 1"},
+    166027:{"rd":"Jan 1","ea":"Nov 1"},
+    131520:{"rd":"Feb 15","ed":"Nov 1"},
+    198419:{"rd":"Jan 5","ed":"Nov 3"},
 }
 
-# ── CORE ENGINES ──────────────────────────────────────────────
+# ── ENGINES ───────────────────────────────────────────────────
 def calculate_aid(income, hsize, ny_res, immig, first_gen):
-    pell = tap = dream = 0
-    heop = False
+    pell=tap=dream=0; heop=False
     if immig in ('citizen','daca'):
         if income<=26000: pell=7395
         elif income<=32000: pell=5546
@@ -179,415 +163,436 @@ def run_career_match(answers):
     scored=[{**c,'fit':score_career(c,profile)} for c in CAREERS]
     return sorted(scored,key=lambda x:x['fit'],reverse=True)
 
-# ── STREAMLIT APP ─────────────────────────────────────────────
+# ── PDF GENERATOR ─────────────────────────────────────────────
+def generate_pdf(my_list, aid, career_top, gpa, sat, act):
+    try:
+        from reportlab.lib.pagesizes import letter
+        from reportlab.lib import colors
+        from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+        from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle, HRFlowable
+        from reportlab.lib.units import inch
 
-# Header
-col1, col2 = st.columns([3,1])
-with col1:
+        buf = BytesIO()
+        doc = SimpleDocTemplate(buf, pagesize=letter,
+                                rightMargin=0.75*inch, leftMargin=0.75*inch,
+                                topMargin=0.75*inch, bottomMargin=0.75*inch)
+        styles = getSampleStyleSheet()
+        story = []
+
+        GOLD   = colors.HexColor('#C9923A')
+        DARK   = colors.HexColor('#0D1B2A')
+        GREEN  = colors.HexColor('#2A6049')
+        GRAY   = colors.HexColor('#6B7A8D')
+
+        title_style = ParagraphStyle('title', parent=styles['Title'],
+                                     fontSize=24, textColor=DARK,
+                                     spaceAfter=4, fontName='Helvetica-Bold')
+        sub_style   = ParagraphStyle('sub', parent=styles['Normal'],
+                                     fontSize=11, textColor=GRAY, spaceAfter=12)
+        head_style  = ParagraphStyle('head', parent=styles['Heading2'],
+                                     fontSize=14, textColor=DARK,
+                                     spaceBefore=16, spaceAfter=6,
+                                     fontName='Helvetica-Bold')
+        body_style  = ParagraphStyle('body', parent=styles['Normal'],
+                                     fontSize=10, textColor=DARK, spaceAfter=4)
+        small_style = ParagraphStyle('small', parent=styles['Normal'],
+                                     fontSize=9, textColor=GRAY, spaceAfter=2)
+
+        # Header
+        story.append(Paragraph("🎓 Pathways by SLN", title_style))
+        story.append(Paragraph("Personalized College Guidance Report", sub_style))
+        story.append(HRFlowable(width="100%", thickness=2, color=GOLD, spaceAfter=12))
+
+        # Profile summary
+        story.append(Paragraph("Your Profile", head_style))
+        profile_info = f"GPA: <b>{gpa}</b>"
+        if sat: profile_info += f"  |  SAT: <b>{sat}</b>"
+        if act: profile_info += f"  |  ACT: <b>{act}</b>"
+        if career_top: profile_info += f"  |  Top Career Match: <b>{career_top}</b>"
+        story.append(Paragraph(profile_info, body_style))
+
+        # Aid summary
+        story.append(Paragraph("Estimated Annual Financial Aid", head_style))
+        aid_data = [
+            ['Program', 'Amount', 'Status'],
+            ['Federal Pell Grant', f"${aid['pell']:,}" if aid['pell']>0 else '—', 'Eligible' if aid['pell']>0 else 'Not eligible'],
+            ['NY State TAP', f"${aid['tap']:,}" if aid['tap']>0 else '—', 'Eligible' if aid['tap']>0 else 'Not eligible'],
+            ['NYS Dream Act', f"${aid['dream']:,}" if aid['dream']>0 else '—', 'Eligible' if aid['dream']>0 else 'Not eligible'],
+            ['HEOP', 'Varies', 'Eligible' if aid['heop'] else 'Not eligible'],
+            ['TOTAL GRANTS', f"${aid['total']:,}/year", 'Does not need to be repaid'],
+        ]
+        aid_table = Table(aid_data, colWidths=[2.5*inch, 1.5*inch, 2.5*inch])
+        aid_table.setStyle(TableStyle([
+            ('BACKGROUND', (0,0), (-1,0), DARK),
+            ('TEXTCOLOR',  (0,0), (-1,0), colors.white),
+            ('FONTNAME',   (0,0), (-1,0), 'Helvetica-Bold'),
+            ('FONTSIZE',   (0,0), (-1,-1), 9),
+            ('BACKGROUND', (0,-1), (-1,-1), colors.HexColor('#E8F4EE')),
+            ('FONTNAME',   (0,-1), (-1,-1), 'Helvetica-Bold'),
+            ('TEXTCOLOR',  (0,-1), (-1,-1), GREEN),
+            ('ROWBACKGROUNDS', (0,1), (-1,-2), [colors.white, colors.HexColor('#F7F3EE')]),
+            ('GRID', (0,0), (-1,-1), 0.5, colors.HexColor('#E0D8CE')),
+            ('VALIGN', (0,0), (-1,-1), 'MIDDLE'),
+            ('TOPPADDING', (0,0), (-1,-1), 6),
+            ('BOTTOMPADDING', (0,0), (-1,-1), 6),
+            ('LEFTPADDING', (0,0), (-1,-1), 8),
+        ]))
+        story.append(aid_table)
+
+        # College list
+        story.append(Paragraph("Your College List", head_style))
+
+        # Balance summary
+        safety_n = sum(1 for s in my_list if s.get('fit')=='safety')
+        match_n  = sum(1 for s in my_list if s.get('fit')=='match')
+        reach_n  = sum(1 for s in my_list if s.get('fit')=='reach')
+        story.append(Paragraph(
+            f"<b>List Balance:</b> {safety_n} Safety &nbsp;|&nbsp; {match_n} Match &nbsp;|&nbsp; {reach_n} Reach  ({len(my_list)} total)",
+            body_style))
+        story.append(Spacer(1, 8))
+
+        if my_list:
+            college_data = [['#', 'College', 'Fit', 'Sticker', 'You Pay/yr', 'RD Deadline']]
+            fit_colors_map = {'safety': colors.HexColor('#E8F5E9'),
+                              'match':  colors.HexColor('#FFF8E1'),
+                              'reach':  colors.HexColor('#FFEBEE'),
+                              'unknown':colors.HexColor('#F5F5F5')}
+            row_colors = []
+            for i, s in enumerate(my_list, 1):
+                fit   = s.get('fit','unknown')
+                net   = f"${s['net']:,}" if s.get('net') is not None else 'N/A'
+                sticker = f"${s.get('tin',0):,}" if s.get('tin') else 'N/A'
+                dl    = DEADLINES.get(s['id'], {"rd":"Check website"})
+                college_data.append([
+                    str(i),
+                    s['name'],
+                    fit.capitalize(),
+                    sticker,
+                    net,
+                    dl.get('rd','Check website'),
+                ])
+                row_colors.append(fit_colors_map.get(fit, colors.white))
+
+            col_table = Table(college_data, colWidths=[0.3*inch,2.4*inch,0.7*inch,0.8*inch,0.8*inch,0.9*inch])
+            table_style = [
+                ('BACKGROUND', (0,0), (-1,0), DARK),
+                ('TEXTCOLOR',  (0,0), (-1,0), colors.white),
+                ('FONTNAME',   (0,0), (-1,0), 'Helvetica-Bold'),
+                ('FONTSIZE',   (0,0), (-1,-1), 8),
+                ('GRID',       (0,0), (-1,-1), 0.5, colors.HexColor('#E0D8CE')),
+                ('VALIGN',     (0,0), (-1,-1), 'MIDDLE'),
+                ('TOPPADDING', (0,0), (-1,-1), 5),
+                ('BOTTOMPADDING', (0,0), (-1,-1), 5),
+                ('LEFTPADDING',   (0,0), (-1,-1), 6),
+            ]
+            for i, rc in enumerate(row_colors, 1):
+                table_style.append(('BACKGROUND', (0,i), (-1,i), rc))
+            col_table.setStyle(TableStyle(table_style))
+            story.append(col_table)
+        else:
+            story.append(Paragraph("No colleges added to list yet.", body_style))
+
+        # Footer
+        story.append(Spacer(1, 20))
+        story.append(HRFlowable(width="100%", thickness=1, color=colors.HexColor('#E0D8CE')))
+        story.append(Paragraph(
+            "Pathways by SLN · Built on IPEDS 2023-24 Federal Data · Aid thresholds: 2025-26 · Always verify deadlines on official college websites",
+            small_style))
+
+        doc.build(story)
+        buf.seek(0)
+        return buf
+    except ImportError:
+        return None
+
+# ── CAREER MAPS ───────────────────────────────────────────────
+CAREER_MAPS = {
+    'i1': {"Helping and healing people":{"helping":3,"people":3},"Building and engineering things":{"building":3,"science":2},"Teaching and shaping communities":{"teaching":3,"people":2},"Running businesses and managing money":{"business":3,"leadership":2},"Creating, designing and communicating":{"creating":3,"creativity":3},"Researching, analyzing and discovering":{"analyzing":3,"data":3}},
+    'i2': {"High income":{"income":3,"prestige":1},"Making a real difference":{"impact":3,"helping":2},"Creative freedom":{"creativity":3,"autonomy":3},"Stability and security":{"stability":3},"Prestige and recognition":{"prestige":3,"leadership":2}},
+    'i3': {"With people (patients, students, clients)":{"people":3,"helping":2},"At a desk or computer":{"data":2,"analyzing":2},"Out in the field (moving, hands-on)":{"outdoors":3,"physical":3},"In a lab, hospital, or studio":{"science":2,"creating":2},"Anywhere (remote/flexible)":{"autonomy":3}},
+    'i4': {"Science or Math":{"science":3,"data":2},"English, Writing, or Communication":{"creating":2,"people":2},"Art, Music, or Design":{"creativity":3,"creating":2},"Social Studies or History":{"people":2,"teaching":2},"Technology or Computer Science":{"building":3,"data":3},"Physical Education or Health":{"physical":3,"helping":2}},
+    'i5': {"1-2 years (start earning soon)":{"stability":2},"4 years (bachelor's degree)":{"income":1},"6-8 years (graduate school)":{"prestige":2,"income":2},"Whatever it takes":{"prestige":3,"income":3}},
+    'i6': {"I love working with my hands":{"physical":3,"building":2},"I love understanding how people feel":{"people":3,"helping":3},"I love solving complex problems":{"analyzing":3,"data":3},"I love building or making things":{"creating":3,"building":2},"I love organizing, planning and leading":{"leadership":3,"business":2}},
+    'i7': {"Running my own business":{"autonomy":3,"leadership":3},"Recognized expert in my field":{"prestige":3,"science":2},"Making a meaningful community impact":{"impact":3,"helping":3},"Financially secure":{"stability":3,"income":3},"Doing creative work I am proud of":{"creativity":3,"creating":3}},
+    'i8': {"Fast-paced with new challenges":{"variety":3,"leadership":2},"Steady and predictable":{"stability":3,"routine":2},"Collaborative team work":{"people":2,"team":3},"Independent, working alone":{"autonomy":3,"analyzing":2},"Helping individuals one-on-one":{"helping":3,"people":3}},
+}
+IMMIG_MAP = {"US Citizen or Green Card":"citizen","DACA":"daca","Undocumented":"undocumented","Visa or other status":"other"}
+SIZE_MAP  = {"Any":"any","Small (<5k)":"small","Medium (5-20k)":"medium","Large (20k+)":"large"}
+CTRL_MAP  = {"Any":"any","Public":"public","Private":"private"}
+ENV_MAP   = {"Any":"any","HBCU":"hbcu","Women's College":"womens","Diverse":"diverse"}
+YRS_MAP   = {"Any":"any","2 years (Associate)":"2yr","4 years (Bachelor's+)":"4yr"}
+
+# ── UI ────────────────────────────────────────────────────────
+col_h1, col_h2 = st.columns([3,1])
+with col_h1:
     st.markdown("# 🎓 Pathways by SLN")
     st.markdown("*Your college list, built around your life.*")
-with col2:
-    st.markdown("<br>", unsafe_allow_html=True)
-    st.caption("Built by SLN RITA Tech & Data Intern")
-
+with col_h2:
+    st.caption("Built by SLN RITA Tech & Data Intern\nIPEDS 2023-24 · Aid thresholds 2025-26")
 st.divider()
 
-# Sidebar — all inputs
+# ── SIDEBAR ───────────────────────────────────────────────────
 with st.sidebar:
     st.markdown("## 📝 Your Profile")
-    st.caption("Fill in your info — results update automatically")
 
-    # STEP 1: Academics
-    st.markdown("### 📚 Step 1 — Academics")
+    st.markdown("### 📚 Academics")
     gpa = st.slider("Unweighted GPA", 0.0, 4.0, 3.0, 0.1)
-
-    score_type = st.selectbox("Test scores", ["None (test-optional)", "SAT", "ACT"])
+    score_type = st.selectbox("Test scores", ["None (test-optional)","SAT","ACT"])
     sat = act = None
     if score_type == "SAT":
         sat = st.number_input("SAT Score", 400, 1600, 1100, 10)
     elif score_type == "ACT":
         act = st.number_input("ACT Score", 1, 36, 24, 1)
 
-    # STEP 2: Career
-    st.markdown("### 🎯 Step 2 — Career Discovery")
-    st.caption("Answer all 8 questions to get your career matches")
+    st.markdown("### 🎯 Career Discovery")
+    q1 = st.selectbox("What excites you most?",list(CAREER_MAPS['i1'].keys()))
+    q2 = st.selectbox("What matters most in a career?",list(CAREER_MAPS['i2'].keys()))
+    q3 = st.selectbox("Where do you want to work?",list(CAREER_MAPS['i3'].keys()))
+    q4 = st.selectbox("Best subject in school?",list(CAREER_MAPS['i4'].keys()))
+    q5 = st.selectbox("How long willing to study?",list(CAREER_MAPS['i5'].keys()))
+    q6 = st.selectbox("Which describes you best?",list(CAREER_MAPS['i6'].keys()))
+    q7 = st.selectbox("In 10 years I see myself...",list(CAREER_MAPS['i7'].keys()))
+    q8 = st.selectbox("Best work environment?",list(CAREER_MAPS['i8'].keys()))
 
-    q_answers = {}
-
-    q_answers['i1'] = st.selectbox("What excites you most?", [
-        "Helping and healing people",
-        "Building and engineering things",
-        "Teaching and shaping communities",
-        "Running businesses and managing money",
-        "Creating, designing and communicating",
-        "Researching, analyzing and discovering",
-    ])
-    q_answers['i2'] = st.selectbox("What matters most in a career?", [
-        "High income",
-        "Making a real difference",
-        "Creative freedom",
-        "Stability and security",
-        "Prestige and recognition",
-    ])
-    q_answers['i3'] = st.selectbox("Where do you want to work?", [
-        "With people (patients, students, clients)",
-        "At a desk or computer",
-        "Out in the field (moving, hands-on)",
-        "In a lab, hospital, or studio",
-        "Anywhere (remote/flexible)",
-    ])
-    q_answers['i4'] = st.selectbox("Best subject in school?", [
-        "Science or Math",
-        "English, Writing, or Communication",
-        "Art, Music, or Design",
-        "Social Studies or History",
-        "Technology or Computer Science",
-        "Physical Education or Health",
-    ])
-    q_answers['i5'] = st.selectbox("How long willing to study?", [
-        "1-2 years (start earning soon)",
-        "4 years (bachelor's degree)",
-        "6-8 years (graduate school)",
-        "Whatever it takes",
-    ])
-    q_answers['i6'] = st.selectbox("Which describes you best?", [
-        "I love working with my hands",
-        "I love understanding how people feel",
-        "I love solving complex problems",
-        "I love building or making things",
-        "I love organizing, planning and leading",
-    ])
-    q_answers['i7'] = st.selectbox("In 10 years I see myself...", [
-        "Running my own business",
-        "Recognized expert in my field",
-        "Making a meaningful community impact",
-        "Financially secure",
-        "Doing creative work I am proud of",
-    ])
-    q_answers['i8'] = st.selectbox("Best work environment?", [
-        "Fast-paced with new challenges",
-        "Steady and predictable",
-        "Collaborative team work",
-        "Independent, working alone",
-        "Helping individuals one-on-one",
-    ])
-
-    # STEP 3: Financial Aid
-    st.markdown("### 💰 Step 3 — Financial Aid")
-    st.caption("Your answers are private — used only to estimate aid")
-
-    income = st.number_input("Annual household income ($)", 0, 500000, 42000, 1000)
-    hsize  = st.slider("Household size", 1, 10, 4)
-    ny_res = st.checkbox("NY State resident (12+ months)", value=True)
-    immig  = st.selectbox("Immigration/citizenship status", [
-        "US Citizen or Green Card",
-        "DACA",
-        "Undocumented",
-        "Visa or other status",
-    ])
+    st.markdown("### 💰 Financial Aid")
+    income    = st.number_input("Annual household income ($)", 0, 500000, 42000, 1000)
+    hsize     = st.slider("Household size", 1, 10, 4)
+    ny_res    = st.checkbox("NY State resident (12+ months)", value=True)
+    immig     = st.selectbox("Immigration/citizenship status",list(IMMIG_MAP.keys()))
     first_gen = st.checkbox("First-generation college student", value=True)
 
-    # STEP 4: Preferences
-    st.markdown("### 🗺️ Step 4 — Preferences")
-
-    state_pref = st.selectbox("Preferred state", ["NY","Any","CA","MA","NJ","PA","TX","FL","IL"])
-    school_size = st.selectbox("School size", ["Any","Small (<5k)","Medium (5-20k)","Large (20k+)"])
-    school_type = st.selectbox("School type", ["Any","Public","Private"])
-    env_pref   = st.selectbox("Campus environment", ["Any","HBCU","Women's College","Diverse"])
-    study_yrs  = st.selectbox("Years willing to study", ["Any","2 years (Associate)","4 years (Bachelor's+)"])
-    n_results  = st.select_slider("Number of results", [5,10,15,20], 10)
+    st.markdown("### 🗺️ Preferences")
+    state_pref  = st.selectbox("Preferred state",["NY","Any","CA","MA","NJ","PA","TX","FL","IL"])
+    school_size = st.selectbox("School size",["Any","Small (<5k)","Medium (5-20k)","Large (20k+)"])
+    school_type = st.selectbox("School type",["Any","Public","Private"])
+    env_pref    = st.selectbox("Campus environment",["Any","HBCU","Women's College","Diverse"])
+    study_yrs   = st.selectbox("Years willing to study",["Any","2 years (Associate)","4 years (Bachelor's+)"])
+    n_results   = st.select_slider("Number of results",[5,10,15,20],10)
 
     run_btn = st.button("🔍 Find My Colleges", type="primary", use_container_width=True)
 
-# ── PROCESS INPUTS ────────────────────────────────────────────
-
-# Map dropdown answers to profile values
-CAREER_MAPS = {
-    'i1': {
-        "Helping and healing people":            {"helping":3,"people":3},
-        "Building and engineering things":       {"building":3,"science":2},
-        "Teaching and shaping communities":      {"teaching":3,"people":2},
-        "Running businesses and managing money": {"business":3,"leadership":2},
-        "Creating, designing and communicating": {"creating":3,"creativity":3},
-        "Researching, analyzing and discovering":{"analyzing":3,"data":3},
-    },
-    'i2': {
-        "High income":               {"income":3,"prestige":1},
-        "Making a real difference":  {"impact":3,"helping":2},
-        "Creative freedom":          {"creativity":3,"autonomy":3},
-        "Stability and security":    {"stability":3},
-        "Prestige and recognition":  {"prestige":3,"leadership":2},
-    },
-    'i3': {
-        "With people (patients, students, clients)":{"people":3,"helping":2},
-        "At a desk or computer":                    {"data":2,"analyzing":2},
-        "Out in the field (moving, hands-on)":      {"outdoors":3,"physical":3},
-        "In a lab, hospital, or studio":            {"science":2,"creating":2},
-        "Anywhere (remote/flexible)":               {"autonomy":3},
-    },
-    'i4': {
-        "Science or Math":                     {"science":3,"data":2},
-        "English, Writing, or Communication":  {"creating":2,"people":2},
-        "Art, Music, or Design":               {"creativity":3,"creating":2},
-        "Social Studies or History":           {"people":2,"teaching":2},
-        "Technology or Computer Science":      {"building":3,"data":3},
-        "Physical Education or Health":        {"physical":3,"helping":2},
-    },
-    'i5': {
-        "1-2 years (start earning soon)":  {"stability":2},
-        "4 years (bachelor's degree)":     {"income":1},
-        "6-8 years (graduate school)":     {"prestige":2,"income":2},
-        "Whatever it takes":               {"prestige":3,"income":3},
-    },
-    'i6': {
-        "I love working with my hands":            {"physical":3,"building":2},
-        "I love understanding how people feel":    {"people":3,"helping":3},
-        "I love solving complex problems":         {"analyzing":3,"data":3},
-        "I love building or making things":        {"creating":3,"building":2},
-        "I love organizing, planning and leading": {"leadership":3,"business":2},
-    },
-    'i7': {
-        "Running my own business":              {"autonomy":3,"leadership":3},
-        "Recognized expert in my field":        {"prestige":3,"science":2},
-        "Making a meaningful community impact": {"impact":3,"helping":3},
-        "Financially secure":                   {"stability":3,"income":3},
-        "Doing creative work I am proud of":    {"creativity":3,"creating":3},
-    },
-    'i8': {
-        "Fast-paced with new challenges":  {"variety":3,"leadership":2},
-        "Steady and predictable":          {"stability":3,"routine":2},
-        "Collaborative team work":         {"people":2,"team":3},
-        "Independent, working alone":      {"autonomy":3,"analyzing":2},
-        "Helping individuals one-on-one":  {"helping":3,"people":3},
-    },
+# ── PROCESS ───────────────────────────────────────────────────
+career_answers = {
+    'i1':CAREER_MAPS['i1'][q1],'i2':CAREER_MAPS['i2'][q2],
+    'i3':CAREER_MAPS['i3'][q3],'i4':CAREER_MAPS['i4'][q4],
+    'i5':CAREER_MAPS['i5'][q5],'i6':CAREER_MAPS['i6'][q6],
+    'i7':CAREER_MAPS['i7'][q7],'i8':CAREER_MAPS['i8'][q8],
 }
-
-# Map UI values to engine values
-immig_map = {
-    "US Citizen or Green Card":"citizen",
-    "DACA":"daca",
-    "Undocumented":"undocumented",
-    "Visa or other status":"other"
-}
-size_map = {"Any":"any","Small (<5k)":"small","Medium (5-20k)":"medium","Large (20k+)":"large"}
-ctrl_map = {"Any":"any","Public":"public","Private":"private"}
-env_map  = {"Any":"any","HBCU":"hbcu","Women's College":"womens","Diverse":"diverse"}
-yrs_map  = {"Any":"any","2 years (Associate)":"2yr","4 years (Bachelor's+)":"4yr"}
-
-# Always compute career results (live)
-career_answers = {k: CAREER_MAPS[k][v] for k,v in q_answers.items()}
 career_results = run_career_match(career_answers)
-top = career_results[0]
+st.session_state.career_results = career_results
+top = career_results[0] if career_results else None
 
-# Compute aid always
-immig_val = immig_map[immig]
-aid = calculate_aid(income, hsize, ny_res, immig_val, first_gen)
+aid = calculate_aid(income, hsize, ny_res, IMMIG_MAP[immig], first_gen)
+st.session_state.aid = aid
 
-# ── MAIN RESULTS AREA ─────────────────────────────────────────
+if run_btn:
+    state_val = "any" if state_pref=="Any" else state_pref
+    need_val  = "full" if income<50000 else "some"
+    matches = run_match(gpa, sat, act, state_val,
+                        SIZE_MAP[school_size], CTRL_MAP[school_type],
+                        need_val, ENV_MAP[env_pref], YRS_MAP[study_yrs], aid, n_results)
+    st.session_state.matches  = matches
+    st.session_state.ran_match = True
+    st.session_state.gpa = gpa
+    st.session_state.sat = sat
+    st.session_state.act = act
 
+matches = st.session_state.matches
+
+# ── TABS ──────────────────────────────────────────────────────
 tab1, tab2, tab3, tab4 = st.tabs([
     "🏫 College Matches",
     "🎯 Career Results",
     "💰 Aid Eligibility",
-    "📋 My List"
+    "📋 My College List"
 ])
 
 # ── TAB 1: COLLEGE MATCHES ────────────────────────────────────
 with tab1:
-    if not run_btn:
-        st.info("👈 Fill in your profile on the left, then click **Find My Colleges** to see your matches.")
+    if not st.session_state.ran_match:
+        st.info("👈 Fill in your profile on the left and click **Find My Colleges**.")
     else:
-        state_val = "any" if state_pref == "Any" else state_pref
-        need_val  = "full" if income < 50000 else "some"
-        matches = run_match(
-            gpa, sat, act,
-            state_val,
-            size_map[school_size],
-            ctrl_map[school_type],
-            need_val,
-            env_map[env_pref],
-            yrs_map[study_yrs],
-            aid,
-            n_results
-        )
-
-        # Summary row
-        c1, c2, c3, c4 = st.columns(4)
-        with c1:
-            st.metric("Colleges Found", len(matches))
-        with c2:
-            st.metric("Est. Annual Aid", f"${aid['total']:,}")
-        with c3:
-            safety_n = sum(1 for s in matches if s['fit']=='safety')
-            match_n  = sum(1 for s in matches if s['fit']=='match')
-            reach_n  = sum(1 for s in matches if s['fit']=='reach')
-            st.metric("Safety / Match / Reach", f"{safety_n} / {match_n} / {reach_n}")
-        with c4:
-            st.metric("Top Career Match", top['name'])
-
+        m = matches
+        c1,c2,c3,c4 = st.columns(4)
+        c1.metric("Colleges Found", len(m))
+        c2.metric("Est. Annual Aid", f"${aid['total']:,}")
+        safety_n=sum(1 for s in m if s['fit']=='safety')
+        match_n =sum(1 for s in m if s['fit']=='match')
+        reach_n =sum(1 for s in m if s['fit']=='reach')
+        c3.metric("Safety / Match / Reach", f"{safety_n} / {match_n} / {reach_n}")
+        c4.metric("Top Career Match", top['name'] if top else "—")
         st.divider()
 
-        if not matches:
-            st.warning("No colleges matched your filters. Try changing your state preference to 'Any'.")
+        if not m:
+            st.warning("No colleges matched. Try changing your state preference to 'Any'.")
         else:
-            fit_colors = {"safety":"🟢","match":"🟡","reach":"🔴","unknown":"⚪"}
-            for s in matches:
-                fit = s.get('fit','unknown')
-                net = s.get('net')
-                sticker = s.get('tin',0)
-                dl = DEADLINES.get(s['id'],{"rd":"Check website"})
+            fit_icons={"safety":"🟢","match":"🟡","reach":"🔴","unknown":"⚪"}
+            for s in m:
+                fit=s.get('fit','unknown')
+                net=s.get('net')
+                dl=DEADLINES.get(s['id'],{"rd":"Check website"})
+                in_list = any(x['id']==s['id'] for x in st.session_state.my_list)
 
                 with st.container():
-                    col_a, col_b, col_c = st.columns([3,1,1])
-                    with col_a:
-                        st.markdown(f"**{fit_colors.get(fit,'⚪')} [{s['name']}]({s.get('web','#')})**")
+                    ca,cb,cc = st.columns([3,1.5,1])
+                    with ca:
+                        st.markdown(f"**{fit_icons.get(fit,'⚪')} [{s['name']}]({s.get('web','#')})**")
                         st.caption(f"{s.get('city','')}, {s['state']} · {'Public' if s['ctrl']==1 else 'Private'} · {s.get('adm','')}% acceptance" + (" · 🏛️ HBCU" if s.get('hbcu') else ""))
-                        # Chips
-                        chips = f"`{fit.capitalize()}` "
-                        if s.get('sat25'): chips += f"`SAT {s['sat25']}–{s['sat75']}` "
-                        if s.get('act25'): chips += f"`ACT {s['act25']}–{s['act75']}` "
-                        if aid['tap']>0 and s['state']=='NY': chips += "`TAP eligible` "
-                        if aid['heop'] and s['state']=='NY': chips += "`HEOP` "
+                        chips = f"`{fit.capitalize()}`"
+                        if s.get('sat25'): chips += f"  `SAT {s['sat25']}–{s['sat75']}`"
+                        if s.get('act25'): chips += f"  `ACT {s['act25']}–{s['act75']}`"
+                        if aid['tap']>0 and s['state']=='NY': chips += "  `TAP eligible`"
+                        if aid['heop'] and s['state']=='NY': chips += "  `HEOP`"
                         st.markdown(chips)
-                    with col_b:
-                        st.markdown(f"**Sticker:** ${sticker:,}" if sticker else "N/A")
-                        if net is not None:
-                            color = "green" if net == 0 else "blue"
-                            label = "Fully covered! 🎉" if net == 0 else f"${net:,}/yr"
-                            st.markdown(f"**You pay:** :{color}[{label}]")
-                    with col_c:
-                        st.markdown(f"**RD:** {dl.get('rd','?')}")
-                        early = dl.get('ed') or dl.get('ea','')
-                        if early: st.markdown(f"**Early:** {early}")
+                    with cb:
+                        sticker = s.get('tin',0)
+                        st.markdown(f"**Sticker:** ${sticker:,}" if sticker else "")
+                        if net==0 and aid['total']>0:
+                            st.markdown("**You pay:** :green[Fully covered 🎉]")
+                        elif net is not None:
+                            st.markdown(f"**You pay:** :blue[${net:,}/yr]")
                         if s.get('grad'): st.markdown(f"**Grad rate:** {s['grad']}%")
-                    # Counselor note
-                    if fit == 'safety':
-                        st.success("Your profile is above their range. Strong safety school — apply with confidence.")
-                    elif fit == 'match':
-                        st.info("Your profile is in their range. A solid application should be competitive.")
-                    elif fit == 'reach':
-                        st.warning("Your profile is below their range. A strong essay and story can still get you in.")
+                        st.markdown(f"**RD:** {dl.get('rd','?')}")
+                    with cc:
+                        if in_list:
+                            if st.button("✓ In my list", key=f"rem_{s['id']}", use_container_width=True):
+                                st.session_state.my_list = [x for x in st.session_state.my_list if x['id']!=s['id']]
+                                st.rerun()
+                        else:
+                            if st.button("+ Add to list", key=f"add_{s['id']}", use_container_width=True, type="primary"):
+                                st.session_state.my_list.append(s)
+                                st.rerun()
+
+                    if fit=='safety': st.success("Your profile is above their range. Strong safety school.")
+                    elif fit=='match': st.info("Your profile is in their range. A solid application should be competitive.")
+                    elif fit=='reach': st.warning("Your profile is below their range. A strong essay and story can still get you in.")
                     st.divider()
 
-# ── TAB 2: CAREER RESULTS ─────────────────────────────────────
+# ── TAB 2: CAREER ─────────────────────────────────────────────
 with tab2:
-    st.markdown(f"### Your top career matches")
-    st.caption("Results update live as you change your answers on the left")
-
-    # Top match banner
-    st.markdown(f"""
-    <div style="background:#0D1B2A;border-radius:12px;padding:24px;margin-bottom:20px;color:white">
-        <div style="font-size:12px;opacity:.5;margin-bottom:4px">YOUR BEST MATCH</div>
-        <div style="font-size:28px;font-family:Georgia,serif;margin-bottom:6px">{top['icon']} {top['name']}</div>
-        <div style="font-size:14px;opacity:.6;margin-bottom:12px">{top['why']}</div>
-        <div style="display:flex;gap:20px;flex-wrap:wrap">
-            <span style="color:#E8AD58;font-size:20px;font-weight:700">${top['salary_mid']:,}/yr avg</span>
-            <span style="background:rgba(42,96,73,.4);padding:4px 12px;border-radius:8px;font-size:13px">{top['growth']} job growth</span>
-            <span style="background:rgba(255,255,255,.1);padding:4px 12px;border-radius:8px;font-size:13px">{top['demand']} demand</span>
+    if not career_results:
+        st.info("Answer the career questions on the left to see your matches.")
+    else:
+        t=career_results[0]
+        st.markdown(f"""
+        <div style="background:#0D1B2A;border-radius:12px;padding:22px 26px;margin-bottom:20px;color:white">
+            <div style="font-size:11px;opacity:.4;margin-bottom:4px;letter-spacing:1px;text-transform:uppercase">Your best match</div>
+            <div style="font-size:26px;font-family:Georgia,serif;margin-bottom:5px">{t['icon']} {t['name']}</div>
+            <div style="font-size:13px;opacity:.55;margin-bottom:12px">{t['why']}</div>
+            <span style="color:#E8AD58;font-size:20px;font-weight:700">${t['salary_mid']:,}/yr avg</span>
+            &nbsp;&nbsp;
+            <span style="background:rgba(42,96,73,.4);padding:4px 12px;border-radius:8px;font-size:12px">{t['growth']} job growth</span>
+            &nbsp;
+            <span style="background:rgba(255,255,255,.1);padding:4px 12px;border-radius:8px;font-size:12px">{t['demand']} demand</span>
         </div>
-    </div>
-    """, unsafe_allow_html=True)
+        """, unsafe_allow_html=True)
+        st.caption("Results update live as you change your answers on the left")
+        for c in career_results[:10]:
+            with st.expander(f"{c['icon']} {c['name']}  —  **{c['fit']}% match** · ${c['salary_mid']:,}/yr"):
+                c1,c2,c3=st.columns(3)
+                c1.metric("Entry",f"${c['salary_entry']:,}")
+                c2.metric("Mid career",f"${c['salary_mid']:,}")
+                c3.metric("Senior",f"${c['salary_senior']:,}")
+                st.progress(c['fit']/100)
+                st.markdown(f"**A day in the life:** {c['day']}")
+                st.markdown(f"**Majors:** {', '.join(c['majors'])}")
+                st.caption(f"Growth: {c['growth']} · Demand: {c['demand']}")
 
-    # Career cards grid
-    for i, c in enumerate(career_results[:10], 1):
-        pct = c['fit']
-        color = "#2A6049" if pct>=70 else "#C9923A" if pct>=50 else "#9E9E9E"
-        with st.expander(f"{c['icon']} {c['name']}  —  **{pct}% match** · ${c['salary_mid']:,}/yr avg"):
-            col1, col2, col3 = st.columns(3)
-            col1.metric("Entry Salary", f"${c['salary_entry']:,}")
-            col2.metric("Mid Career", f"${c['salary_mid']:,}")
-            col3.metric("Senior Level", f"${c['salary_senior']:,}")
-            st.progress(pct / 100)
-            st.markdown(f"**A day in the life:** {c['day']}")
-            st.markdown(f"**Majors that lead here:** {', '.join(c['majors'])}")
-            st.markdown(f"**Job growth:** {c['growth']} · **Demand:** {c['demand']}")
-
-# ── TAB 3: AID ELIGIBILITY ────────────────────────────────────
+# ── TAB 3: AID ────────────────────────────────────────────────
 with tab3:
     st.markdown("### Your financial aid eligibility")
-    st.caption("Based on 2025-26 federal and NY State thresholds")
-
-    col1, col2 = st.columns([2,1])
-    with col1:
-        c1,c2,c3,c4 = st.columns(4)
-        c1.metric("Pell Grant", f"${aid['pell']:,}" if aid['pell']>0 else "❌", delta="Eligible" if aid['pell']>0 else None)
-        c2.metric("NY TAP", f"${aid['tap']:,}" if aid['tap']>0 else "❌", delta="Eligible" if aid['tap']>0 else None)
-        c3.metric("Dream Act", f"${aid['dream']:,}" if aid['dream']>0 else "❌", delta="Eligible" if aid['dream']>0 else None)
-        c4.metric("HEOP", "✅ Eligible" if aid['heop'] else "❌", delta="NY schools" if aid['heop'] else None)
-
-        st.divider()
-        total = aid['total']
-        st.markdown(f"### 💵 Total estimated annual aid: ${total:,}")
-        st.caption("These are grants — they do not need to be repaid.")
-
-        if aid['heop']:
-            st.success("🎓 You are HEOP eligible — this provides additional support at participating NY colleges including tutoring, counseling, and academic resources.")
-
-    with col2:
-        st.markdown("**What each program is:**")
-        st.markdown("""
-        - **Pell Grant** — Federal free money for low-income students
-        - **TAP** — NY State tuition assistance (NY residents only)
-        - **Dream Act** — TAP-equivalent for undocumented/DACA students
-        - **HEOP** — Additional NY support for first-gen, low-income students
-        """)
-        st.info("💡 Complete your FAFSA at **studentaid.gov** to receive your actual aid award.")
+    st.caption("Based on 2025-26 federal and NY State thresholds. Updates live.")
+    c1,c2,c3,c4=st.columns(4)
+    c1.metric("Pell Grant",f"${aid['pell']:,}" if aid['pell']>0 else "❌")
+    c2.metric("NY TAP",f"${aid['tap']:,}" if aid['tap']>0 else "❌")
+    c3.metric("Dream Act",f"${aid['dream']:,}" if aid['dream']>0 else "❌")
+    c4.metric("HEOP","✅ Eligible" if aid['heop'] else "❌")
+    st.divider()
+    st.markdown(f"### 💵 Total estimated annual aid: **${aid['total']:,}**")
+    st.caption("These are grants — they do not need to be repaid.")
+    if aid['heop']:
+        st.success("🎓 HEOP eligible — additional academic support at participating NY colleges.")
+    st.info("💡 Complete your FAFSA at **studentaid.gov** to receive your actual award letter.")
 
 # ── TAB 4: MY LIST ────────────────────────────────────────────
 with tab4:
-    st.markdown("### Build your college list")
-    st.caption("Run College Matches first, then come back here to build your balanced list")
+    st.markdown("### 📋 My College List")
 
-    if run_btn:
-        state_val = "any" if state_pref == "Any" else state_pref
-        need_val  = "full" if income < 50000 else "some"
-        matches = run_match(gpa, sat, act, state_val, size_map[school_size],
-                           ctrl_map[school_type], need_val, env_map[env_pref],
-                           yrs_map[study_yrs], aid, 20)
+    my_list = st.session_state.my_list
 
-        if matches:
-            st.markdown("**Select colleges for your list:**")
-            selected = []
-            cols = st.columns(2)
-            for i, s in enumerate(matches[:12]):
-                fit = s.get('fit','unknown')
-                icons = {"safety":"🟢","match":"🟡","reach":"🔴","unknown":"⚪"}
-                net = f"${s['net']:,}" if s.get('net') is not None else "N/A"
-                with cols[i % 2]:
-                    if st.checkbox(f"{icons.get(fit,'⚪')} {s['name']} — {fit.capitalize()} — {net}/yr", key=f"sel_{s['id']}"):
-                        selected.append(s)
-
-            if selected:
-                st.divider()
-                st.markdown(f"### Your list: {len(selected)} colleges")
-                safety_n = sum(1 for s in selected if s['fit']=='safety')
-                match_n  = sum(1 for s in selected if s['fit']=='match')
-                reach_n  = sum(1 for s in selected if s['fit']=='reach')
-
-                c1,c2,c3 = st.columns(3)
-                c1.metric("Safety", safety_n)
-                c2.metric("Match", match_n)
-                c3.metric("Reach", reach_n)
-
-                if safety_n < 2:
-                    st.warning("⚠️ Add more safety schools — where your scores are above their typical range.")
-                elif reach_n < 1:
-                    st.info("💡 Consider adding 1-2 reach schools. A strong application can surprise you.")
-                elif match_n < 2:
-                    st.info("📋 Add more match schools — these tend to be your most likely admits.")
-                else:
-                    st.success("✅ Great balance! Apply to all of them.")
-
-                st.markdown("**Your list with deadlines:**")
-                for s in selected:
-                    dl = DEADLINES.get(s['id'],{"rd":"Check website"})
-                    net = f"${s['net']:,}" if s.get('net') is not None else "N/A"
-                    fit = s.get('fit','unknown').capitalize()
-                    early = dl.get('ed') or dl.get('ea','N/A')
-                    st.markdown(f"- **{s['name']}** — {fit} — {net}/yr — RD: {dl.get('rd','?')} — Early: {early} — [Apply ↗]({s.get('web','#')})")
+    if not my_list:
+        st.info("Go to **College Matches** and click **+ Add to list** on any college. Your list stays saved here as you explore.")
     else:
-        st.info("👈 Click **Find My Colleges** first to see your matches here.")
+        # Balance summary
+        sn=sum(1 for s in my_list if s.get('fit')=='safety')
+        mn=sum(1 for s in my_list if s.get('fit')=='match')
+        rn=sum(1 for s in my_list if s.get('fit')=='reach')
+        c1,c2,c3,c4=st.columns(4)
+        c1.metric("Total",len(my_list))
+        c2.metric("🟢 Safety",sn)
+        c3.metric("🟡 Match",mn)
+        c4.metric("🔴 Reach",rn)
 
+        if sn<2: st.warning("⚠️ Add more safety schools — schools where your profile is above their typical range.")
+        elif rn<1: st.info("💡 Consider adding 1-2 reach schools. A strong application can surprise you.")
+        elif mn<2: st.info("📋 Add more match schools — these tend to be your most likely admits.")
+        else: st.success("✅ Great balance! Apply to all of them.")
+
+        st.divider()
+
+        # List with remove buttons
+        for i,s in enumerate(my_list):
+            fit=s.get('fit','unknown')
+            net=s.get('net')
+            dl=DEADLINES.get(s['id'],{"rd":"Check website"})
+            early=dl.get('ed') or dl.get('ea','—')
+            fit_icons={"safety":"🟢","match":"🟡","reach":"🔴","unknown":"⚪"}
+
+            ca,cb,cc=st.columns([3,2,0.7])
+            with ca:
+                st.markdown(f"**{fit_icons.get(fit,'⚪')} [{s['name']}]({s.get('web','#')})**")
+                st.caption(f"{s['state']} · {'Public' if s['ctrl']==1 else 'Private'} · {fit.capitalize()}")
+            with cb:
+                net_str = f"${net:,}/yr" if net is not None else "N/A"
+                if net==0 and aid['total']>0: net_str="Fully covered 🎉"
+                st.markdown(f"**You pay:** {net_str}")
+                st.caption(f"RD: {dl.get('rd','?')} · Early: {early}")
+            with cc:
+                if st.button("✕", key=f"del_{s['id']}_{i}", help="Remove from list"):
+                    st.session_state.my_list = [x for x in st.session_state.my_list if x['id']!=s['id']]
+                    st.rerun()
+
+        st.divider()
+
+        # PDF Download
+        st.markdown("### 📄 Download Your Report")
+        top_name = st.session_state.career_results[0]['name'] if st.session_state.career_results else ""
+        saved_gpa = st.session_state.get('gpa', gpa)
+        saved_sat = st.session_state.get('sat', sat)
+        saved_act = st.session_state.get('act', act)
+
+        try:
+            import reportlab
+            pdf_buf = generate_pdf(my_list, aid, top_name, saved_gpa, saved_sat, saved_act)
+            if pdf_buf:
+                st.download_button(
+                    label="⬇️ Download PDF Report",
+                    data=pdf_buf,
+                    file_name="Pathways_SLN_Report.pdf",
+                    mime="application/pdf",
+                    use_container_width=True,
+                    type="primary"
+                )
+                st.caption("PDF includes your college list, aid eligibility, deadlines, and career match.")
+            else:
+                st.error("PDF generation failed. Please try again.")
+        except ImportError:
+            st.warning("📄 PDF export requires reportlab. Add `reportlab` to your requirements.txt to enable this feature.")
+
+        st.caption("⚠️ Always verify deadlines on each college's official website before applying.")
+
+st.divider()
+st.caption("Pathways by SLN · IPEDS 2023-24 · Aid thresholds 2025-26 · Verify all deadlines on official college websites")
 # Footer
 st.divider()
 st.caption("Pathways by SLN · Built on IPEDS 2023-24 Federal Data · Aid thresholds: 2025-26 · Always verify deadlines on official college websites")
