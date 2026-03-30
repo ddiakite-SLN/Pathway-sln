@@ -25,6 +25,8 @@ div[data-testid="metric-container"] { background:white; border-radius:10px; padd
 # ── SESSION STATE INIT ────────────────────────────────────────
 if 'my_list' not in st.session_state:
     st.session_state.my_list = []
+if 'sort_mode' not in st.session_state:
+    st.session_state.sort_mode = 'fit'
 if 'matches' not in st.session_state:
     st.session_state.matches = []
 if 'aid' not in st.session_state:
@@ -35,7 +37,6 @@ if 'ran_match' not in st.session_state:
     st.session_state.ran_match = False
 
 # ── DATA ──────────────────────────────────────────────────────
-@st.cache_data
 def load_schools():
     import pandas as pd, os
     csv_path = 'schools_full.csv'
@@ -152,19 +153,27 @@ def calculate_aid(income, hsize, ny_res, immig, first_gen):
         heop=True
     return {"pell":pell,"tap":tap,"dream":dream,"heop":heop,"total":pell+tap+dream}
 
-def get_fit(sat, act, s):
+def get_fit(sat, act, s, gpa=None):
+    # Test score based (most accurate)
     if sat and s.get('sat25') and s.get('sat75'):
-        if sat>=s['sat75']: return 'safety'
-        if sat>=s['sat25']: return 'match'
+        if sat >= s['sat75']: return 'safety'
+        if sat >= s['sat25']: return 'match'
         return 'reach'
     if act and s.get('act25') and s.get('act75'):
-        if act>=s['act75']: return 'safety'
-        if act>=s['act25']: return 'match'
+        if act >= s['act75']: return 'safety'
+        if act >= s['act25']: return 'match'
         return 'reach'
-    adm=s.get('adm')
+    # GPA + acceptance rate estimation
+    adm = s.get('adm')
+    if gpa and adm:
+        if adm >= 80: return 'safety'
+        if adm >= 60: return 'safety' if gpa >= 3.0 else 'match'
+        if adm >= 40: return 'match' if gpa >= 2.8 else 'reach'
+        if adm >= 20: return 'match' if gpa >= 3.5 else 'reach'
+        return 'reach'
     if adm:
-        if adm>70: return 'safety'
-        if adm>40: return 'match'
+        if adm >= 80: return 'safety'
+        if adm >= 50: return 'match'
         return 'reach'
     return 'unknown'
 
@@ -187,7 +196,7 @@ def run_match(gpa, sat, act, state, size, ctrl, need, env, study_yrs, aid, n):
         if study_yrs=='2yr' and not s.get('yr2'): continue
         # Default: filter out 2yr schools unless student wants them
         if study_yrs=='any' and s.get('yr2'): continue
-        fit=get_fit(sat,act,s)
+        fit=get_fit(sat,act,s,gpa)
         net=max(0, tin - aid['total']) if tin > 0 else None
         results.append({**s,'fit':fit,'net':net})
     results.sort(key=lambda x:(x['net'] is None, x['net'] or 999999))
@@ -468,6 +477,39 @@ with tab1:
         c4.metric("Top Career Match", top['name'] if top else "—")
         st.divider()
 
+        # Sort buttons
+        sort_col1,sort_col2,sort_col3,sort_col4 = st.columns(4)
+        sort_mode = st.session_state.get('sort_mode','fit')
+        with sort_col1:
+            if st.button("🎯 Best Fit First", use_container_width=True,
+                        type="primary" if sort_mode=='fit' else "secondary"):
+                st.session_state.sort_mode='fit'; st.rerun()
+        with sort_col2:
+            if st.button("💚 Lowest Cost First", use_container_width=True,
+                        type="primary" if sort_mode=='cost' else "secondary"):
+                st.session_state.sort_mode='cost'; st.rerun()
+        with sort_col3:
+            if st.button("🟢 Safety First", use_container_width=True,
+                        type="primary" if sort_mode=='safety' else "secondary"):
+                st.session_state.sort_mode='safety'; st.rerun()
+        with sort_col4:
+            if st.button("🎓 Grad Rate First", use_container_width=True,
+                        type="primary" if sort_mode=='grad' else "secondary"):
+                st.session_state.sort_mode='grad'; st.rerun()
+
+        # Apply sort
+        sort_mode = st.session_state.get('sort_mode','fit')
+        fit_order = {'safety':0,'match':1,'reach':2,'unknown':3}
+        if sort_mode == 'fit':
+            m = sorted(m, key=lambda x: (fit_order.get(x.get('fit','unknown'),3), x.get('net') or 999999))
+        elif sort_mode == 'cost':
+            m = sorted(m, key=lambda x: (x.get('net') is None, x.get('net') or 999999))
+        elif sort_mode == 'safety':
+            m = sorted(m, key=lambda x: fit_order.get(x.get('fit','unknown'),3))
+        elif sort_mode == 'grad':
+            m = sorted(m, key=lambda x: -(x.get('grad') or 0))
+        st.divider()
+
         if not m:
             st.warning("No colleges matched. Try changing your state preference to 'Any'.")
         else:
@@ -482,7 +524,7 @@ with tab1:
                     ca,cb,cc = st.columns([3,1.5,1])
                     with ca:
                         st.markdown(f"**{fit_icons.get(fit,'⚪')} [{s['name']}]({s.get('web','#')})**")
-                        adm_display = f"{s['adm']}% acceptance" if s.get('adm') else "Acceptance rate N/A"
+                        adm_val = s.get('adm'); adm_display = f"{adm_val:.1f}% acceptance" if adm_val and str(adm_val) != 'nan' else "Acceptance rate N/A"
                         st.caption(f"{s.get('city','')}, {s['state']} · {'Public' if s['ctrl']==1 else 'Private'} · {adm_display}" + (" · 🏛️ HBCU" if s.get('hbcu') else ""))
                         chips = f"`{fit.capitalize()}`"
                         if s.get('sat25'): chips += f"  `SAT {s['sat25']}–{s['sat75']}`"
