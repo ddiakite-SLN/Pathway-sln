@@ -76,6 +76,34 @@ def load_schools():
         except: s['adm'] = None
     return schools
 
+@st.cache_data
+def load_careers():
+    import pandas as pd, os
+    csv_path = 'careers.csv'
+    if not os.path.exists(csv_path):
+        return []
+    df = pd.read_csv(csv_path)
+    df = df.where(pd.notnull(df), None)
+    careers = []
+    for _, row in df.iterrows():
+        try:
+            careers.append({
+                'soc': str(row.get('soc_code','')),
+                'name': str(row.get('title','')),
+                'field': str(row.get('field','')),
+                'salary_mid': int(float(row.get('median_annual',0) or 0)),
+                'salary_entry': int(float(row.get('entry_annual',0) or 0)),
+                'salary_senior': int(float(row.get('experienced_annual',0) or 0)),
+                'employment': int(float(row.get('employment',0) or 0)),
+                'growth': str(row.get('growth_pct','')),
+                'education': str(row.get('education','')),
+                'demand': str(row.get('outlook','')),
+            })
+        except: pass
+    return careers
+
+CAREERS_FULL = load_careers()
+
 SAMPLE_SCHOOLS = [
     {"id":190637,"name":"City College of New York (CUNY)","city":"New York","state":"NY","ctrl":1,"size":4,"sat25":1050,"sat75":1270,"grad":52,"adm":47.0,"tin":6930,"hbcu":False,"yr2":False,"web":"https://ccny.cuny.edu"},
     {"id":196097,"name":"Stony Brook University","city":"Stony Brook","state":"NY","ctrl":1,"size":5,"sat25":1320,"sat75":1500,"grad":77,"adm":49.0,"tin":7070,"hbcu":False,"yr2":False,"web":"https://stonybrook.edu"},
@@ -490,6 +518,10 @@ with tab1:
         c4.metric("Top Career Match", top['name'] if top else "—")
         st.divider()
 
+        # Test score nudge
+        if not sat and not act:
+            st.info("💡 **Tip:** Adding your SAT or ACT score makes your Safety/Match/Reach analysis much more accurate. Test scores are optional — but they give you a clearer picture of where you stand at each school.")
+
         # Sort buttons
         sort_col1,sort_col2,sort_col3,sort_col4 = st.columns(4)
         sort_mode = st.session_state.get('sort_mode','fit')
@@ -564,10 +596,29 @@ with tab1:
                                 st.session_state.my_list.append(s)
                                 st.rerun()
 
-                    if fit=='safety': st.success("Your profile is above their range. Strong safety school.")
-                    elif fit=='match': st.info("Your profile is in their range. A solid application should be competitive.")
-                    elif fit=='reach': st.warning("Your profile is below their range. A strong essay and story can still get you in.")
-                    elif fit=='unknown': st.caption("⚠️ Limited data available for this school — visit their website to confirm fit.")
+                    # Build detailed fit explanation
+                    if sat and s.get('sat25') and s.get('sat75'):
+                        if fit=='safety':
+                            st.success(f"✅ **Safety** — Your SAT {sat} is above their 75th percentile ({s['sat75']}). Strong match.")
+                        elif fit=='match':
+                            st.info(f"🎯 **Match** — Your SAT {sat} falls in their middle range ({s['sat25']}–{s['sat75']}). Solid application should be competitive.")
+                        elif fit=='reach':
+                            st.warning(f"⚠️ **Reach** — Your SAT {sat} is below their 25th percentile ({s['sat25']}). A compelling essay and strong GPA can still get you in.")
+                    elif act and s.get('act25') and s.get('act75'):
+                        if fit=='safety':
+                            st.success(f"✅ **Safety** — Your ACT {act} is above their 75th percentile ({int(s['act75'])}). Strong match.")
+                        elif fit=='match':
+                            st.info(f"🎯 **Match** — Your ACT {act} falls in their middle range ({int(s['act25'])}–{int(s['act75'])}). Solid application should be competitive.")
+                        elif fit=='reach':
+                            st.warning(f"⚠️ **Reach** — Your ACT {act} is below their 25th percentile ({int(s['act25'])}). A compelling essay and strong GPA can still get you in.")
+                    elif fit=='safety':
+                        st.success(f"✅ **Safety** — {s.get('adm','')}% acceptance rate. Your GPA puts you in a strong position here.")
+                    elif fit=='match':
+                        st.info(f"🎯 **Match** — {s.get('adm','')}% acceptance rate. Your profile is competitive for this school.")
+                    elif fit=='reach':
+                        st.warning(f"⚠️ **Reach** — {s.get('adm','') or 'Low'}% acceptance rate. Selective school — apply but have backups.")
+                    elif fit=='unknown':
+                        st.caption("⚠️ Limited data available for this school — visit their website to confirm fit.")
                     st.divider()
 
 # ── TAB 2: CAREER ─────────────────────────────────────────────
@@ -576,6 +627,9 @@ with tab2:
         st.info("Answer the career questions on the left to see your matches.")
     else:
         t=career_results[0]
+        # Show BLS career database stats
+        if CAREERS_FULL:
+            st.caption(f"Career matching from {len(CAREERS_FULL)} occupations across {len(set(c['field'] for c in CAREERS_FULL))} fields — BLS Occupational Employment Statistics 2023")
         st.markdown(f"""
         <div style="background:#0D1B2A;border-radius:12px;padding:22px 26px;margin-bottom:20px;color:white">
             <div style="font-size:11px;opacity:.4;margin-bottom:4px;letter-spacing:1px;text-transform:uppercase">Your best match</div>
