@@ -52,6 +52,14 @@ def load_schools():
         for k in ['tin','sat25','sat75','act25','act75','grad','adm']:
             v = s.get(k)
             s[k] = float(v) if v is not None else None
+        try: s['ctrl'] = int(s['ctrl']) if s.get('ctrl') else 1
+        except: s['ctrl'] = 1
+        try: s['size'] = int(s['size']) if s.get('size') else 3
+        except: s['size'] = 3
+        try: s['hbcu'] = bool(int(s['hbcu'])) if s.get('hbcu') is not None else False
+        except: s['hbcu'] = False
+        try: s['yr2'] = bool(int(s['yr2'])) if s.get('yr2') is not None else False
+        except: s['yr2'] = False
         try: s['tin'] = int(s['tin']) if s.get('tin') else None
         except: s['tin'] = None
         try: s['sat25'] = int(s['sat25']) if s.get('sat25') else None
@@ -524,7 +532,7 @@ with tab1:
                     ca,cb,cc = st.columns([3,1.5,1])
                     with ca:
                         st.markdown(f"**{fit_icons.get(fit,'⚪')} [{s['name']}]({s.get('web','#')})**")
-                        adm_val = s.get('adm'); adm_display = f"{adm_val:.1f}% acceptance" if adm_val and str(adm_val) != 'nan' else "Acceptance rate N/A"
+                        adm_val = s.get('adm'); adm_display = f"{float(adm_val):.1f}% acceptance" if adm_val and adm_val == adm_val else "Acceptance rate N/A"
                         st.caption(f"{s.get('city','')}, {s['state']} · {'Public' if s['ctrl']==1 else 'Private'} · {adm_display}" + (" · 🏛️ HBCU" if s.get('hbcu') else ""))
                         chips = f"`{fit.capitalize()}`"
                         if s.get('sat25'): chips += f"  `SAT {s['sat25']}–{s['sat75']}`"
@@ -554,6 +562,7 @@ with tab1:
                     if fit=='safety': st.success("Your profile is above their range. Strong safety school.")
                     elif fit=='match': st.info("Your profile is in their range. A solid application should be competitive.")
                     elif fit=='reach': st.warning("Your profile is below their range. A strong essay and story can still get you in.")
+                    elif fit=='unknown': st.caption("⚠️ Limited data available for this school — visit their website to confirm fit.")
                     st.divider()
 
 # ── TAB 2: CAREER ─────────────────────────────────────────────
