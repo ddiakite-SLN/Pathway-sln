@@ -1,0 +1,177 @@
+soc_code,title,field,median_annual,entry_annual,experienced_annual,employment,growth_pct,education,outlook
+29-1141,Registered Nurses,Healthcare,81220,59730,107000,3298400,6%,Bachelor's degree,High
+29-1215,Family Medicine Physicians,Healthcare,208000,92000,350000,109370,3%,Doctoral degree,High
+29-1071,Physician Assistants,Healthcare,121530,85000,157000,148850,28%,Master's degree,Very High
+29-1051,Pharmacists,Healthcare,128570,100000,158000,317780,2%,Doctoral degree,Stable
+29-1123,Physical Therapists,Healthcare,97720,62000,127000,253300,15%,Doctoral degree,High
+29-1127,Speech-Language Pathologists,Healthcare,84140,58000,117000,173200,19%,Master's degree,High
+29-1141,Nurse Practitioners,Healthcare,121610,85000,157000,246880,28%,Master's degree,Very High
+29-2061,Licensed Practical Nurses,Healthcare,54680,38000,72000,742290,5%,Postsecondary certificate,High
+29-2034,Radiologic Technologists,Healthcare,68020,46000,95000,214360,2%,Associate's degree,Moderate
+29-2052,Pharmacy Technicians,Healthcare,37790,28000,52000,444390,5%,High school diploma,Moderate
+29-2055,Surgical Technologists,Healthcare,53350,37000,72000,116770,7%,Associate's degree,Moderate
+29-1022,Oral and Maxillofacial Surgeons,Healthcare,311460,150000,500000,10040,4%,Doctoral degree,Stable
+29-1021,"Dentists, General",Healthcare,168160,90000,250000,107450,4%,Doctoral degree,Stable
+29-1031,Dietitians and Nutritionists,Healthcare,66450,44000,95000,79140,7%,Bachelor's degree,Moderate
+29-1122,Occupational Therapists,Healthcare,93180,62000,126000,143600,12%,Master's degree,High
+29-2021,Dental Hygienists,Healthcare,81400,56000,107000,214400,9%,Associate's degree,High
+29-9021,Health Information Technicians,Healthcare,48780,32000,70000,32560,17%,Associate's degree,High
+29-1051,Optometrists,Healthcare,128550,75000,187000,46880,9%,Doctoral degree,High
+29-1161,Nurse Midwives,Healthcare,114210,80000,150000,7760,7%,Master's degree,Moderate
+29-1141,Certified Nursing Assistants,Healthcare,38130,28000,52000,1443900,4%,Postsecondary certificate,High
+21-1023,Mental Health & Substance Abuse Counselors,Mental Health,53710,36000,79000,376050,18%,Master's degree,Very High
+21-1022,Healthcare Social Workers,Social Services,60840,40000,87000,193680,10%,Master's degree,High
+21-1021,Child & Family Social Workers,Social Services,52520,35000,76000,335510,7%,Bachelor's degree,High
+21-1015,Rehabilitation Counselors,Social Services,40850,29000,60000,131870,10%,Master's degree,High
+21-1012,Educational Counselors,Education,61710,42000,97000,356330,5%,Master's degree,Moderate
+21-1014,Mental Health Counselors,Mental Health,58510,38000,83000,415200,22%,Master's degree,Very High
+19-3031,Clinical Psychologists,Mental Health,96100,62000,137000,181040,6%,Doctoral degree,Moderate
+21-1011,Substance Abuse Counselors,Mental Health,49710,32000,73000,162840,18%,Bachelor's degree,Very High
+21-1093,Social Work Assistants,Social Services,37060,27000,52000,199330,10%,Associate's degree,High
+21-1099,Community Health Workers,Social Services,46190,31000,66000,59890,13%,High school diploma,High
+25-2021,Elementary School Teachers,Education,62360,42000,88000,1529740,1%,Bachelor's degree,Steady
+25-2031,Secondary School Teachers,Education,62870,43000,89000,1080820,1%,Bachelor's degree,Steady
+25-2011,Preschool Teachers,Education,35630,24000,52000,579650,15%,Associate's degree,High
+25-2052,Special Education Teachers,Education,62290,44000,88000,506700,4%,Bachelor's degree,Moderate
+25-3031,Tutors,Education,39280,26000,60000,194060,12%,Bachelor's degree,High
+25-1194,Vocational Education Teachers,Education,60480,41000,86000,105870,4%,Bachelor's degree,Moderate
+25-9031,Instructional Coordinators,Education,74620,48000,108000,176800,2%,Master's degree,Moderate
+25-4022,Librarians,Education,62280,42000,90000,147180,3%,Master's degree,Stable
+25-1071,Health Specialties Teachers (Postsecondary),Education,121620,65000,220000,279290,6%,Doctoral degree,Moderate
+25-1011,Business Teachers (Postsecondary),Education,108990,58000,200000,106960,8%,Doctoral degree,Moderate
+25-1193,Recreation and Fitness Teachers,Education,45650,30000,70000,29960,10%,Bachelor's degree,Moderate
+25-2041,Special Education Teachers (Secondary),Education,62860,44000,90000,148960,4%,Bachelor's degree,Moderate
+15-1252,Software Developers,Technology,124200,75000,180000,1847900,25%,Bachelor's degree,Very High
+15-1211,Computer Systems Analysts,Technology,103800,64000,153000,609290,10%,Bachelor's degree,High
+15-1299,Cybersecurity Analysts,Technology,112000,69000,167000,180170,32%,Bachelor's degree,Critical
+15-1243,Database Administrators,Technology,101860,62000,153000,104070,9%,Bachelor's degree,High
+15-2051,Data Scientists,Technology,108020,65000,165000,168140,35%,Bachelor's degree,Very High
+15-1244,Network Administrators,Technology,95360,58000,147000,318760,3%,Bachelor's degree,Moderate
+15-1255,Web Developers,Technology,78580,46000,130000,205720,16%,Associate's degree,High
+15-1299,Cloud Engineers,Technology,120000,75000,180000,150000,28%,Bachelor's degree,Very High
+15-1241,Computer Network Architects,Technology,126900,78000,185000,168730,5%,Bachelor's degree,High
+15-1231,Computer Network Support Specialists,Technology,62760,38000,96000,192290,6%,Associate's degree,Moderate
+15-1251,Computer Programmers,Technology,99860,58000,157000,185740,-10%,Bachelor's degree,Declining
+15-2031,Operations Research Analysts,Technology,82360,50000,129000,107100,23%,Bachelor's degree,High
+15-1221,Computer and IS Managers,Technology,164070,104000,240000,500280,15%,Bachelor's degree,High
+15-1299,UX Designers,Technology,95000,62000,155000,190900,3%,Bachelor's degree,Moderate
+15-1299,Machine Learning Engineers,Technology,136620,90000,200000,120000,40%,Master's degree,Very High
+15-1299,DevOps Engineers,Technology,118000,75000,175000,140000,28%,Bachelor's degree,Very High
+15-1212,Information Security Analysts,Technology,120360,75000,175000,168170,32%,Bachelor's degree,Very High
+13-2051,Financial Analysts,Business & Finance,95080,58000,157000,336300,8%,Bachelor's degree,High
+13-2011,Accountants and Auditors,Business & Finance,78000,48000,128000,1515240,4%,Bachelor's degree,Steady
+11-1021,General and Operations Managers,Business,101280,56000,173000,3285810,3%,Bachelor's degree,Moderate
+13-1111,Management Analysts,Business,95290,59000,155000,930200,10%,Bachelor's degree,High
+13-2052,Personal Financial Advisors,Business & Finance,99580,47000,208000,330300,13%,Bachelor's degree,High
+13-1021,Buyers and Purchasing Agents,Business,67620,43000,103000,534780,0%,Bachelor's degree,Stable
+13-1071,Human Resources Specialists,Business,67650,43000,104000,854070,6%,Bachelor's degree,Moderate
+11-3121,Human Resources Managers,Business,136350,83000,208000,165720,5%,Bachelor's degree,Moderate
+13-2041,Credit Analysts,Business & Finance,82340,49000,131000,73280,3%,Bachelor's degree,Stable
+13-2099,Tax Examiners,Business & Finance,57950,36000,90000,54890,2%,Bachelor's degree,Stable
+11-2021,Marketing Managers,Marketing,140040,79000,220000,312060,6%,Bachelor's degree,Moderate
+11-2011,Advertising and Promotions Managers,Marketing,127830,72000,208000,24510,3%,Bachelor's degree,Moderate
+13-1161,Market Research Analysts,Marketing,68230,40000,112000,834990,13%,Bachelor's degree,High
+41-3099,Sales Representatives,Business,63040,32000,121000,1652910,3%,High school diploma,Moderate
+11-2022,Sales Managers,Business,135160,72000,220000,435390,4%,Bachelor's degree,Moderate
+13-1022,Wholesale Buyers,Business,77020,46000,120000,79620,1%,Bachelor's degree,Stable
+11-3031,Financial Managers,Business & Finance,156100,89000,239000,729890,16%,Bachelor's degree,High
+13-1199,Business Operations Specialists,Business,77800,47000,122000,1090660,8%,Bachelor's degree,Moderate
+11-1011,Chief Executives,Business,189520,97000,350000,202030,3%,Bachelor's degree,Stable
+13-2031,Budget Analysts,Business & Finance,84940,53000,127000,57440,3%,Bachelor's degree,Stable
+23-1011,Lawyers,Law,139540,72000,239000,813900,4%,Doctoral degree,Moderate
+23-2011,Paralegals and Legal Assistants,Law,59200,38000,87000,371000,4%,Associate's degree,Moderate
+33-3021,Detectives and Criminal Investigators,Criminal Justice,90290,52000,137000,119980,3%,High school diploma,Moderate
+33-3051,Police Officers,Criminal Justice,67290,42000,105000,697520,3%,High school diploma,Steady
+33-1012,Police Supervisors,Criminal Justice,100980,63000,150000,118760,4%,High school diploma,Moderate
+23-1022,Arbitrators and Mediators,Law,70860,38000,132000,8650,5%,Bachelor's degree,Moderate
+33-3031,Fish and Game Wardens,Criminal Justice,60760,38000,90000,7470,3%,Bachelor's degree,Stable
+33-9021,Private Detectives,Criminal Justice,59380,34000,99000,35670,6%,High school diploma,Moderate
+23-2093,Title Examiners,Law,50760,32000,77000,54020,3%,High school diploma,Stable
+33-1021,Fire Supervisors,Criminal Justice,83300,52000,122000,78580,4%,High school diploma,Stable
+33-2011,Firefighters,Criminal Justice,54650,33000,83000,330090,4%,High school diploma,Stable
+17-2051,Civil Engineers,Engineering,95890,60000,142000,323800,5%,Bachelor's degree,High
+17-2141,Mechanical Engineers,Engineering,96310,61000,145000,308400,10%,Bachelor's degree,High
+17-2071,Electrical Engineers,Engineering,105990,66000,159000,207920,9%,Bachelor's degree,High
+17-2061,Computer Hardware Engineers,Engineering,132360,84000,194000,73700,5%,Bachelor's degree,Moderate
+17-2112,Industrial Engineers,Engineering,99380,63000,150000,316880,10%,Bachelor's degree,High
+17-2081,Environmental Engineers,Engineering,96530,60000,148000,54570,6%,Bachelor's degree,Moderate
+17-2131,Materials Engineers,Engineering,100140,63000,151000,28520,8%,Bachelor's degree,Moderate
+17-2171,Petroleum Engineers,Engineering,131800,82000,208000,35370,2%,Bachelor's degree,Volatile
+17-2011,Aerospace Engineers,Engineering,122270,75000,180000,61240,6%,Bachelor's degree,Moderate
+17-2041,Chemical Engineers,Engineering,106260,66000,161000,29470,10%,Bachelor's degree,Moderate
+17-2199,Biomedical Engineers,Engineering,99550,62000,151000,21340,10%,Bachelor's degree,High
+17-3023,Electrical Technicians,Engineering,63660,40000,95000,195600,2%,Associate's degree,Stable
+17-2121,Marine Engineers,Engineering,98390,60000,153000,8980,4%,Bachelor's degree,Stable
+17-1011,Architects,Architecture,93310,55000,145000,130000,5%,Bachelor's degree,Moderate
+17-1021,Cartographers,Engineering,70100,44000,107000,14280,5%,Bachelor's degree,Stable
+19-1042,Medical Scientists,Science,100890,55000,167000,139440,11%,Doctoral degree,High
+19-2031,Chemists,Science,80670,48000,129000,97710,5%,Bachelor's degree,Moderate
+19-1029,Biological Scientists,Science,82290,48000,131000,40400,5%,Doctoral degree,Moderate
+19-2041,Environmental Scientists,Science,76480,47000,120000,94450,6%,Bachelor's degree,Growing
+19-3011,Economists,Science,113940,62000,194000,23560,6%,Master's degree,Moderate
+19-3041,Sociologists,Science,96910,54000,153000,4920,4%,Master's degree,Moderate
+19-1032,Foresters,Science,64200,41000,99000,11550,3%,Bachelor's degree,Stable
+19-2012,Physicists,Science,152430,80000,253000,19780,5%,Doctoral degree,Moderate
+19-1031,Conservation Scientists,Science,68490,42000,103000,24150,5%,Bachelor's degree,Moderate
+19-3051,Urban Planners,Science,81800,51000,122000,41780,4%,Master's degree,Moderate
+19-1099,Life Scientists,Science,90840,52000,147000,30320,6%,Doctoral degree,Moderate
+19-2099,Physical Scientists,Science,118000,65000,190000,25000,8%,Doctoral degree,Moderate
+19-4021,Biological Technicians,Science,48810,33000,73000,83550,9%,Bachelor's degree,Moderate
+19-3091,Anthropologists,Science,61910,37000,99000,8690,6%,Master's degree,Moderate
+19-3094,Political Scientists,Science,128020,65000,210000,8740,6%,Master's degree,Moderate
+27-2012,Producers and Directors,Arts & Media,85320,40000,180000,174440,10%,Bachelor's degree,Moderate
+27-3031,Public Relations Specialists,Communications,67440,40000,110000,275870,6%,Bachelor's degree,Moderate
+27-1024,Graphic Designers,Arts & Media,58370,36000,91000,286300,3%,Bachelor's degree,Moderate
+27-3022,Reporters and Correspondents,Media,55960,32000,100000,48090,4%,Bachelor's degree,Moderate
+27-3041,Editors,Media,73080,40000,120000,120340,4%,Bachelor's degree,Moderate
+27-1014,Special Effects Artists,Arts & Media,98950,52000,166000,16540,4%,Bachelor's degree,Moderate
+27-3043,Writers and Authors,Media,73690,36000,137000,163380,4%,Bachelor's degree,Moderate
+27-1013,Fine Artists,Arts & Media,65690,30000,120000,25580,4%,Bachelor's degree,Competitive
+27-2041,Music Directors and Composers,Arts & Media,76750,35000,140000,73750,5%,Bachelor's degree,Competitive
+27-2031,Dancers,Arts & Media,40040,22000,78000,16930,2%,No formal education,Competitive
+27-3011,Broadcast Announcers,Media,47680,27000,91000,42800,3%,Bachelor's degree,Declining
+27-1021,Commercial and Industrial Designers,Arts & Media,76080,47000,116000,41450,2%,Bachelor's degree,Stable
+27-4021,Photographers,Arts & Media,40280,24000,75000,51340,4%,High school diploma,Competitive
+27-1025,Interior Designers,Arts & Media,60340,37000,97000,84410,4%,Bachelor's degree,Moderate
+47-2111,Electricians,Skilled Trades,61550,40000,95000,762600,6%,Apprenticeship,High
+47-2031,Carpenters,Skilled Trades,57960,36000,88000,933700,2%,Apprenticeship,Moderate
+47-2152,Plumbers,Skilled Trades,61550,39000,100000,531700,2%,Apprenticeship,Moderate
+49-3023,Automotive Technicians,Skilled Trades,46880,29000,73000,729530,2%,Postsecondary certificate,Moderate
+47-2061,Construction Laborers,Skilled Trades,42420,28000,66000,1359350,4%,No formal education,Moderate
+47-1011,Construction Managers,Skilled Trades,101480,59000,160000,477880,8%,Bachelor's degree,High
+49-9071,Maintenance Workers,Skilled Trades,44090,28000,66000,1527160,6%,High school diploma,Moderate
+51-1011,Production Supervisors,Skilled Trades,67790,43000,103000,797320,1%,High school diploma,Stable
+47-2073,Cement Masons,Skilled Trades,48900,32000,76000,204810,2%,No formal education,Moderate
+47-2181,Roofers,Skilled Trades,48720,31000,79000,160740,2%,No formal education,Moderate
+49-2022,Telecommunications Technicians,Skilled Trades,57960,36000,88000,247880,3%,Associate's degree,Moderate
+47-4051,Highway Maintenance Workers,Skilled Trades,47720,31000,72000,166270,4%,High school diploma,Stable
+11-9151,Social and Community Service Managers,Public Health,74240,46000,114000,186350,9%,Bachelor's degree,High
+21-1091,Health Educators,Public Health,61170,38000,95000,70060,8%,Bachelor's degree,High
+11-9031,Education Administrators,Education,101320,60000,159000,279190,4%,Master's degree,Moderate
+13-1041,Compliance Officers,Business,76210,47000,120000,340620,5%,Bachelor's degree,Moderate
+11-9121,Natural Sciences Managers,Science,156110,88000,252000,76060,5%,Bachelor's degree,Moderate
+19-4099,Environmental Technicians,Public Health,53670,34000,82000,40590,7%,Associate's degree,Moderate
+33-1099,Emergency Management Directors,Government,81000,49000,127000,12370,3%,Bachelor's degree,Stable
+11-9171,Funeral Home Managers,Government,78830,46000,126000,16050,7%,Associate's degree,Stable
+35-1012,Food Service Managers,Culinary Arts,61310,37000,96000,352280,10%,High school diploma,High
+35-1011,Chefs and Head Cooks,Culinary Arts,56520,32000,95000,159640,15%,High school diploma,High
+39-9011,Childcare Workers,Social Services,29380,21000,42000,583960,2%,High school diploma,Moderate
+39-5011,Barbers,Personal Care,36010,22000,59000,110820,7%,Postsecondary certificate,Moderate
+39-5012,Hairdressers,Personal Care,33400,21000,55000,641200,6%,Postsecondary certificate,Moderate
+11-9081,Lodging Managers,Hospitality,63040,38000,104000,51890,10%,Bachelor's degree,Moderate
+39-1022,Recreation Workers,Sports & Fitness,32900,22000,51000,378280,5%,Bachelor's degree,Moderate
+39-9032,Recreation and Fitness Workers,Sports & Fitness,43040,26000,68000,409140,10%,Bachelor's degree,High
+29-9091,Athletic Trainers,Sports & Fitness,53340,35000,80000,33950,19%,Bachelor's degree,High
+27-2022,Coaches and Scouts,Sports & Fitness,44890,25000,79000,281310,11%,Bachelor's degree,Moderate
+29-1125,Recreational Therapists,Sports & Fitness,51390,34000,76000,19530,4%,Bachelor's degree,Moderate
+39-9031,Fitness Trainers,Sports & Fitness,44160,26000,75000,375680,10%,Postsecondary certificate,High
+53-2011,Airline Pilots,Transportation,239200,90000,400000,92950,4%,Bachelor's degree,High
+53-3032,Heavy Truck Drivers,Transportation,54320,34000,80000,2025360,4%,High school diploma,Moderate
+11-3071,Transportation Managers,Transportation,109740,65000,172000,158460,7%,Bachelor's degree,Moderate
+53-1043,Logisticians,Transportation,77030,48000,119000,193970,18%,Bachelor's degree,High
+53-7062,Laborers and Freight Movers,Transportation,36930,24000,55000,3537550,4%,No formal education,Moderate
+19-1013,Soil Scientists,Agriculture,66890,42000,103000,17990,5%,Bachelor's degree,Stable
+45-1011,Agricultural Managers,Agriculture,75790,43000,127000,142970,5%,Bachelor's degree,Stable
+19-1032,Foresters,Agriculture,64200,41000,99000,11550,3%,Bachelor's degree,Stable
+45-2041,Graders and Sorters,Agriculture,29920,22000,43000,68980,1%,No formal education,Stable
+19-2041,Environmental Science Technicians,Agriculture,49160,32000,76000,22840,7%,Associate's degree,Growing
