@@ -187,12 +187,17 @@ def get_fit(sat, act, s, gpa=None):
 
 def run_match(gpa, sat, act, state, size, ctrl, need, env, study_yrs, aid, n):
     size_codes={'any':[1,2,3,4,5],'small':[1,2],'medium':[3,4],'large':[5]}.get(size,[1,2,3,4,5])
-    ctrl_codes={'any':[1,2],'public':[1],'private':[2]}.get(ctrl,[1,2])
+    ctrl_codes={'any':[1,2,3,'1','2','3'],'public':[1,'1'],'private':[2,'2'],'any_str':['1','2','3']}.get(ctrl,[1,2])
     results=[]
     for s in SCHOOLS:
         if state!='any' and s['state'].lower()!=state.lower(): continue
         if s['size'] not in size_codes: continue
-        if s['ctrl'] not in ctrl_codes: continue
+        # Handle ctrl as both int and string
+        s_ctrl = s.get('ctrl')
+        try: s_ctrl = int(s_ctrl)
+        except: pass
+        if ctrl == 'public' and s_ctrl not in [1, '1']: continue
+        if ctrl == 'private' and s_ctrl not in [2, '2']: continue
         tin = s.get('tin') or 0
         if tin <= 0: continue  # skip schools with no tuition data
         if s.get('size', 0) < 0: continue  # skip invalid size codes
