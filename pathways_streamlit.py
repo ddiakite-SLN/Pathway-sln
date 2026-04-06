@@ -440,14 +440,14 @@ with st.sidebar:
         act = st.number_input("ACT Score", 1, 36, 24, 1)
 
     st.markdown("### 🎯 Career Discovery")
-    q1 = st.selectbox("What excites you most?",list(CAREER_MAPS['i1'].keys()))
-    q2 = st.selectbox("What matters most in a career?",list(CAREER_MAPS['i2'].keys()))
-    q3 = st.selectbox("Where do you want to work?",list(CAREER_MAPS['i3'].keys()))
-    q4 = st.selectbox("Best subject in school?",list(CAREER_MAPS['i4'].keys()))
-    q5 = st.selectbox("How long willing to study?",list(CAREER_MAPS['i5'].keys()))
-    q6 = st.selectbox("Which describes you best?",list(CAREER_MAPS['i6'].keys()))
-    q7 = st.selectbox("In 10 years I see myself...",list(CAREER_MAPS['i7'].keys()))
-    q8 = st.selectbox("Best work environment?",list(CAREER_MAPS['i8'].keys()))
+    q1 = st.selectbox("What excites you most?",["— Select an answer —"] + list(CAREER_MAPS['i1'].keys()))
+    q2 = st.selectbox("What matters most in a career?",["— Select an answer —"] + list(CAREER_MAPS['i2'].keys()))
+    q3 = st.selectbox("Where do you want to work?",["— Select an answer —"] + list(CAREER_MAPS['i3'].keys()))
+    q4 = st.selectbox("Best subject in school?",["— Select an answer —"] + list(CAREER_MAPS['i4'].keys()))
+    q5 = st.selectbox("How long willing to study?",["— Select an answer —"] + list(CAREER_MAPS['i5'].keys()))
+    q6 = st.selectbox("Which describes you best?",["— Select an answer —"] + list(CAREER_MAPS['i6'].keys()))
+    q7 = st.selectbox("In 10 years I see myself...",["— Select an answer —"] + list(CAREER_MAPS['i7'].keys()))
+    q8 = st.selectbox("Best work environment?",["— Select an answer —"] + list(CAREER_MAPS['i8'].keys()))
 
     st.markdown("### 💰 Financial Aid")
     income    = st.number_input("Annual household income ($)", 0, 500000, 42000, 1000)
@@ -467,14 +467,19 @@ with st.sidebar:
     run_btn = st.button("🔍 Find My Colleges", type="primary", use_container_width=True)
 
 # ── PROCESS ───────────────────────────────────────────────────
-career_answers = {
-    'i1':CAREER_MAPS['i1'][q1],'i2':CAREER_MAPS['i2'][q2],
-    'i3':CAREER_MAPS['i3'][q3],'i4':CAREER_MAPS['i4'][q4],
-    'i5':CAREER_MAPS['i5'][q5],'i6':CAREER_MAPS['i6'][q6],
-    'i7':CAREER_MAPS['i7'][q7],'i8':CAREER_MAPS['i8'][q8],
-}
-career_results = run_career_match(career_answers)
-st.session_state.career_results = career_results
+# Only score careers if all 8 questions are answered
+_all_answered = all(q != "— Select an answer —" for q in [q1,q2,q3,q4,q5,q6,q7,q8])
+if _all_answered:
+    career_answers = {
+        'i1':CAREER_MAPS['i1'][q1],'i2':CAREER_MAPS['i2'][q2],
+        'i3':CAREER_MAPS['i3'][q3],'i4':CAREER_MAPS['i4'][q4],
+        'i5':CAREER_MAPS['i5'][q5],'i6':CAREER_MAPS['i6'][q6],
+        'i7':CAREER_MAPS['i7'][q7],'i8':CAREER_MAPS['i8'][q8],
+    }
+    career_results = run_career_match(career_answers)
+    st.session_state.career_results = career_results
+else:
+    career_results = st.session_state.get('career_results', [])
 top = career_results[0] if career_results else None
 
 aid = calculate_aid(income, hsize, ny_res, IMMIG_MAP[immig], first_gen)
@@ -515,7 +520,7 @@ with tab1:
         match_n =sum(1 for s in m if s['fit']=='match')
         reach_n =sum(1 for s in m if s['fit']=='reach')
         c3.metric("Safety / Match / Reach", f"{safety_n} / {match_n} / {reach_n}")
-        c4.metric("Top Career Match", top['name'] if top else "—")
+        c4.metric("Top Career Match", top['name'] if top and _all_answered else "Answer career questions →")
         st.divider()
 
         # Test score nudge
@@ -623,7 +628,10 @@ with tab1:
 
 # ── TAB 2: CAREER ─────────────────────────────────────────────
 with tab2:
-    if not career_results:
+    if not _all_answered:
+        answered = sum(1 for q in [q1,q2,q3,q4,q5,q6,q7,q8] if q != "— Select an answer —")
+        st.info(f"🎯 Answer all 8 career questions on the left to see your matches. ({answered}/8 answered)")
+    elif not career_results:
         st.info("Answer the career questions on the left to see your matches.")
     else:
         t=career_results[0]
