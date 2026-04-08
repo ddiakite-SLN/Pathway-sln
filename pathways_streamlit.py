@@ -942,233 +942,24 @@ with tab1:
                     st.divider()
 
 # ── TAB 2: CAREER ─────────────────────────────────────────────
-with tab2:
-    if not _all_answered:
-        answered = sum(1 for q in [q1,q2,q3,q4,q5,q6,q7,q8] if q != "— Select an answer —")
-        st.info(f"🎯 Answer the career questions on the left to see your matches. ({answered}/8 answered)")
-        st.markdown("### 🧪 Or take the full career assessment")
-        st.markdown("Answer 20 questions for more accurate results — same method used by O*NET and CareerExplorer.")
-        with st.expander("▶️ Click to take the full career test", expanded=False):
-            st.markdown("**Rate how much you enjoy each activity (1=Not at all, 5=Very much)**")
-            full_q = {
-                "Build or repair electronic equipment": "R",
-                "Work on cars or machines": "R",
-                "Do physical outdoor work": "R",
-                "Use hand tools or power tools": "R",
-                "Study how plants or animals grow": "I",
-                "Do science experiments": "I",
-                "Analyze data or solve math problems": "I",
-                "Research topics in depth": "I",
-                "Create art, music, or writing": "A",
-                "Design websites, graphics, or videos": "A",
-                "Express yourself through creative projects": "A",
-                "Perform or present in front of others": "A",
-                "Help people with personal problems": "S",
-                "Teach or train others": "S",
-                "Work as part of a care team": "S",
-                "Volunteer in your community": "S",
-                "Lead a group or project": "E",
-                "Persuade or sell ideas to others": "E",
-                "Start or manage a business": "E",
-                "Compete to win in business situations": "E",
-            }
-            full_scores = {}
-            cols = st.columns(2)
-            for i, (activity, riasec) in enumerate(full_q.items()):
-                with cols[i % 2]:
-                    full_scores[riasec] = full_scores.get(riasec, 0) + st.slider(activity, 1, 5, 3, key=f"careertest_q_{i}")
-
-            if st.button("🎯 See My Career Matches", type="primary", key="full_test_submit"):
-                # Convert RIASEC scores to profile
-                full_profile = {
-                    'physical': full_scores.get('R',0)*2,
-                    'building': full_scores.get('R',0)*2,
-                    'outdoors': full_scores.get('R',0)*2,
-                    'science':  full_scores.get('I',0)*2,
-                    'data':     full_scores.get('I',0)*2,
-                    'analyzing':full_scores.get('I',0)*2,
-                    'creativity':full_scores.get('A',0)*2,
-                    'creating': full_scores.get('A',0)*2,
-                    'helping':  full_scores.get('S',0)*2,
-                    'people':   full_scores.get('S',0)*2,
-                    'teaching': full_scores.get('S',0)*2,
-                    'leadership':full_scores.get('E',0)*2,
-                    'business': full_scores.get('E',0)*2,
-                }
-                full_results = run_career_match({}, direct_profile=full_profile)
-                st.session_state.career_results = full_results
-                st.session_state.full_test_taken = True
-                st.rerun()
-    elif not career_results:
-        st.info("Answer the career questions on the left to see your matches.")
-    else:
-        t=career_results[0]
-        # Show BLS career database stats
-        if CAREERS_FULL:
-            st.caption(f"Career matching from {len(CAREERS_FULL)} occupations across {len(set(c['field'] for c in CAREERS_FULL))} fields — BLS Occupational Employment Statistics 2023")
-        t_name = t.get('name') or t.get('title','')
-        t_icon = t.get('icon','💼')
-        t_why = t.get('why') or t.get('field','')
-        t_sal = t.get('salary_mid') or t.get('median_annual') or 0
-        try: t_sal_int = int(float(t_sal))
-        except: t_sal_int = 0
-        t_growth = t.get('growth') or t.get('growth_pct','N/A')
-        t_demand = t.get('demand') or t.get('outlook','N/A')
-        st.markdown(f"""
-        <div style="background:#0D1B2A;border-radius:12px;padding:22px 26px;margin-bottom:20px;color:white">
-            <div style="font-size:11px;opacity:.4;margin-bottom:4px;letter-spacing:1px;text-transform:uppercase">Your best match</div>
-            <div style="font-size:26px;font-family:Georgia,serif;margin-bottom:5px">{t_icon} {t_name}</div>
-            <div style="font-size:13px;opacity:.55;margin-bottom:12px">{t_why}</div>
-            <span style="color:#E8AD58;font-size:20px;font-weight:700">${t_sal_int:,}/yr avg</span>
-            &nbsp;&nbsp;
-            <span style="background:rgba(42,96,73,.4);padding:4px 12px;border-radius:8px;font-size:12px">{t_growth} job growth</span>
-            &nbsp;
-            <span style="background:rgba(255,255,255,.1);padding:4px 12px;border-radius:8px;font-size:12px">{t_demand} demand</span>
-        </div>
-        """, unsafe_allow_html=True)
-        st.caption("Results update live as you change your answers on the left")
-        for c in career_results[:10]:
-            # Handle both hardcoded and CSV career formats
-            name = c.get('name') or c.get('title','Unknown')
-            icon = c.get('icon','💼')
-            sal_mid = c.get('salary_mid') or c.get('median_annual') or 0
-            sal_entry = c.get('salary_entry') or c.get('entry_annual') or 0
-            sal_senior = c.get('salary_senior') or c.get('experienced_annual') or 0
-            growth = c.get('growth') or c.get('growth_pct','N/A')
-            demand = c.get('demand') or c.get('outlook','N/A')
-            field = c.get('field','N/A')
-            education = c.get('education','N/A')
-            fit = c.get('fit',0)
-            try: sal_mid_int = int(float(sal_mid)) if sal_mid else 0
-            except: sal_mid_int = 0
-            try: sal_entry_int = int(float(sal_entry)) if sal_entry else 0
-            except: sal_entry_int = 0
-            try: sal_senior_int = int(float(sal_senior)) if sal_senior else 0
-            except: sal_senior_int = 0
-
-            with st.expander(f"{icon} {name}  —  **{fit}% match** · ${sal_mid_int:,}/yr"):
-                c1,c2,c3=st.columns(3)
-                c1.metric("Entry", f"${sal_entry_int:,}")
-                c2.metric("Mid career", f"${sal_mid_int:,}")
-                c3.metric("Senior", f"${sal_senior_int:,}")
-                st.progress(fit/100)
-                if c.get('day'):
-                    st.markdown(f"**A day in the life:** {c['day']}")
-                if c.get('majors'):
-                    st.markdown(f"**Majors:** {', '.join(c['majors'])}")
-                st.caption(f"Field: {field} · Growth: {growth} · Demand: {demand} · Education: {education}")
-
-# ── TAB 3: AID ────────────────────────────────────────────────
-with tab3:
-    st.markdown("### Your financial aid eligibility")
-    st.caption("Based on 2025-26 federal and NY State thresholds. Updates live.")
-    c1,c2,c3,c4=st.columns(4)
-    c1.metric("Pell Grant",f"${aid['pell']:,}" if aid['pell']>0 else "❌")
-    c2.metric("NY TAP",f"${aid['tap']:,}" if aid['tap']>0 else "❌")
-    c3.metric("Dream Act",f"${aid['dream']:,}" if aid['dream']>0 else "❌")
-    c4.metric("HEOP","✅ Eligible" if aid['heop'] else "❌")
-    st.divider()
-    st.markdown(f"### 💵 Total estimated annual aid: **${aid['total']:,}**")
-    st.caption("These are grants — they do not need to be repaid.")
-    if aid['heop']:
-        st.success("🎓 HEOP eligible — additional academic support at participating NY colleges.")
-    st.info("💡 Complete your FAFSA at **studentaid.gov** to receive your actual award letter.")
-
-# ── TAB 4: MY LIST ────────────────────────────────────────────
-with tab4:
-    st.markdown("### 📋 My College List")
-
-    my_list = st.session_state.my_list
-
-    if not my_list:
-        st.info("Go to **College Matches** and click **+ Add to list** on any college. Your list stays saved here as you explore.")
-    else:
-        # Balance summary
-        sn=sum(1 for s in my_list if s.get('fit')=='safety')
-        mn=sum(1 for s in my_list if s.get('fit')=='match')
-        rn=sum(1 for s in my_list if s.get('fit')=='reach')
-        c1,c2,c3,c4=st.columns(4)
-        c1.metric("Total",len(my_list))
-        c2.metric("🟢 Safety",sn)
-        c3.metric("🟡 Match",mn)
-        c4.metric("🔴 Reach",rn)
-
-        if sn<2: st.warning("⚠️ Add more safety schools — schools where your profile is above their typical range.")
-        elif rn<1: st.info("💡 Consider adding 1-2 reach schools. A strong application can surprise you.")
-        elif mn<2: st.info("📋 Add more match schools — these tend to be your most likely admits.")
-        else: st.success("✅ Great balance! Apply to all of them.")
-
-        st.divider()
-
-        # List with remove buttons
-        for i,s in enumerate(my_list):
-            fit=s.get('fit','unknown')
-            net=s.get('net')
-            dl=DEADLINES.get(s['id'],{"rd":"Check website"})
-            early=dl.get('ed') or dl.get('ea','—')
-            fit_icons={"safety":"🟢","match":"🟡","reach":"🔴","unknown":"⚪"}
-
-            ca,cb,cc=st.columns([3,2,0.7])
-            with ca:
-                st.markdown(f"**{fit_icons.get(fit,'⚪')} [{s['name']}]({s.get('web','#')})**")
-                st.caption(f"{s['state']} · {'Public' if s['ctrl']==1 else 'Private'} · {fit.capitalize()}")
-            with cb:
-                net_str = f"${net:,}/yr" if net is not None else "N/A"
-                if net==0 and aid['total']>0: net_str="Fully covered 🎉"
-                st.markdown(f"**You pay:** {net_str}")
-                st.caption(f"RD: {dl.get('rd','?')} · Early: {early}")
-            with cc:
-                if st.button("✕", key=f"del_{s['id']}_{i}", help="Remove from list"):
-                    st.session_state.my_list = [x for x in st.session_state.my_list if x['id']!=s['id']]
-                    st.rerun()
-
-        st.divider()
-
-        # PDF Download
-        st.markdown("### 📄 Download Your Report")
-        top_name = st.session_state.career_results[0]['name'] if st.session_state.career_results else ""
-        saved_gpa = st.session_state.get('gpa', gpa)
-        saved_sat = st.session_state.get('sat', sat)
-        saved_act = st.session_state.get('act', act)
-
-        try:
-            import reportlab
-            pdf_buf = generate_pdf(my_list, aid, top_name, saved_gpa, saved_sat, saved_act)
-            if pdf_buf:
-                st.download_button(
-                    label="⬇️ Download PDF Report",
-                    data=pdf_buf,
-                    file_name="Pathways_SLN_Report.pdf",
-                    mime="application/pdf",
-                    use_container_width=True,
-                    type="primary"
-                )
-                st.caption("PDF includes your college list, aid eligibility, deadlines, and career match.")
-            else:
-                st.error("PDF generation failed. Please try again.")
-        except ImportError:
-            st.warning("📄 PDF export requires reportlab. Add `reportlab` to your requirements.txt to enable this feature.")
-
-        st.caption("⚠️ Always verify deadlines on each college's official website before applying.")
-
-        st.divider()
-        st.caption("Pathways by SLN · IPEDS 2023-24 · Aid thresholds 2025-26 · Verify all deadlines on official college websites")
 
     with tab2:
         # ── CAREER RESULTS TAB ──────────────────────────────────────
         if CAREERS_FULL:
             st.caption(f"Career matching from {len(CAREERS_FULL):,} occupations across {len(set(c['field'] for c in CAREERS_FULL))} fields — O*NET 30.2 + BLS 2024")
 
-        # ── Sub-tabs: Match Me | Explore Any Career ──────────────
         career_sub = st.radio("", ["🎯 Match me to careers", "🔍 Explore any career"], horizontal=True, label_visibility="collapsed")
 
+        # If student typed a major → auto-switch to explore mode
+        if majors_input and majors_input.strip():
+            career_sub = "🔍 Explore any career"
+
         if career_sub == "🎯 Match me to careers":
-            # ── Career matching results ──────────────────────────
             if not _all_answered:
                 answered = sum(1 for q in [q1,q2,q3,q4,q5,q6,q7,q8] if q != "— Select an answer —")
                 st.info(f"🎯 Answer the career questions on the left to see your matches. ({answered}/8 answered)")
                 st.markdown("### Or take the full 20-question career assessment")
-                st.markdown("More questions = more accurate results. Same method used by O*NET Interest Profiler.")
+                st.markdown("More questions = more accurate results. Same method used by O*NET and CareerExplorer.")
                 with st.expander("▶️ Click to take the full career test", expanded=False):
                     st.markdown("**Rate how much you enjoy each activity (1 = not at all, 5 = very much)**")
                     full_q = {
@@ -1199,7 +990,7 @@ with tab4:
                         with cols_q[i % 2]:
                             val = st.slider(activity, 1, 5, 3, key=f"fulltest_q_{i}")
                             full_scores[riasec] = full_scores.get(riasec, 0) + val
-                    if st.button("🎯 See My Career Matches", type="primary", key="full_test_submit_2"):
+                    if st.button("🎯 See My Career Matches", type="primary", key="full_test_submit_btn"):
                         full_profile = {
                             'physical': full_scores.get('R',0)*2, 'building': full_scores.get('R',0)*2,
                             'outdoors': full_scores.get('R',0)*2, 'science': full_scores.get('I',0)*2,
@@ -1248,6 +1039,8 @@ with tab4:
                     field = c.get('field','N/A')
                     education = c.get('education','N/A')
                     fit = c.get('fit',0)
+                    daily = str(c.get('daily_tasks','') or '')
+                    tools = str(c.get('tech_tools','') or '')
                     try: sal_mid_int = int(float(sal_mid)) if sal_mid else 0
                     except: sal_mid_int = 0
                     try: sal_entry_int = int(float(sal_entry)) if sal_entry else 0
@@ -1261,38 +1054,48 @@ with tab4:
                         c2.metric("Mid career", f"${sal_mid_int:,}" if sal_mid_int else "N/A")
                         c3.metric("Senior", f"${sal_senior_int:,}" if sal_senior_int else "N/A")
                         st.progress(fit/100)
-                        if c.get('day'): st.markdown(f"**A day in the life:** {c['day']}")
-                        if c.get('majors'): st.markdown(f"**Majors:** {', '.join(c['majors'])}")
-                        st.caption(f"Field: {field} · Growth: {growth} · Demand: {demand} · Education: {education}")
+                        if daily:
+                            st.markdown("**What you do:**")
+                            for task in daily.split(' | ')[:3]:
+                                if task.strip(): st.markdown(f"• {task.strip()}")
+                        if tools:
+                            tool_list = [t.strip() for t in tools.split(',') if t.strip()][:5]
+                            if tool_list: st.caption(f"Tools: {', '.join(tool_list)}")
+                        st.caption(f"Field: {field} · Growth: {growth} · Education: {education}")
 
         else:
             # ── EXPLORE ANY CAREER ───────────────────────────────
             st.markdown("### Explore any career")
+
+            # Pre-fill from majors input automatically
+            default_search = majors_input.strip() if majors_input and majors_input.strip() else st.session_state.get('career_search','')
             search_career = st.text_input("Search any career or job title",
+                value=default_search,
                 placeholder="e.g. Nurse, Software Engineer, Lawyer, Chef, Cybersecurity...",
                 key="career_search")
 
             if search_career:
-                # Find matching careers from O*NET CSV
                 search_lower = search_career.lower().strip()
                 matches = []
                 for c in (CAREERS_FULL or []):
                     title = str(c.get('title','')).lower()
-                    field = str(c.get('field','')).lower()
-                    if search_lower in title or any(w in title for w in search_lower.split()):
+                    field_c = str(c.get('field','')).lower()
+                    desc_c = str(c.get('description','')).lower()
+                    if (search_lower in title or
+                        any(w in title for w in search_lower.split() if len(w)>3) or
+                        search_lower in field_c):
                         matches.append(c)
 
                 if not matches:
-                    st.warning(f"No exact match in our database for '{search_career}' — searching with AI...")
-                    st.info(f"Try a related term — for example 'Engineer', 'Nurse', 'Designer', 'Manager'")
-                    st.markdown("**Or browse by field:**")
+                    st.warning(f"No exact match for '{search_career}' in our database.")
+                    st.info("Try: Nurse, Engineer, Teacher, Designer, Analyst, Manager, Developer")
+                    st.markdown("**Browse by field:**")
                     fields_list = sorted(set(c.get('field','') for c in (CAREERS_FULL or []) if c.get('field')))
-                    field_cols = st.columns(4)
-                    for _fi, _fn in enumerate(fields_list[:12]):
-                        with field_cols[_fi % 4]:
-                            st.markdown(f"• {_fn}")
+                    f_cols = st.columns(4)
+                    for fi, fn in enumerate(fields_list[:12]):
+                        with f_cols[fi % 4]:
+                            st.markdown(f"• {fn}")
                 else:
-                    # Show top match as deep dive
                     career = matches[0]
                     title = career.get('title','')
                     field = career.get('field','')
@@ -1303,22 +1106,23 @@ with tab4:
                     outlook = career.get('outlook','N/A')
                     education = career.get('education','N/A')
                     job_zone = int(float(career.get('job_zone',3) or 3))
-                    desc = career.get('description','')[:300] if career.get('description') else ''
+                    desc = str(career.get('description','') or '')[:300]
+                    daily = str(career.get('daily_tasks','') or '')
+                    tools = str(career.get('tech_tools','') or '')
+                    skills = str(career.get('top_skills','') or '')
 
-                    # Job zone → years of study
-                    zone_map = {1:"No formal education needed",2:"High school diploma (1-2 yrs)",
-                                3:"Associate's or Bachelor's (2-4 yrs)",4:"Bachelor's degree (4 yrs)",
-                                5:"Graduate degree (6+ yrs)"}
-                    study_req = zone_map.get(job_zone,"Bachelor's degree (4 yrs)")
-
-                    # Can get job now (job zone 1-3)
+                    zone_map = {1:"No degree needed — start immediately",
+                                2:"High school diploma — 0-2 years",
+                                3:"Associate's or Bachelor's — 2-4 years",
+                                4:"Bachelor's degree — 4 years",
+                                5:"Graduate degree — 6+ years"}
+                    study_req = zone_map.get(job_zone,"Bachelor's degree — 4 years")
                     can_now = job_zone <= 3
 
                     st.markdown(f"### {title}")
                     st.caption(f"{field} · {study_req}")
-                    if desc: st.markdown(f"*{desc}*")
+                    if desc: st.markdown(f"*{desc[:250]}...*" if len(desc)>250 else f"*{desc}*")
 
-                    # Metric cards
                     m1,m2,m3,m4 = st.columns(4)
                     m1.metric("Median salary", f"${sal_mid:,}/yr" if sal_mid else "N/A")
                     m2.metric("Entry salary", f"${sal_entry:,}/yr" if sal_entry else "N/A")
@@ -1327,24 +1131,32 @@ with tab4:
 
                     st.divider()
 
-                    # Can get job now?
                     if can_now:
-                        st.success(f"✅ **You can get entry-level roles in {field} without finishing your degree.** Look for internships, assistants, and tech roles in this field.")
+                        st.success(f"✅ You can get entry-level roles in {field} without finishing your full degree!")
                     else:
-                        st.info(f"📚 **This career typically requires {study_req}.** Build experience through internships and assistants roles while studying.")
+                        st.info(f"📚 This career requires {study_req} before most entry-level roles.")
 
-                    # Salary progression bar
-                    st.markdown("**Salary progression**")
-                    if sal_entry and sal_mid and sal_senior:
-                        prog_cols = st.columns(3)
-                        prog_cols[0].markdown(f"**Entry**\n\n${sal_entry:,}")
-                        prog_cols[1].markdown(f"**Mid career**\n\n${sal_mid:,}")
-                        prog_cols[2].markdown(f"**Senior**\n\n${sal_senior:,}")
-                        st.progress(min(sal_mid/200000, 1.0))
-                    else:
-                        st.caption("Salary data not available for this occupation — check BLS.gov")
+                    if daily:
+                        st.markdown("**What you do every day:**")
+                        for task in daily.split(' | ')[:5]:
+                            if task.strip(): st.markdown(f"• {task.strip()}")
 
-                    # RIASEC profile
+                    if tools:
+                        st.markdown("**Tools & software used:**")
+                        tool_list = [t.strip() for t in tools.split(',') if t.strip()]
+                        t_cols = st.columns(4)
+                        for ti, tool in enumerate(tool_list[:8]):
+                            with t_cols[ti % 4]:
+                                st.markdown(f"`{tool}`")
+
+                    if skills:
+                        st.markdown("**Top skills needed:**")
+                        sk_list = [s.strip() for s in skills.split(',') if s.strip()]
+                        s_cols = st.columns(5)
+                        for si, sk in enumerate(sk_list[:5]):
+                            with s_cols[si % 5]:
+                                st.markdown(f"**{sk}**")
+
                     R = float(career.get('interest_realistic',0) or 0)
                     I = float(career.get('interest_investigative',0) or 0)
                     A = float(career.get('interest_artistic',0) or 0)
@@ -1352,61 +1164,28 @@ with tab4:
                     E = float(career.get('interest_enterprising',0) or 0)
                     C = float(career.get('interest_conventional',0) or 0)
 
-                    st.markdown("**What this job is like (O*NET interest profile)**")
-                    riasec_cols = st.columns(6)
-                    labels = [("R","Hands-on",R),("I","Analytical",I),("A","Creative",A),
-                              ("S","Social",S),("E","Leadership",E),("C","Detail",C)]
-                    for col, (code_k, label, val) in zip(riasec_cols, labels):
-                        with col:
-                            st.metric(label, f"{val:.1f}/7")
-
                     st.divider()
+                    st.markdown("**What kind of person thrives here (O*NET)**")
+                    r_cols = st.columns(6)
+                    for col, (lbl, val) in zip(r_cols, [("Hands-on",R),("Analytical",I),("Creative",A),("Social",S),("Leadership",E),("Detail",C)]):
+                        col.metric(lbl, f"{val:.1f}/7")
 
-                    # Daily tasks from O*NET
-                    daily = career.get('daily_tasks','')
-                    if daily:
-                        st.markdown("**What you do every day (O*NET)**")
-                        for task in daily.split(' | ')[:5]:
-                            if task.strip():
-                                st.markdown(f"• {task.strip()}")
-                        st.divider()
-
-                    # Tech tools
-                    tools = career.get('tech_tools','')
-                    if tools:
-                        st.markdown("**Tools & software used**")
-                        tool_list = [t.strip() for t in tools.split(',') if t.strip()]
-                        tool_cols = st.columns(4)
-                        for i, tool in enumerate(tool_list[:8]):
-                            with tool_cols[i % 4]:
-                                st.markdown(f"`{tool}`")
-                        st.divider()
-
-                    # Top skills
-                    top_skills = career.get('top_skills','')
-                    if top_skills:
-                        st.markdown("**Top skills needed**")
-                        sk_cols = st.columns(5)
-                        for i, sk in enumerate(top_skills.split(',')[:5]):
-                            with sk_cols[i % 5]:
-                                st.markdown(f"**{sk.strip()}**")
-
-                    # Other matches
                     if len(matches) > 1:
-                        st.markdown(f"**Other {search_career} roles ({len(matches)-1} more found)**")
-                        for m in matches[1:8]:
+                        st.divider()
+                        st.markdown(f"**{len(matches)-1} related roles:**")
+                        for m in matches[1:6]:
                             m_sal = int(float(m.get('median_annual',0) or 0))
-                            sal_str = f"${m_sal:,}/yr" if m_sal else "salary N/A"
-                            st.caption(f"• {m.get('title','')} — {m.get('field','')} · {sal_str}")
+                            sal_str = f"${m_sal:,}/yr" if m_sal else "N/A"
+                            st.caption(f"• {m.get('title','')} — {sal_str}")
 
-                    st.caption(f"Source: O*NET 30.2 · BLS Occupational Employment Statistics 2024")
+                    st.caption(f"Source: O*NET 30.2 · BLS 2024")
             else:
                 st.markdown("**Popular searches:**")
                 popular = ["Software Engineer","Registered Nurse","Lawyer","Data Scientist",
                           "Teacher","Social Worker","Cybersecurity","Accountant","Marketing Manager","Pharmacist"]
-                cols_p = st.columns(5)
-                for i, p in enumerate(popular):
-                    with cols_p[i % 5]:
-                        if st.button(p, key=f"pop_{i}", use_container_width=True):
-                            st.session_state.career_search_val = p
+                p_cols = st.columns(5)
+                for pi, p in enumerate(popular):
+                    with p_cols[pi % 5]:
+                        if st.button(p, key=f"pop_{pi}", use_container_width=True):
+                            st.session_state['career_search'] = p
                             st.rerun()
