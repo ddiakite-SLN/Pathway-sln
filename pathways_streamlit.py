@@ -448,6 +448,55 @@ def score_career_onet(career, profile):
 
     return round((score / max_score) * 100) if max_score > 0 else 0
 
+
+def run_match(gpa, sat, act, state, size, ctrl, need, env, study_yrs, aid, n):
+    size_codes={'any':[1,2,3,4,5],'small':[1,2],'medium':[3,4],'large':[5]}.get(size,[1,2,3,4,5])
+    results=[]
+    for s in SCHOOLS:
+        if state!='any' and s['state'].lower()!=state.lower(): continue
+        if s['size'] not in size_codes: continue
+        s_ctrl = s.get('ctrl')
+        try: s_ctrl = int(s_ctrl)
+        except: pass
+        if ctrl == 'public' and s_ctrl not in [1,'1']: continue
+        if ctrl == 'private' and s_ctrl not in [2,'2']: continue
+        tin = s.get('tin') or 0
+        if tin <= 0: continue
+        if s.get('size',0) < 0: continue
+        if need=='full' and tin > 55000: continue
+        if env=='hbcu' and not s.get('hbcu'): continue
+        if study_yrs=='4yr' and s.get('yr2'): continue
+        if study_yrs=='2yr' and not s.get('yr2'): continue
+        if study_yrs=='any' and s.get('yr2'): continue
+        fit = get_fit(sat, act, s, gpa)
+        net = max(0, tin - aid['total']) if tin > 0 else None
+        adm_val = s.get('adm')
+        adm_display = f"{float(adm_val):.1f}%" if adm_val and adm_val==adm_val else "Acceptance rate N/A"
+        sticker = int(tin) if tin else 0
+        dl = DEADLINES.get(s.get('id'),{})
+        results.append({
+            **s,
+            'fit': fit,
+            'net': net,
+            'adm_display': adm_display,
+            'sticker': sticker,
+            'rd': dl.get('rd','Check website'),
+            'ea': dl.get('ea',''),
+            'ed': dl.get('ed',''),
+            'sys': dl.get('sys',''),
+        })
+    fit_order={'safety':0,'match':1,'reach':2,'unknown':3}
+    sort_mode = st.session_state.get('sort_mode','fit')
+    if sort_mode=='fit':
+        results=sorted(results,key=lambda x:(fit_order.get(x['fit'],3),x.get('net') or 999999))
+    elif sort_mode=='cost':
+        results=sorted(results,key=lambda x:(x.get('net') is None, x.get('net') or 999999))
+    elif sort_mode=='safety':
+        results=sorted(results,key=lambda x:fit_order.get(x['fit'],3))
+    elif sort_mode=='grad':
+        results=sorted(results,key=lambda x:-(x.get('grad') or 0))
+    return results[:n]
+
 def run_career_match(answers):
     profile={}
     for vals in answers.values():
