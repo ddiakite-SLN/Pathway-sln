@@ -1377,3 +1377,136 @@ with tab1:
                         if st.button(p, key=f"pop_{pi}", use_container_width=True):
                             st.session_state['pop_career'] = p
                             st.rerun()
+
+    with tab3:
+        # ════════════════════════════════════════════════════════════
+        # SECTION: AID ELIGIBILITY TAB
+        # Shows Pell Grant, NY TAP, Dream Act, HEOP eligibility
+        # ════════════════════════════════════════════════════════════
+        st.markdown("### 💰 Your Financial Aid Eligibility")
+        st.caption("Based on 2025-26 federal and NY State thresholds")
+
+        # Aid is calculated in sidebar and stored in session state
+        aid = st.session_state.get('aid', calculate_aid(income, hsize, ny_res, IMMIG_MAP.get(immig,'citizen'), first_gen))
+
+        # Summary metrics
+        total = aid.get('total', 0)
+        pell  = aid.get('pell', 0)
+        tap   = aid.get('tap', 0)
+        dream = aid.get('dream', 0)
+        heop  = aid.get('heop', False)
+
+        c1,c2,c3,c4 = st.columns(4)
+        c1.metric("Total Est. Aid", f"${total:,}/yr")
+        c2.metric("Pell Grant", f"${pell:,}/yr" if pell else "Not eligible")
+        c3.metric("NY TAP", f"${tap:,}/yr" if tap else "Not eligible")
+        c4.metric("Dream Act", f"${dream:,}/yr" if dream else "Not eligible")
+
+        st.divider()
+
+        # Detailed breakdown
+        if pell:
+            st.success(f"✅ **Federal Pell Grant** — ${pell:,}/yr · For low-income undergrads · No repayment required")
+        else:
+            st.info("ℹ️ **Federal Pell Grant** — Not eligible based on your income. Check studentaid.gov for FAFSA.")
+
+        if tap:
+            st.success(f"✅ **NY TAP (Tuition Assistance Program)** — ${tap:,}/yr · NY residents only · No repayment")
+        else:
+            st.info("ℹ️ **NY TAP** — Not eligible. Must be NY resident with income under $80,000.")
+
+        if dream:
+            st.success(f"✅ **NY Dream Act** — ${dream:,}/yr · Undocumented/DACA students · NY resident required")
+
+        if heop:
+            st.success("✅ **HEOP (Higher Education Opportunity Program)** — Full scholarship at many NY private colleges · First-gen + income eligible")
+        else:
+            st.info("ℹ️ **HEOP** — Not eligible based on your profile. Must be NY resident, first-gen, and meet income limits.")
+
+        st.divider()
+        st.markdown("**📋 Important reminders:**")
+        st.markdown("• File your FAFSA at studentaid.gov every year — opens October 1")
+        st.markdown("• TAP application opens after FAFSA — apply at hesc.ny.gov")
+        st.markdown("• HEOP is awarded by individual colleges — ask each school directly")
+        st.markdown("• These are estimates — actual aid depends on your full FAFSA")
+        st.caption("Aid thresholds: Federal 2025-26 · NY HESC 2025-26 · Verify at studentaid.gov and hesc.ny.gov")
+
+    with tab4:
+        # ════════════════════════════════════════════════════════════
+        # SECTION: MY COLLEGE LIST TAB
+        # Student's saved college list with PDF export
+        # ════════════════════════════════════════════════════════════
+        st.markdown("### 📋 My College List")
+
+        my_list = st.session_state.get('my_list', [])
+
+        if not my_list:
+            st.info("Your list is empty — go to College Matches and click **+ Add to list** on any school.")
+        else:
+            aid = st.session_state.get('aid', {})
+            gpa = st.session_state.get('gpa', 3.0)
+
+            # Summary
+            safety_n  = sum(1 for s in my_list if s.get('fit')=='safety')
+            match_n   = sum(1 for s in my_list if s.get('fit')=='match')
+            reach_n   = sum(1 for s in my_list if s.get('fit')=='reach')
+
+            c1,c2,c3,c4 = st.columns(4)
+            c1.metric("Total Schools", len(my_list))
+            c2.metric("Safety", safety_n)
+            c3.metric("Match", match_n)
+            c4.metric("Reach", reach_n)
+
+            if safety_n == 0:
+                st.warning("⚠️ No safety schools — add at least 2 schools where you're likely to get in.")
+            if reach_n == 0:
+                st.info("💡 Consider adding a reach school — a dream school worth shooting for.")
+
+            st.divider()
+
+            fit_icons = {'safety':'🟢','match':'🎯','reach':'⚠️','unknown':'⚪'}
+
+            for s in my_list:
+                fit   = s.get('fit','unknown')
+                name  = s.get('name','')
+                state = s.get('state','')
+                tin   = s.get('tin', 0) or 0
+                net   = s.get('net', 0) or 0
+                grad  = s.get('grad', 0) or 0
+                rd    = s.get('rd','Check website')
+                ea    = s.get('ea','')
+                web   = s.get('web','#')
+
+                with st.container():
+                    col_a, col_b, col_c = st.columns([3,1.5,1])
+                    with col_a:
+                        st.markdown(f"**{fit_icons.get(fit,'⚪')} [{name}]({web})**")
+                        st.caption(f"{state} · Sticker: ${int(tin):,} · You pay: ${int(net):,}/yr · Grad rate: {int(grad)}%")
+                    with col_b:
+                        st.markdown(f"**RD:** {rd}")
+                        if ea: st.caption(f"EA: {ea}")
+                    with col_c:
+                        if st.button("Remove", key=f"rm_{s.get('id',name)}", use_container_width=True):
+                            st.session_state.my_list = [x for x in my_list if x.get('id') != s.get('id')]
+                            st.rerun()
+                    st.divider()
+
+            # PDF Export
+            st.markdown("### 📄 Download Your List")
+            if st.button("⬇️ Download as PDF", type="primary", key="pdf_download"):
+                try:
+                    pdf_bytes = generate_pdf(my_list, aid, gpa)
+                    st.download_button(
+                        "📄 Save College List PDF",
+                        data=pdf_bytes,
+                        file_name="my_college_list.pdf",
+                        mime="application/pdf",
+                        key="pdf_save"
+                    )
+                except ImportError:
+                    st.warning("📄 PDF export requires reportlab. Add `reportlab` to your requirements.txt.")
+
+            st.caption("⚠️ Always verify deadlines on each college's official website before applying.")
+
+st.divider()
+st.caption("Pathways by SLN · IPEDS 2023-24 · Peterson's 2025 · O*NET 30.2 · Aid thresholds 2025-26 · Verify all deadlines on official college websites")
