@@ -405,12 +405,15 @@ def run_match(gpa, sat, act, state, size, ctrl, need, env, study_yrs, aid, n, ma
     if majors_input:
         for m in [x.strip().lower() for x in majors_input.replace(',', ' ').split()]:
             for keyword, cips in KEYWORD_MAP.items():
-                if keyword in m or m in keyword or len(m)>4 and m in keyword:
+                if keyword in m or m in keyword or (len(m)>4 and m in keyword):
                     major_cips_filter.update(cips)
+    # Only filter by major if we actually found CIP codes
+    # If student typed a career ("lawyer") not a major, don't block colleges
+    use_major_filter = len(major_cips_filter) > 0
 
     for s in SCHOOLS:
         # Filter by major — only show schools that offer it
-        if major_cips_filter:
+        if use_major_filter:
             school_cips = set(str(s.get('major_cips','') or '').split(','))
             if not major_cips_filter.intersection(school_cips):
                 continue
@@ -427,9 +430,9 @@ def run_match(gpa, sat, act, state, size, ctrl, need, env, study_yrs, aid, n, ma
         if s.get('size',0) < 0: continue
         if need=='full' and tin > 55000: continue
         if env=='hbcu' and not s.get('hbcu'): continue
+        # Only filter 2yr schools if student explicitly chose
         if study_yrs=='4yr' and s.get('yr2'): continue
         if study_yrs=='2yr' and not s.get('yr2'): continue
-        if study_yrs=='any' and s.get('yr2'): continue
         fit = get_fit(sat, act, s, gpa)
         net = max(0, tin - aid['total']) if tin > 0 else None
         adm_val = s.get('adm')
@@ -793,7 +796,7 @@ if run_btn:
     matches = run_match(gpa, sat, act, state_val,
                         SIZE_MAP[school_size], CTRL_MAP[school_type],
                         need_val, ENV_MAP[env_pref], YRS_MAP[study_yrs], aid, n_results,
-                        majors_input=majors_input)
+                        majors_input=st.session_state.get('college_major_filter',''))
     st.session_state.matches  = matches
     st.session_state.ran_match = True
     st.session_state.gpa = gpa
