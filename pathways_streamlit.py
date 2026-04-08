@@ -350,6 +350,34 @@ def get_fit(sat, act, s, gpa=None):
 
 
 # ════════════════════════════════════════════════════════════
+# SECTION 3b: ENVIRONMENTAL FIT ENGINE
+# Academic match = GPA/SAT alignment (how likely to get in)
+# Environmental fit = size, location, type alignment (will you thrive)
+# Based on Hossler & Gallagher (1987) college choice literature
+# ════════════════════════════════════════════════════════════
+def get_env_fit(s, env_pref, school_size, school_type):
+    """Returns environment fit tags for a school"""
+    tags = []
+    # Size fit
+    size = s.get('size', 0)
+    size_label = {1:'Very small (<1k)', 2:'Small (1-5k)', 3:'Medium (5-15k)', 4:'Large (15-30k)', 5:'Very large (30k+)'}.get(size, '')
+    if size_label: tags.append(size_label)
+    # Type
+    ctrl = s.get('ctrl')
+    try: ctrl = int(ctrl)
+    except: pass
+    if ctrl == 1: tags.append('Public')
+    elif ctrl == 2: tags.append('Private')
+    # Special
+    if s.get('hbcu'): tags.append('HBCU')
+    if s.get('womens'): tags.append("Women's college")
+    # Grad rate signal
+    grad = s.get('grad') or 0
+    if grad >= 80: tags.append('High grad rate')
+    elif grad >= 60: tags.append('Moderate grad rate')
+    return tags
+
+# ════════════════════════════════════════════════════════════
 # SECTION 4: CAREER SCORING ENGINE
 # Uses O*NET RIASEC Holland codes to match student to careers
 # R=Realistic I=Investigative A=Artistic S=Social E=Enterprising C=Conventional
@@ -396,7 +424,7 @@ def score_career_onet(career, profile):
     return result
 
 
-def run_match(gpa, sat, act, state, size, ctrl, need, env, study_yrs, aid, n, majors_input=''):
+def run_match(gpa, sat, act, state, size, ctrl, need, env, study_yrs, aid, n, majors_input='', only_gpa=False, only_adm=False):
     size_codes={'any':[1,2,3,4,5],'small':[1,2],'medium':[3,4],'large':[5]}.get(size,[1,2,3,4,5])
     results=[]
 
@@ -427,6 +455,9 @@ def run_match(gpa, sat, act, state, size, ctrl, need, env, study_yrs, aid, n, ma
         if ctrl == 'private' and s_ctrl not in [2,'2']: continue
         tin = s.get('tin') or 0
         if tin <= 0: continue
+        # Data quality filters
+        if only_gpa and not (s.get('gpa_25') or s.get('gpa_avg')): continue
+        if only_adm and (not s.get('adm') or s.get('adm') != s.get('adm')): continue
         if s.get('size',0) < 0: continue
         if need=='full' and tin > 55000: continue
         if env=='hbcu' and not s.get('hbcu'): continue
@@ -655,6 +686,35 @@ def generate_pdf(my_list, aid, career_top, gpa, sat, act):
         return None
 
 # ── CAREER MAPS ───────────────────────────────────────────────
+# ── SLN School Whitelist ─────────────────────────────────────
+# Schools that should always appear in results for NY students
+# regardless of other filters — key partner/recommended schools
+# Add IPEDS unitid to include a school. Update with Aaron/Kieran.
+SLN_WHITELIST = {
+    # CUNY system
+    190512,  # CUNY City College
+    190549,  # CUNY Hunter College
+    190558,  # CUNY John Jay College
+    190576,  # CUNY Lehman College
+    190600,  # CUNY Queens College
+    190615,  # CUNY Brooklyn College
+    190624,  # CUNY Baruch College
+    190099,  # CUNY Bronx Community College
+    # SUNY system
+    196060,  # SUNY Albany
+    196097,  # Binghamton University
+    196105,  # University at Buffalo
+    196183,  # Stony Brook University
+    196200,  # SUNY Geneseo
+    # Key NY private schools
+    193900,  # NYU
+    190150,  # Columbia University
+    194824,  # Fordham University
+    # HBCUs
+    206695,  # Howard University (DC)
+    216010,  # Spelman College (GA)
+}
+
 # ── Career Assessment Question Maps ─────────────────────────
 # Maps each dropdown answer to RIASEC trait scores
 # To add a new question: add 'i9' here and a selectbox in the UI
@@ -726,7 +786,13 @@ with st.sidebar:
     st.markdown("## 📝 Your Profile")
 
     st.markdown("### 📚 Academics")
-    gpa = st.slider("Unweighted GPA", 0.0, 4.0, 3.0, 0.1, key="gpa_slider")
+    gpa_scale = st.radio("GPA scale", ["4.0 scale","100 scale"], horizontal=True, key="gpa_scale_radio")
+    if gpa_scale == "4.0 scale":
+        gpa = st.slider("Unweighted GPA", 0.0, 4.0, 3.0, 0.1, key="gpa_slider")
+    else:
+        gpa_100 = st.slider("GPA (0-100)", 0, 100, 80, 1, key="gpa_slider_100")
+        gpa = round(gpa_100 / 25.0, 2)  # convert to 4.0 scale
+        st.caption(f"= {gpa:.1f} on 4.0 scale")
     score_type = st.selectbox("Test scores", ["None (test-optional)","SAT","ACT"], key="test_scores")
     sat = act = None
     if score_type == "SAT":
@@ -766,7 +832,11 @@ with st.sidebar:
     school_size = st.selectbox("School size",["Any","Small (<5k)","Medium (5-20k)","Large (20k+)"], key="school_size")
     school_type = st.selectbox("School type",["Any","Public","Private"], key="school_type")
     env_pref    = st.selectbox("Campus environment",["Any","HBCU","Women's College","Diverse"], key="campus_env")
-    study_yrs   = st.selectbox("Years willing to study",["Any","2 years (Associate's)","4 years (Bachelor's+)"], key="study_yrs")
+
+    st.markdown("**🔍 Data filters**")
+    only_gpa_data    = st.checkbox("Only schools with GPA data", value=False, key="filter_gpa")
+    only_adm_data    = st.checkbox("Only schools with acceptance rate", value=False, key="filter_adm")
+    study_yrs   = st.selectbox("Degree level",["Any","Associate's (2 yr)","Bachelor's or higher (4 yr+)"], key="study_yrs")
     n_results   = st.select_slider("Number of results",[5,10,15,20],10, key="n_results_slider")
 
     run_btn = st.button("🔍 Find My Colleges", type="primary", use_container_width=True)
@@ -796,7 +866,8 @@ if run_btn:
     matches = run_match(gpa, sat, act, state_val,
                         SIZE_MAP[school_size], CTRL_MAP[school_type],
                         need_val, ENV_MAP[env_pref], YRS_MAP[study_yrs], aid, n_results,
-                        majors_input=st.session_state.get('college_major_filter',''))
+                        majors_input=st.session_state.get('college_major_filter',''),
+                        only_gpa=only_gpa_data, only_adm=only_adm_data)
     st.session_state.matches  = matches
     st.session_state.ran_match = True
     st.session_state.gpa = gpa
@@ -885,13 +956,22 @@ with tab1:
                         if _majors_typed and s.get('major_cips'):
                             st.success(f"✅ Confirmed offers: {_majors_typed}")
                         adm_val = s.get('adm'); adm_display = f"{float(adm_val):.1f}% acceptance" if adm_val and adm_val == adm_val else "Acceptance rate N/A"
-                        st.caption(f"{s.get('city','')}, {s['state']} · {'Public' if s['ctrl']==1 else 'Private'} · {adm_display}" + (" · 🏛️ HBCU" if s.get('hbcu') else ""))
-                        chips = f"`{fit.capitalize()}`"
-                        if s.get('sat25'): chips += f"  `SAT {s['sat25']}–{s['sat75']}`"
-                        if s.get('act25'): chips += f"  `ACT {s['act25']}–{s['act75']}`"
-                        if aid['tap']>0 and s['state']=='NY': chips += "  `TAP eligible`"
-                        if aid['heop'] and s['state']=='NY': chips += "  `HEOP`"
-                        st.markdown(chips)
+                        env_tag_str = ' · '.join(env_tags[:3]) if env_tags else ''
+                        st.caption(f"{s.get('city','')}, {s['state']} · {adm_display} · {env_tag_str}" + (" · 🏛️ HBCU" if s.get('hbcu') else ""))
+                        # Academic match (how likely to get in)
+                        fit_label = {'safety':'✅ Safety','match':'🎯 Match','reach':'⚠️ Reach','unknown':'⚪ Limited data'}.get(fit, fit)
+                        acad_chips = f"`{fit_label}`"
+                        if s.get('sat25'): acad_chips += f"  `SAT {s['sat25']}–{s['sat75']}`"
+                        if s.get('act25'): acad_chips += f"  `ACT {s['act25']}–{s['act75']}`"
+                        if s.get('gpa_25'): acad_chips += f"  `Avg GPA {s['gpa_25']}–{s['gpa_75']}`"
+                        st.markdown(acad_chips)
+                        # Aid + env chips
+                        aid_chips = ""
+                        if aid['tap']>0 and s['state']=='NY': aid_chips += "  `TAP eligible`"
+                        if aid['heop'] and s['state']=='NY': aid_chips += "  `HEOP`"
+                        if s.get('hbcu'): aid_chips += "  `HBCU`"
+                        if s.get('womens'): aid_chips += "  `Women's college`"
+                        if aid_chips: st.markdown(aid_chips.strip())
                     with cb:
                         sticker = int(s.get('tin') or 0)
                         st.markdown(f"**Sticker:** ${sticker:,}" if sticker else "")
