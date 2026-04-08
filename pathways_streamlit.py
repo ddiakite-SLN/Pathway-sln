@@ -48,6 +48,7 @@ if 'ran_match' not in st.session_state:
 # Loads colleges, GPA data, careers from CSV files on GitHub
 # To update data: replace the CSV files in the repo
 # ════════════════════════════════════════════════════════════
+@st.cache_data(ttl=3600, show_spinner=False)
 def load_schools():
     import pandas as pd, os
     csv_path = 'schools_full.csv'
@@ -101,6 +102,7 @@ def load_schools():
 @st.cache_data
 # ── GPA Data Loader (Peterson's 2025 + SUNY PDF) ────────────
 # Source: gpa_data.csv — 76 schools with admitted GPA ranges
+@st.cache_data(ttl=3600, show_spinner=False)
 def load_gpa_data():
     import pandas as pd, os
     csv_path = 'gpa_data.csv'
@@ -138,6 +140,7 @@ except:
 
 # ── Career Data Loader (O*NET 30.2 + BLS 2023) ──────────────
 # Source: careers.csv — 1,016 occupations with RIASEC scores
+@st.cache_data(ttl=3600, show_spinner=False)
 def load_careers():
     import pandas as pd, os
     csv_path = 'careers.csv'
@@ -471,6 +474,8 @@ def run_match(gpa, sat, act, state, size, ctrl, need, env, study_yrs, aid, n, ma
         except: pass
         if ctrl == 'public' and s_ctrl not in [1,'1']: continue
         if ctrl == 'private' and s_ctrl not in [2,'2']: continue
+        # Exclude for-profit schools by default (ctrl=3)
+        if ctrl == 'any' and s_ctrl == 3: continue
         tin = s.get('tin') or 0
         if tin <= 0: continue
         # Data quality filters
@@ -912,7 +917,7 @@ aid = calculate_aid(income, hsize, ny_res, IMMIG_MAP[immig], first_gen)
 st.session_state.aid = aid
 
 if run_btn:
-    state_val = state_pref if state_pref else 'any'
+    state_val = state_pref if state_pref else ['NY']  # default to NY if nothing selected
     need_val  = "full" if income<50000 else "some"
     matches = run_match(gpa, sat, act, state_val,
                         SIZE_MAP[school_size], CTRL_MAP[school_type],
@@ -1531,7 +1536,7 @@ with tab1:
                     with p_cols[pi % 5]:
                         if st.button(p, key=f"pop_{pi}", use_container_width=True):
                             st.session_state['pop_career'] = p
-                            st.rerun()
+                            st.rerun()  # safe - button click triggers new run
 
     with tab3:
         # ════════════════════════════════════════════════════════════
