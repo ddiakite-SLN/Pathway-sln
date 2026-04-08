@@ -978,7 +978,7 @@ with tab2:
                 with cols[i % 2]:
                     full_scores[riasec] = full_scores.get(riasec, 0) + st.slider(activity, 1, 5, 3, key=f"careertest_q_{i}")
 
-            if st.button("🎯 See My Career Matches", type="primary"):
+            if st.button("🎯 See My Career Matches", type="primary", key="full_test_submit"):
                 # Convert RIASEC scores to profile
                 full_profile = {
                     'physical': full_scores.get('R',0)*2,
@@ -1199,7 +1199,7 @@ with tab4:
                         with cols_q[i % 2]:
                             val = st.slider(activity, 1, 5, 3, key=f"fulltest_q_{i}")
                             full_scores[riasec] = full_scores.get(riasec, 0) + val
-                    if st.button("🎯 See My Career Matches", type="primary"):
+                    if st.button("🎯 See My Career Matches", type="primary", key="full_test_submit_2"):
                         full_profile = {
                             'physical': full_scores.get('R',0)*2, 'building': full_scores.get('R',0)*2,
                             'outdoors': full_scores.get('R',0)*2, 'science': full_scores.get('I',0)*2,
