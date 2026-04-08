@@ -326,17 +326,9 @@ def get_fit(sat, act, s, gpa=None):
 # ════════════════════════════════════════════════════════════
 def score_career_onet(career, profile):
     """
-    Score a career using O*NET RIASEC interest codes and work values.
-    Maps student answers to Holland codes for accurate matching.
+    Score using O*NET RIASEC Holland codes.
+    Dominant interest gets 2.5x weight — prevents weak traits from hijacking results.
     """
-    score = 0.0
-    max_score = 0.0
-
-    # Map student profile traits to RIASEC Holland codes
-    # R=Realistic(hands-on), I=Investigative(analytical), A=Artistic(creative)
-    # S=Social(helping), E=Enterprising(leadership), C=Conventional(detail/data)
-    
-    # Get career RIASEC scores (0-7 scale from O*NET)
     R = float(career.get('interest_realistic') or 0)
     I = float(career.get('interest_investigative') or 0)
     A = float(career.get('interest_artistic') or 0)
@@ -344,168 +336,41 @@ def score_career_onet(career, profile):
     E = float(career.get('interest_enterprising') or 0)
     C = float(career.get('interest_conventional') or 0)
 
-    # Map student profile to RIASEC Holland codes
-    # Use max of contributing traits to avoid dilution
-    p_R = max(profile.get('physical',0), profile.get('building',0), profile.get('outdoors',0))
-    p_I = max(profile.get('science',0), profile.get('data',0), profile.get('analyzing',0))
-    p_A = max(profile.get('creativity',0), profile.get('creating',0))
-    p_S = max(profile.get('helping',0), profile.get('people',0), profile.get('teaching',0))
-    p_E = max(profile.get('leadership',0), profile.get('business',0))
-    p_C = max(profile.get('data',0), profile.get('routine',0), profile.get('stability',0))
+    # Map profile to RIASEC — use max() so dominant interest isn't diluted
+    p_R = min(max(profile.get('physical',0), profile.get('building',0), profile.get('outdoors',0), profile.get('R',0)) / 9.0, 1.0) * 7
+    p_I = min(max(profile.get('science',0), profile.get('data',0), profile.get('analyzing',0), profile.get('I',0)) / 9.0, 1.0) * 7
+    p_A = min(max(profile.get('creativity',0), profile.get('creating',0), profile.get('A',0)) / 9.0, 1.0) * 7
+    p_S = min(max(profile.get('helping',0), profile.get('people',0), profile.get('teaching',0), profile.get('S',0)) / 9.0, 1.0) * 7
+    p_E = min(max(profile.get('leadership',0), profile.get('business',0), profile.get('E',0)) / 9.0, 1.0) * 7
+    # Stability contributes to C but at reduced weight so it doesn't override interest
+    p_C = min(max(profile.get('data',0), profile.get('C',0), profile.get('stability',0) * 0.3) / 9.0, 1.0) * 7
 
-    # Normalize to 0-7 scale
-    norm = lambda x: min(x/9.0, 1.0) * 7
-    p_R_n = norm(p_R)
-    p_I_n = norm(p_I)
-    p_A_n = norm(p_A)
-    p_S_n = norm(p_S)
-    p_E_n = norm(p_E)
-    p_C_n = norm(p_C)
+    vals = [('R',p_R,R), ('I',p_I,I), ('A',p_A,A), ('S',p_S,S), ('E',p_E,E), ('C',p_C,C)]
 
-    # RIASEC match (primary scoring - 60 points)
-    for p_val, c_val in [(p_R_n,R),(p_I_n,I),(p_A_n,A),(p_S_n,S),(p_E_n,E),(p_C_n,C)]:
-        max_score += 10
-        score += (1 - abs(p_val - c_val)/7.0) * 10
+    # Find dominant profile trait — give it 2.5x weight
+    dominant_key = max(vals, key=lambda x: x[1])[0]
 
-    # Work values match (secondary - 25 points)
-    ach = float(career.get('value_achievement') or 0)
-    ind = float(career.get('value_independence') or 0)
-    rec = float(career.get('value_recognition') or 0)
-    rel = float(career.get('value_relationships') or 0)
-    
-    p_ach = min(profile.get('impact',0)/9.0, 1.0) * 7
-    p_ind = min(profile.get('autonomy',0)/9.0, 1.0) * 7
-    p_rec = min(profile.get('prestige',0)/9.0, 1.0) * 7
-    p_rel = min(profile.get('people',0)/9.0, 1.0) * 7
+    score = 0.0; max_score = 0.0
+    for key, p_val, c_val in vals:
+        weight = 25.0 if key == dominant_key else 8.0
+        max_score += weight
+        score += (1.0 - abs(p_val - c_val) / 7.0) * weight
 
-    for p_val, c_val in [(p_ach,ach),(p_ind,ind),(p_rec,rec),(p_rel,rel)]:
-        max_score += 6
-        score += (1 - abs(p_val - c_val)/7.0) * 6
+    result = round((score / max_score) * 100) if max_score > 0 else 0
 
-    # Income preference match (15 points)
-    salary = float(career.get('median_annual') or 0)
-    income_pref = profile.get('income', 0)
-    if income_pref > 0 and salary > 0:
-        sal_norm = min(salary/150000.0, 1.0)
-        inc_norm = min(income_pref/9.0, 1.0)
-        max_score += 15
-        score += (1 - abs(sal_norm - inc_norm)) * 15
-    
-    # Education/study willingness match
-    jzone = int(career.get('job_zone') or 3)
-    y2 = profile.get('y2', 0)
-    y4 = profile.get('y4', 0)
-    ygrad = profile.get('ygrad', 0)
-    
-    if jzone <= 2 and y2 > 0:
-        score += 5
-    elif jzone == 3 and y4 > 0:
-        score += 5
-    elif jzone >= 4 and ygrad > 0:
-        score += 5
-    elif jzone == 3:
-        score += 3  # neutral match for 4yr schools
-    max_score += 5
+    # Reduce score for jobs with no salary data (minor/niche occupations)
+    if not float(career.get('median_annual') or 0):
+        result = round(result * 0.65)
 
-    return round((score/max_score)*100) if max_score > 0 else 0
-    score = 0.0
-    max_score = 0.0
-    field = str(career.get('field','')).lower()
-    education = str(career.get('education','')).lower()
-    growth = str(career.get('growth_pct','')).replace('%','').replace('N/A','0')
-    try: growth_val = float(growth)
-    except: growth_val = 0
-
-    # Match field to student interests
-    field_map = {
-        'healthcare': ['helping','people','science','physical'],
-        'technology': ['data','analyzing','building','creating'],
-        'education': ['teaching','people','helping'],
-        'mental health': ['helping','people'],
-        'social services': ['helping','people','impact'],
-        'engineering': ['building','science','data','outdoors'],
-        'business & finance': ['business','data','leadership'],
-        'business': ['business','leadership','data'],
-        'marketing & communications': ['creating','people','creativity'],
-        'marketing': ['creating','people','creativity'],
-        'law & justice': ['analyzing','leadership','data'],
-        'criminal justice': ['physical','leadership','outdoors'],
-        'arts & media': ['creating','creativity'],
-        'media': ['creating','creativity','people'],
-        'science & research': ['science','data','analyzing'],
-        'skilled trades': ['physical','building','outdoors'],
-        'public health': ['helping','people','science','data'],
-        'sports & fitness': ['physical','people','outdoors'],
-        'culinary arts': ['creating','physical'],
-        'agriculture': ['outdoors','science','physical'],
-        'transportation': ['physical','outdoors'],
-        'architecture': ['creating','building','science'],
-        'communications': ['people','creating'],
-        'hospitality': ['people','creating'],
-        'government': ['leadership','data'],
-        'personal care': ['people','physical'],
-    }
-    
-    relevant_traits = field_map.get(field, [])
-    for trait in relevant_traits:
-        pv = profile.get(trait, 0)
-        max_score += 10
-        score += min(pv / 5.0, 1.0) * 10
-
-    # Education preference match
-    study_pref = profile.get('y4', 0) + profile.get('ygrad', 0) * 2 + profile.get('y2', 0) * 0.5
-    if 'doctoral' in education or 'professional' in education:
-        edu_score = profile.get('ygrad', 0) / 3.0
-    elif "master" in education:
-        edu_score = (profile.get('ygrad', 0) + profile.get('y4', 0)) / 6.0
-    elif "bachelor" in education:
-        edu_score = profile.get('y4', 0) / 3.0
-    elif "associate" in education or "certificate" in education:
-        edu_score = (profile.get('y2', 0) + profile.get('y4', 0)) / 6.0
-    else:
-        edu_score = 0.5
-    max_score += 15
-    score += edu_score * 15
-
-    # Income priority match
-    salary = career.get('median_annual', 0) or 0
-    income_pref = profile.get('income', 0)
-    if income_pref > 0:
-        salary_norm = min(salary / 150000.0, 1.0)
-        pref_norm = min(income_pref / 9.0, 1.0)
-        max_score += 15
-        score += (1 - abs(salary_norm - pref_norm)) * 15
-
-    # Growth / stability match
-    stability_pref = profile.get('stability', 0)
-    if stability_pref > 0 and growth_val >= 0:
-        growth_norm = min(growth_val / 30.0, 1.0)
-        stability_norm = min(stability_pref / 9.0, 1.0)
-        max_score += 10
-        score += (stability_norm * 0.5 + growth_norm * 0.5) * 10
-
-    # Impact preference
-    impact_pref = profile.get('impact', 0)
-    helping_fields = ['healthcare','social services','mental health','education','public health']
-    if impact_pref > 0 and any(f in field for f in helping_fields):
-        max_score += 10
-        score += min(impact_pref / 9.0, 1.0) * 10
-
-    return round((score / max_score) * 100) if max_score > 0 else 0
+    return result
 
 
-# ════════════════════════════════════════════════════════════
-# SECTION 5: COLLEGE MATCH ENGINE
-# Filters 3,690 schools by student preferences
-# Returns balanced Safety/Match/Reach list
-# To change income filter: find 'need==full and tin > 55000'
-# To change 2yr filter: find 'study_yrs==any and s.get(yr2)'
-# ════════════════════════════════════════════════════════════
 def run_match(gpa, sat, act, state, size, ctrl, need, env, study_yrs, aid, n):
     size_codes={'any':[1,2,3,4,5],'small':[1,2],'medium':[3,4],'large':[5]}.get(size,[1,2,3,4,5])
     results=[]
     for s in SCHOOLS:
-        if state!='any' and s['state'].lower()!=state.lower(): continue
+        state_list = state if isinstance(state, list) else ([state] if state != 'any' else [])
+        if state_list and s['state'] not in state_list: continue
         if s['size'] not in size_codes: continue
         s_ctrl = s.get('ctrl')
         try: s_ctrl = int(s_ctrl)
@@ -818,6 +683,15 @@ with st.sidebar:
         act = st.number_input("ACT Score", 1, 36, 24, 1)
 
     st.markdown("### 🎯 Career Discovery")
+
+    # Majors of interest
+    majors_input = st.text_input(
+        "📚 Majors you're interested in",
+        placeholder="e.g. Nursing, Computer Science, Business",
+        help="Add one or more majors — we'll show careers that match"
+    )
+
+    st.caption("Or answer these questions to discover careers:")
     q1 = st.selectbox("What excites you most?",["— Select an answer —"] + list(CAREER_MAPS['i1'].keys()))
     q2 = st.selectbox("What matters most in a career?",["— Select an answer —"] + list(CAREER_MAPS['i2'].keys()))
     q3 = st.selectbox("Where do you want to work?",["— Select an answer —"] + list(CAREER_MAPS['i3'].keys()))
@@ -835,7 +709,8 @@ with st.sidebar:
     first_gen = st.checkbox("First-generation college student", value=True)
 
     st.markdown("### 🗺️ Preferences")
-    state_pref  = st.selectbox("Preferred state",["NY","Any","CA","MA","NJ","PA","TX","FL","IL"])
+    states_list = ["NY","NJ","CT","PA","MA","CA","TX","FL","IL","GA","VA","MD","NC","OH","MI","WA","CO","AZ","MN","WI","OR","IN","TN","MO","SC","AL","LA","KY","OK","UT","IA","AR","MS","KS","NV","NM","NE","ID","HI","NH","ME","RI","MT","DE","SD","ND","AK","VT","WY","WV","DC","PR"]
+    state_pref = st.multiselect("Preferred state(s)", states_list, default=["NY"], help="Select one or more states. Leave empty to search all states.")
     school_size = st.selectbox("School size",["Any","Small (<5k)","Medium (5-20k)","Large (20k+)"])
     school_type = st.selectbox("School type",["Any","Public","Private"])
     env_pref    = st.selectbox("Campus environment",["Any","HBCU","Women's College","Diverse"])
@@ -864,7 +739,7 @@ aid = calculate_aid(income, hsize, ny_res, IMMIG_MAP[immig], first_gen)
 st.session_state.aid = aid
 
 if run_btn:
-    state_val = "any" if state_pref=="Any" else state_pref
+    state_val = state_pref if state_pref else 'any'
     need_val  = "full" if income<50000 else "some"
     matches = run_match(gpa, sat, act, state_val,
                         SIZE_MAP[school_size], CTRL_MAP[school_type],
@@ -1034,7 +909,60 @@ with tab1:
 with tab2:
     if not _all_answered:
         answered = sum(1 for q in [q1,q2,q3,q4,q5,q6,q7,q8] if q != "— Select an answer —")
-        st.info(f"🎯 Answer all 8 career questions on the left to see your matches. ({answered}/8 answered)")
+        st.info(f"🎯 Answer the career questions on the left to see your matches. ({answered}/8 answered)")
+        st.markdown("### 🧪 Or take the full career assessment")
+        st.markdown("Answer 20 questions for more accurate results — same method used by O*NET and CareerExplorer.")
+        with st.expander("▶️ Click to take the full career test", expanded=False):
+            st.markdown("**Rate how much you enjoy each activity (1=Not at all, 5=Very much)**")
+            full_q = {
+                "Build or repair electronic equipment": "R",
+                "Work on cars or machines": "R",
+                "Do physical outdoor work": "R",
+                "Use hand tools or power tools": "R",
+                "Study how plants or animals grow": "I",
+                "Do science experiments": "I",
+                "Analyze data or solve math problems": "I",
+                "Research topics in depth": "I",
+                "Create art, music, or writing": "A",
+                "Design websites, graphics, or videos": "A",
+                "Express yourself through creative projects": "A",
+                "Perform or present in front of others": "A",
+                "Help people with personal problems": "S",
+                "Teach or train others": "S",
+                "Work as part of a care team": "S",
+                "Volunteer in your community": "S",
+                "Lead a group or project": "E",
+                "Persuade or sell ideas to others": "E",
+                "Start or manage a business": "E",
+                "Compete to win in business situations": "E",
+            }
+            full_scores = {}
+            cols = st.columns(2)
+            for i, (activity, riasec) in enumerate(full_q.items()):
+                with cols[i % 2]:
+                    full_scores[riasec] = full_scores.get(riasec, 0) + st.slider(activity, 1, 5, 3, key=f"fq_{i}")
+
+            if st.button("🎯 See My Career Matches", type="primary"):
+                # Convert RIASEC scores to profile
+                full_profile = {
+                    'physical': full_scores.get('R',0)*2,
+                    'building': full_scores.get('R',0)*2,
+                    'outdoors': full_scores.get('R',0)*2,
+                    'science':  full_scores.get('I',0)*2,
+                    'data':     full_scores.get('I',0)*2,
+                    'analyzing':full_scores.get('I',0)*2,
+                    'creativity':full_scores.get('A',0)*2,
+                    'creating': full_scores.get('A',0)*2,
+                    'helping':  full_scores.get('S',0)*2,
+                    'people':   full_scores.get('S',0)*2,
+                    'teaching': full_scores.get('S',0)*2,
+                    'leadership':full_scores.get('E',0)*2,
+                    'business': full_scores.get('E',0)*2,
+                }
+                full_results = run_career_match(full_profile)
+                st.session_state.career_results = full_results
+                st.session_state.full_test_taken = True
+                st.rerun()
     elif not career_results:
         st.info("Answer the career questions on the left to see your matches.")
     else:
