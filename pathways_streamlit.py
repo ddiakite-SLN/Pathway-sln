@@ -74,6 +74,12 @@ def load_schools():
         except: s['grad'] = None
         try: s['adm'] = float(s['adm']) if s.get('adm') else None
         except: s['adm'] = None
+        try: s['gpa_avg'] = float(s['gpa_avg']) if s.get('gpa_avg') else None
+        except: s['gpa_avg'] = None
+        try: s['gpa_25'] = float(s['gpa_25']) if s.get('gpa_25') else None
+        except: s['gpa_25'] = None
+        try: s['gpa_75'] = float(s['gpa_75']) if s.get('gpa_75') else None
+        except: s['gpa_75'] = None
     return schools
 
 @st.cache_data
@@ -227,21 +233,28 @@ def get_fit(sat, act, s, gpa=None):
         if act >= s['act25']: return 'match'
         return 'reach'
 
-    # 2. GPA data from CDS/SUNY PDF (second most accurate)
-    if gpa and uid and uid in GPA_DATA:
-        g = GPA_DATA[uid]
-        gpa_low  = g.get('gpa_low')
-        gpa_high = g.get('gpa_high')
-        gpa_avg  = g.get('gpa_avg')
-        if gpa_low and gpa_high:
-            if gpa >= gpa_high: return 'safety'
-            if gpa >= gpa_low:  return 'match'
-            if gpa >= gpa_low - 0.3: return 'reach'
+    # 2. GPA data from Peterson's 2025 (in schools_full.csv)
+    if gpa:
+        gpa_25 = s.get('gpa_25')
+        gpa_75 = s.get('gpa_75')
+        gpa_avg = s.get('gpa_avg')
+        if gpa_25 and gpa_75:
+            if gpa >= gpa_75: return 'safety'
+            if gpa >= gpa_25: return 'match'
             return 'reach'
         if gpa_avg:
             if gpa >= gpa_avg + 0.2: return 'safety'
             if gpa >= gpa_avg - 0.2: return 'match'
             return 'reach'
+        # Also check gpa_data.csv for SUNY schools
+        if uid and uid in GPA_DATA:
+            g = GPA_DATA[uid]
+            gpa_low = g.get('gpa_low')
+            gpa_high = g.get('gpa_high')
+            if gpa_low and gpa_high:
+                if gpa >= gpa_high: return 'safety'
+                if gpa >= gpa_low: return 'match'
+                return 'reach'
 
     # 3. GPA + acceptance rate fallback
     adm = s.get('adm')
@@ -836,16 +849,24 @@ with tab1:
                             st.info(f"🎯 **Match** — Your ACT {act} falls in their range ({int(s['act25'])}–{int(s['act75'])}). A solid application should be competitive.")
                         elif fit=='reach':
                             st.warning(f"⚠️ **Reach** — Your ACT {act} is below their 25th percentile ({int(s['act25'])}). A compelling essay can still get you in.")
-                    elif gpa_info and gpa_info.get('gpa_low') and gpa:
-                        glo = gpa_info['gpa_low']
-                        ghi = gpa_info['gpa_high']
-                        src = "SUNY 2025" if "SUNY" in gpa_info.get('source','') else "Common Data Set 2024-25"
-                        if fit=='safety':
-                            st.success(f"✅ **Safety** — Your GPA {gpa} is above their typical range ({glo}–{ghi}). Source: {src}.")
-                        elif fit=='match':
-                            st.info(f"🎯 **Match** — Your GPA {gpa} falls in their admitted range ({glo}–{ghi}). Source: {src}.")
-                        elif fit=='reach':
-                            st.warning(f"⚠️ **Reach** — Their typical admitted GPA is {glo}–{ghi}, yours is {gpa}. A strong application can still get you in.")
+                    elif gpa and (s.get('gpa_25') or s.get('gpa_avg')):
+                        gpa_25s = s.get('gpa_25')
+                        gpa_75s = s.get('gpa_75')
+                        gpa_avgs = s.get('gpa_avg')
+                        if gpa_25s and gpa_75s:
+                            if fit=='safety':
+                                st.success(f"✅ **Safety** — Your GPA {gpa} is above their 75th percentile ({gpa_75s}). Source: Peterson's 2025.")
+                            elif fit=='match':
+                                st.info(f"🎯 **Match** — Your GPA {gpa} falls in their range ({gpa_25s}–{gpa_75s}). Source: Peterson's 2025.")
+                            elif fit=='reach':
+                                st.warning(f"⚠️ **Reach** — Their GPA range is {gpa_25s}–{gpa_75s}, yours is {gpa}. A strong application can still get you in.")
+                        elif gpa_avgs:
+                            if fit=='safety':
+                                st.success(f"✅ **Safety** — Your GPA {gpa} is above their average admitted GPA ({gpa_avgs}). Source: Peterson's 2025.")
+                            elif fit=='match':
+                                st.info(f"🎯 **Match** — Your GPA {gpa} is near their average admitted GPA ({gpa_avgs}). Source: Peterson's 2025.")
+                            elif fit=='reach':
+                                st.warning(f"⚠️ **Reach** — Their average admitted GPA is {gpa_avgs}, yours is {gpa}. A strong application can still get you in.")
                     elif fit=='safety':
                         adm_val = s.get('adm')
                         adm_str = f"{adm_val:.1f}%" if adm_val else "High"
