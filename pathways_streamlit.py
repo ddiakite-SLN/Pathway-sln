@@ -1086,7 +1086,8 @@ with tab1:
             st.markdown("### Explore any career")
 
             # Pre-fill from majors input automatically
-            default_search = majors_input.strip() if majors_input and majors_input.strip() else st.session_state.get('career_search','')
+            _pop = st.session_state.pop('pop_career', '')
+            default_search = majors_input.strip() if majors_input and majors_input.strip() else _pop
             search_career = st.text_input("Search any career or job title",
                 value=default_search,
                 placeholder="e.g. Nurse, Software Engineer, Lawyer, Chef, Cybersecurity...",
@@ -1352,5 +1353,5 @@ with tab1:
                 for pi, p in enumerate(popular):
                     with p_cols[pi % 5]:
                         if st.button(p, key=f"pop_{pi}", use_container_width=True):
-                            st.session_state['career_search'] = p
+                            st.session_state['pop_career'] = p
                             st.rerun()
