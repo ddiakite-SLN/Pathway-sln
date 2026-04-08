@@ -77,6 +77,31 @@ def load_schools():
     return schools
 
 @st.cache_data
+@st.cache_data
+def load_gpa_data():
+    import pandas as pd, os
+    csv_path = 'gpa_data.csv'
+    if not os.path.exists(csv_path):
+        return {}
+    df = pd.read_csv(csv_path)
+    df = df.where(pd.notnull(df), None)
+    gpa_map = {}
+    for _, row in df.iterrows():
+        try:
+            uid = int(row['unitid'])
+            gpa_map[uid] = {
+                'gpa_avg':  float(row['gpa_avg'])  if row.get('gpa_avg')  else None,
+                'gpa_low':  float(row['gpa_low'])  if row.get('gpa_low')  else None,
+                'gpa_high': float(row['gpa_high']) if row.get('gpa_high') else None,
+                'eop_low':  float(row['eop_gpa_low'])  if row.get('eop_gpa_low')  else None,
+                'eop_high': float(row['eop_gpa_high']) if row.get('eop_gpa_high') else None,
+                'source':   str(row.get('source',''))
+            }
+        except: pass
+    return gpa_map
+
+GPA_DATA = load_gpa_data()
+
 def load_careers():
     import pandas as pd, os
     csv_path = 'careers.csv'
@@ -184,13 +209,15 @@ def calculate_aid(income, hsize, ny_res, immig, first_gen):
     if ny_res and immig in ('undocumented','daca') and income<=80000:
         dream=tap if tap>0 else 2500
         if immig=='undocumented': tap=0
-    cuts=[22400,30240,38080,45920,53760,61600]
-    if ny_res and first_gen and income<=cuts[min(hsize-1,5)] and immig!='undocumented':
+    cuts=[28953,39128,49303,59478,69653,79828,90003,100178]  # 2026-27 EOP thresholds
+    if ny_res and first_gen and income<=cuts[min(hsize-1,7)] and immig!='undocumented':
         heop=True
     return {"pell":pell,"tap":tap,"dream":dream,"heop":heop,"total":pell+tap+dream}
 
 def get_fit(sat, act, s, gpa=None):
-    # Test score based (most accurate)
+    uid = s.get('id')
+    
+    # 1. Test score based (most accurate)
     if sat and s.get('sat25') and s.get('sat75'):
         if sat >= s['sat75']: return 'safety'
         if sat >= s['sat25']: return 'match'
@@ -199,13 +226,30 @@ def get_fit(sat, act, s, gpa=None):
         if act >= s['act75']: return 'safety'
         if act >= s['act25']: return 'match'
         return 'reach'
-    # GPA + acceptance rate estimation
+
+    # 2. GPA data from CDS/SUNY PDF (second most accurate)
+    if gpa and uid and uid in GPA_DATA:
+        g = GPA_DATA[uid]
+        gpa_low  = g.get('gpa_low')
+        gpa_high = g.get('gpa_high')
+        gpa_avg  = g.get('gpa_avg')
+        if gpa_low and gpa_high:
+            if gpa >= gpa_high: return 'safety'
+            if gpa >= gpa_low:  return 'match'
+            if gpa >= gpa_low - 0.3: return 'reach'
+            return 'reach'
+        if gpa_avg:
+            if gpa >= gpa_avg + 0.2: return 'safety'
+            if gpa >= gpa_avg - 0.2: return 'match'
+            return 'reach'
+
+    # 3. GPA + acceptance rate fallback
     adm = s.get('adm')
     if gpa and adm:
         if adm >= 80: return 'safety'
         if adm >= 60: return 'safety' if gpa >= 3.0 else 'match'
-        if adm >= 40: return 'match' if gpa >= 2.8 else 'reach'
-        if adm >= 20: return 'match' if gpa >= 3.5 else 'reach'
+        if adm >= 40: return 'match'  if gpa >= 2.8 else 'reach'
+        if adm >= 20: return 'match'  if gpa >= 3.5 else 'reach'
         return 'reach'
     if adm:
         if adm >= 80: return 'safety'
@@ -602,28 +646,46 @@ with tab1:
                                 st.rerun()
 
                     # Build detailed fit explanation
+                    uid_s = s.get('id')
+                    gpa_info = GPA_DATA.get(uid_s) if uid_s else None
                     if sat and s.get('sat25') and s.get('sat75'):
                         if fit=='safety':
-                            st.success(f"✅ **Safety** — Your SAT {sat} is above their 75th percentile ({s['sat75']}). Strong match.")
+                            st.success(f"✅ **Safety** — Your SAT {sat} is above their 75th percentile ({int(s['sat75'])}). Strong match.")
                         elif fit=='match':
-                            st.info(f"🎯 **Match** — Your SAT {sat} falls in their middle range ({s['sat25']}–{s['sat75']}). Solid application should be competitive.")
+                            st.info(f"🎯 **Match** — Your SAT {sat} falls in their range ({int(s['sat25'])}–{int(s['sat75'])}). A solid application should be competitive.")
                         elif fit=='reach':
-                            st.warning(f"⚠️ **Reach** — Your SAT {sat} is below their 25th percentile ({s['sat25']}). A compelling essay and strong GPA can still get you in.")
+                            st.warning(f"⚠️ **Reach** — Your SAT {sat} is below their 25th percentile ({int(s['sat25'])}). A compelling essay can still get you in.")
                     elif act and s.get('act25') and s.get('act75'):
                         if fit=='safety':
                             st.success(f"✅ **Safety** — Your ACT {act} is above their 75th percentile ({int(s['act75'])}). Strong match.")
                         elif fit=='match':
-                            st.info(f"🎯 **Match** — Your ACT {act} falls in their middle range ({int(s['act25'])}–{int(s['act75'])}). Solid application should be competitive.")
+                            st.info(f"🎯 **Match** — Your ACT {act} falls in their range ({int(s['act25'])}–{int(s['act75'])}). A solid application should be competitive.")
                         elif fit=='reach':
-                            st.warning(f"⚠️ **Reach** — Your ACT {act} is below their 25th percentile ({int(s['act25'])}). A compelling essay and strong GPA can still get you in.")
+                            st.warning(f"⚠️ **Reach** — Your ACT {act} is below their 25th percentile ({int(s['act25'])}). A compelling essay can still get you in.")
+                    elif gpa_info and gpa_info.get('gpa_low') and gpa:
+                        glo = gpa_info['gpa_low']
+                        ghi = gpa_info['gpa_high']
+                        src = "SUNY 2025" if "SUNY" in gpa_info.get('source','') else "Common Data Set 2024-25"
+                        if fit=='safety':
+                            st.success(f"✅ **Safety** — Your GPA {gpa} is above their typical range ({glo}–{ghi}). Source: {src}.")
+                        elif fit=='match':
+                            st.info(f"🎯 **Match** — Your GPA {gpa} falls in their admitted range ({glo}–{ghi}). Source: {src}.")
+                        elif fit=='reach':
+                            st.warning(f"⚠️ **Reach** — Their typical admitted GPA is {glo}–{ghi}, yours is {gpa}. A strong application can still get you in.")
                     elif fit=='safety':
-                        st.success(f"✅ **Safety** — {s.get('adm','')}% acceptance rate. Your GPA puts you in a strong position here.")
+                        adm_val = s.get('adm')
+                        adm_str = f"{adm_val:.1f}%" if adm_val else "High"
+                        st.success(f"✅ **Safety** — {adm_str} acceptance rate. Your GPA puts you in a strong position here.")
                     elif fit=='match':
-                        st.info(f"🎯 **Match** — {s.get('adm','')}% acceptance rate. Your profile is competitive for this school.")
+                        adm_val = s.get('adm')
+                        adm_str = f"{adm_val:.1f}%" if adm_val else "Moderate"
+                        st.info(f"🎯 **Match** — {adm_str} acceptance rate. Your profile is competitive for this school.")
                     elif fit=='reach':
-                        st.warning(f"⚠️ **Reach** — {s.get('adm','') or 'Low'}% acceptance rate. Selective school — apply but have backups.")
+                        adm_val = s.get('adm')
+                        adm_str = f"{adm_val:.1f}%" if adm_val else "Low"
+                        st.warning(f"⚠️ **Reach** — {adm_str} acceptance rate. Selective school — apply with strong essays.")
                     elif fit=='unknown':
-                        st.caption("⚠️ Limited data available for this school — visit their website to confirm fit.")
+                        st.caption("⚠️ Limited data available — visit their website to confirm fit.")
                     st.divider()
 
 # ── TAB 2: CAREER ─────────────────────────────────────────────
