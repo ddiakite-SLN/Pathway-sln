@@ -74,12 +74,14 @@ def load_schools():
         except: s['grad'] = None
         try: s['adm'] = float(s['adm']) if s.get('adm') else None
         except: s['adm'] = None
-        try: s['gpa_avg'] = float(s['gpa_avg']) if s.get('gpa_avg') else None
-        except: s['gpa_avg'] = None
-        try: s['gpa_25'] = float(s['gpa_25']) if s.get('gpa_25') else None
-        except: s['gpa_25'] = None
-        try: s['gpa_75'] = float(s['gpa_75']) if s.get('gpa_75') else None
-        except: s['gpa_75'] = None
+        def safe_gpa(v):
+            try:
+                f = float(v)
+                return round(f, 2) if f == f and f > 0 else None  # f==f checks for NaN
+            except: return None
+        s['gpa_avg'] = safe_gpa(s.get('gpa_avg'))
+        s['gpa_25']  = safe_gpa(s.get('gpa_25'))
+        s['gpa_75']  = safe_gpa(s.get('gpa_75'))
     return schools
 
 @st.cache_data
@@ -221,19 +223,27 @@ def calculate_aid(income, hsize, ny_res, immig, first_gen):
     return {"pell":pell,"tap":tap,"dream":dream,"heop":heop,"total":pell+tap+dream}
 
 def get_fit(sat, act, s, gpa=None):
+    """
+    Determine Safety/Match/Reach using best available data.
+    Priority: SAT/ACT → Peterson's GPA range → acceptance rate
+    Only returns 'unknown' when truly no data exists.
+    """
     uid = s.get('id')
-    
-    # 1. Test score based (most accurate)
+    adm = s.get('adm')  # acceptance rate
+
+    # ── 1. SAT scores (most accurate) ─────────────────────────
     if sat and s.get('sat25') and s.get('sat75'):
         if sat >= s['sat75']: return 'safety'
         if sat >= s['sat25']: return 'match'
         return 'reach'
+
+    # ── 2. ACT scores ─────────────────────────────────────────
     if act and s.get('act25') and s.get('act75'):
         if act >= s['act75']: return 'safety'
         if act >= s['act25']: return 'match'
         return 'reach'
 
-    # 2. GPA data from Peterson's 2025 (in schools_full.csv)
+    # ── 3. Peterson's GPA percentile range ────────────────────
     if gpa:
         gpa_25 = s.get('gpa_25')
         gpa_75 = s.get('gpa_75')
@@ -246,67 +256,28 @@ def get_fit(sat, act, s, gpa=None):
             if gpa >= gpa_avg + 0.2: return 'safety'
             if gpa >= gpa_avg - 0.2: return 'match'
             return 'reach'
-        # Also check gpa_data.csv for SUNY schools
-        if uid and uid in GPA_DATA:
-            g = GPA_DATA[uid]
-            gpa_low = g.get('gpa_low')
-            gpa_high = g.get('gpa_high')
-            if gpa_low and gpa_high:
-                if gpa >= gpa_high: return 'safety'
-                if gpa >= gpa_low: return 'match'
-                return 'reach'
 
-    # 3. GPA + acceptance rate fallback
-    adm = s.get('adm')
-    if gpa and adm:
-        if adm >= 80: return 'safety'
-        if adm >= 60: return 'safety' if gpa >= 3.0 else 'match'
-        if adm >= 40: return 'match'  if gpa >= 2.8 else 'reach'
-        if adm >= 20: return 'match'  if gpa >= 3.5 else 'reach'
-        return 'reach'
-    if adm:
-        if adm >= 80: return 'safety'
-        if adm >= 50: return 'match'
-        return 'reach'
+    # ── 4. SUNY/CDS GPA data ──────────────────────────────────
+    if gpa and uid and uid in GPA_DATA:
+        g = GPA_DATA[uid]
+        gpa_low = g.get('gpa_low')
+        gpa_high = g.get('gpa_high')
+        if gpa_low and gpa_high:
+            if gpa >= gpa_high: return 'safety'
+            if gpa >= gpa_low:  return 'match'
+            return 'reach'
+
+    # ── 5. Acceptance rate fallback (honest and simple) ───────
+    # These cutoffs match what Niche and CollegeVine use
+    if adm is not None:
+        if adm >= 75: return 'safety'    # very likely to get in
+        if adm >= 40: return 'match'     # competitive but realistic
+        if adm >= 15: return 'reach'     # selective
+        return 'reach'                   # highly selective
+
+    # ── 6. No data at all ─────────────────────────────────────
     return 'unknown'
 
-def run_match(gpa, sat, act, state, size, ctrl, need, env, study_yrs, aid, n):
-    size_codes={'any':[1,2,3,4,5],'small':[1,2],'medium':[3,4],'large':[5]}.get(size,[1,2,3,4,5])
-    ctrl_codes={'any':[1,2,3,'1','2','3'],'public':[1,'1'],'private':[2,'2'],'any_str':['1','2','3']}.get(ctrl,[1,2])
-    results=[]
-    for s in SCHOOLS:
-        if state!='any' and s['state'].lower()!=state.lower(): continue
-        if s['size'] not in size_codes: continue
-        # Handle ctrl as both int and string
-        s_ctrl = s.get('ctrl')
-        try: s_ctrl = int(s_ctrl)
-        except: pass
-        if ctrl == 'public' and s_ctrl not in [1, '1']: continue
-        if ctrl == 'private' and s_ctrl not in [2, '2']: continue
-        tin = s.get('tin') or 0
-        if tin <= 0: continue  # skip schools with no tuition data
-        if s.get('size', 0) < 0: continue  # skip invalid size codes
-        if need=='full' and tin > 55000: continue
-        if env=='hbcu' and not s.get('hbcu'): continue
-        # If student wants 4yr, filter out 2yr schools
-        if study_yrs=='4yr' and s.get('yr2'): continue
-        # If student wants 2yr, only show 2yr schools
-        if study_yrs=='2yr' and not s.get('yr2'): continue
-        # Default: filter out 2yr schools unless student wants them
-        if study_yrs=='any' and s.get('yr2'): continue
-        fit=get_fit(sat,act,s,gpa)
-        net=max(0, tin - aid['total']) if tin > 0 else None
-        results.append({**s,'fit':fit,'net':net})
-    results.sort(key=lambda x:(x['net'] is None, x['net'] or 999999))
-    return results[:n]
-
-def score_career(career, profile):
-    score=0.0; max_score=0.0
-    for key,w in [('traits',10),('values',15),('styles',8)]:
-        for k,cv in career[key].items():
-            pv=profile.get(k,0); max_score+=w
-            score+=(1-abs(min(pv/15.0,1.0)-cv/5.0))*w
-    return round((score/max_score)*100) if max_score>0 else 0
 
 def score_career_onet(career, profile):
     """
@@ -1042,3 +1013,4 @@ with tab4:
 
 st.divider()
 st.caption("Pathways by SLN · IPEDS 2023-24 · Aid thresholds 2025-26 · Verify all deadlines on official college websites")
+        
