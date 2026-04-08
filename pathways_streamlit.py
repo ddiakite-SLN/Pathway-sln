@@ -356,25 +356,43 @@ def get_fit(sat, act, s, gpa=None):
 # Based on Hossler & Gallagher (1987) college choice literature
 # ════════════════════════════════════════════════════════════
 def get_env_fit(s, env_pref, school_size, school_type):
-    """Returns environment fit tags for a school"""
+    """
+    Environmental fit — separate from academic match.
+    Based on Hossler & Gallagher (1987) college choice literature:
+    'fit' = alignment between student preferences and institutional characteristics.
+    Returns list of environment descriptor tags.
+    """
     tags = []
-    # Size fit
-    size = s.get('size', 0)
-    size_label = {1:'Very small (<1k)', 2:'Small (1-5k)', 3:'Medium (5-15k)', 4:'Large (15-30k)', 5:'Very large (30k+)'}.get(size, '')
-    if size_label: tags.append(size_label)
-    # Type
     ctrl = s.get('ctrl')
     try: ctrl = int(ctrl)
     except: pass
+
+    # Institutional type
     if ctrl == 1: tags.append('Public')
-    elif ctrl == 2: tags.append('Private')
-    # Special
+    elif ctrl == 2: tags.append('Private nonprofit')
+    elif ctrl == 3: tags.append('For-profit')
+
+    # Size descriptor (IPEDS size categories)
+    size = s.get('size', 0)
+    size_labels = {
+        1: 'Very small (<1k students)',
+        2: 'Small (1–5k students)',
+        3: 'Medium (5–15k students)',
+        4: 'Large (15–30k students)',
+        5: 'Very large (30k+ students)'
+    }
+    if size in size_labels: tags.append(size_labels[size])
+
+    # Mission / identity
     if s.get('hbcu'): tags.append('HBCU')
     if s.get('womens'): tags.append("Women's college")
-    # Grad rate signal
-    grad = s.get('grad') or 0
-    if grad >= 80: tags.append('High grad rate')
-    elif grad >= 60: tags.append('Moderate grad rate')
+
+    # Outcomes signal
+    grad = float(s.get('grad') or 0)
+    if grad >= 80: tags.append(f'{int(grad)}% grad rate')
+    elif grad >= 60: tags.append(f'{int(grad)}% grad rate')
+    elif grad > 0: tags.append(f'{int(grad)}% grad rate')
+
     return tags
 
 # ════════════════════════════════════════════════════════════
@@ -686,6 +704,37 @@ def generate_pdf(my_list, aid, career_top, gpa, sat, act):
         return None
 
 # ── CAREER MAPS ───────────────────────────────────────────────
+# ════════════════════════════════════════════════════════════
+# SECTION 7b: EOP / OPPORTUNITY PROGRAMS DATA
+# EOP = Educational Opportunity Program (SUNY system)
+# Source: Alex H. file — eop_schools.csv
+# Format: unitid, school_name, program_name, program_type
+# program_type: EOP | HEOP | SEEK | CD | AIM
+# To activate: upload eop_schools.csv to GitHub repo
+# Contact: ahawn@studentleadershipnetwork.org
+# ════════════════════════════════════════════════════════════
+def load_eop_data():
+    import os, csv
+    eop = {}  # unitid -> list of program names
+    if not os.path.exists('eop_schools.csv'):
+        return eop
+    try:
+        with open('eop_schools.csv', encoding='utf-8-sig') as f:
+            for row in csv.DictReader(f):
+                uid = str(row.get('unitid','')).strip()
+                prog = str(row.get('program_type','EOP')).strip()
+                if uid:
+                    if uid not in eop:
+                        eop[uid] = []
+                    eop[uid].append(prog)
+    except Exception as e:
+        pass
+    return eop
+
+EOP_DATA = load_eop_data()
+if EOP_DATA:
+    print(f"EOP data loaded: {len(EOP_DATA)} schools")
+
 # ── SLN School Whitelist ─────────────────────────────────────
 # Schools that should always appear in results for NY students
 # regardless of other filters — key partner/recommended schools
@@ -833,9 +882,11 @@ with st.sidebar:
     school_type = st.selectbox("School type",["Any","Public","Private"], key="school_type")
     env_pref    = st.selectbox("Campus environment",["Any","HBCU","Women's College","Diverse"], key="campus_env")
 
-    st.markdown("**🔍 Data filters**")
-    only_gpa_data    = st.checkbox("Only schools with GPA data", value=False, key="filter_gpa")
-    only_adm_data    = st.checkbox("Only schools with acceptance rate", value=False, key="filter_adm")
+    st.markdown("**🔍 Data quality filters**")
+    only_gpa_data = st.checkbox("Only schools with verified GPA ranges", value=False, key="filter_gpa",
+        help="Shows only schools where Peterson's 2025 has admitted GPA data — more accurate Safety/Match/Reach")
+    only_adm_data = st.checkbox("Only schools with published acceptance rate", value=False, key="filter_adm",
+        help="Hides schools that don't publish how many students they accept")
     study_yrs   = st.selectbox("Degree level",["Any","Associate's (2 yr)","Bachelor's or higher (4 yr+)"], key="study_yrs")
     n_results   = st.select_slider("Number of results",[5,10,15,20],10, key="n_results_slider")
 
@@ -956,22 +1007,43 @@ with tab1:
                         if _majors_typed and s.get('major_cips'):
                             st.success(f"✅ Confirmed offers: {_majors_typed}")
                         adm_val = s.get('adm'); adm_display = f"{float(adm_val):.1f}% acceptance" if adm_val and adm_val == adm_val else "Acceptance rate N/A"
+                        env_tags = get_env_fit(s, env_pref, school_size, school_type)
                         env_tag_str = ' · '.join(env_tags[:3]) if env_tags else ''
                         st.caption(f"{s.get('city','')}, {s['state']} · {adm_display} · {env_tag_str}" + (" · 🏛️ HBCU" if s.get('hbcu') else ""))
                         # Academic match (how likely to get in)
                         fit_label = {'safety':'✅ Safety','match':'🎯 Match','reach':'⚠️ Reach','unknown':'⚪ Limited data'}.get(fit, fit)
                         acad_chips = f"`{fit_label}`"
-                        if s.get('sat25'): acad_chips += f"  `SAT {s['sat25']}–{s['sat75']}`"
-                        if s.get('act25'): acad_chips += f"  `ACT {s['act25']}–{s['act75']}`"
-                        if s.get('gpa_25'): acad_chips += f"  `Avg GPA {s['gpa_25']}–{s['gpa_75']}`"
-                        st.markdown(acad_chips)
-                        # Aid + env chips
+                        # Show what data source determined the fit
+                        if s.get('sat25') and sat:
+                            acad_chips += f"  `SAT {s['sat25']}–{s['sat75']}`"
+                            acad_chips += "  `📊 Based on your SAT`"
+                        elif s.get('act25') and act:
+                            acad_chips += f"  `ACT {s['act25']}–{s['act75']}`"
+                            acad_chips += "  `📊 Based on your ACT`"
+                        elif s.get('gpa_25') and gpa:
+                            acad_chips += f"  `GPA range {s['gpa_25']}–{s['gpa_75']}`"
+                            acad_chips += "  `📊 Peterson's 2025`"
+                        elif s.get('gpa_avg') and gpa:
+                            acad_chips += f"  `Avg GPA {s['gpa_avg']}`"
+                            acad_chips += "  `📊 Peterson's 2025`"
+                        elif s.get('adm'):
+                            acad_chips += f"  `{s['adm']:.0f}% acceptance`"
+                            acad_chips += "  `📊 Acceptance rate`"
+                        else:
+                            acad_chips += "  `⚠️ Limited data`"
+                        st.markdown(f"**Academic match:** {acad_chips}")
+                        # Aid eligibility + environment fit chips
                         aid_chips = ""
                         if aid['tap']>0 and s['state']=='NY': aid_chips += "  `TAP eligible`"
                         if aid['heop'] and s['state']=='NY': aid_chips += "  `HEOP`"
+                        # EOP/SEEK/CD programs from Alex H. data
+                        school_uid = str(s.get('id',''))
+                        if school_uid in EOP_DATA:
+                            for prog in EOP_DATA[school_uid]:
+                                aid_chips += f"  `{prog}`"
                         if s.get('hbcu'): aid_chips += "  `HBCU`"
                         if s.get('womens'): aid_chips += "  `Women's college`"
-                        if aid_chips: st.markdown(aid_chips.strip())
+                        if aid_chips: st.markdown(f"**Aid & fit:** {aid_chips.strip()}")
                     with cb:
                         sticker = int(s.get('tin') or 0)
                         st.markdown(f"**Sticker:** ${sticker:,}" if sticker else "")
