@@ -295,12 +295,186 @@ def score_career(career, profile):
             score+=(1-abs(min(pv/15.0,1.0)-cv/5.0))*w
     return round((score/max_score)*100) if max_score>0 else 0
 
+def score_career_onet(career, profile):
+    """
+    Score a career using O*NET RIASEC interest codes and work values.
+    Maps student answers to Holland codes for accurate matching.
+    """
+    score = 0.0
+    max_score = 0.0
+
+    # Map student profile traits to RIASEC Holland codes
+    # R=Realistic(hands-on), I=Investigative(analytical), A=Artistic(creative)
+    # S=Social(helping), E=Enterprising(leadership), C=Conventional(detail/data)
+    
+    # Get career RIASEC scores (0-7 scale from O*NET)
+    R = float(career.get('interest_realistic') or 0)
+    I = float(career.get('interest_investigative') or 0)
+    A = float(career.get('interest_artistic') or 0)
+    S = float(career.get('interest_social') or 0)
+    E = float(career.get('interest_enterprising') or 0)
+    C = float(career.get('interest_conventional') or 0)
+
+    # Map student profile to RIASEC Holland codes
+    # Use max of contributing traits to avoid dilution
+    p_R = max(profile.get('physical',0), profile.get('building',0), profile.get('outdoors',0))
+    p_I = max(profile.get('science',0), profile.get('data',0), profile.get('analyzing',0))
+    p_A = max(profile.get('creativity',0), profile.get('creating',0))
+    p_S = max(profile.get('helping',0), profile.get('people',0), profile.get('teaching',0))
+    p_E = max(profile.get('leadership',0), profile.get('business',0))
+    p_C = max(profile.get('data',0), profile.get('routine',0), profile.get('stability',0))
+
+    # Normalize to 0-7 scale
+    norm = lambda x: min(x/9.0, 1.0) * 7
+    p_R_n = norm(p_R)
+    p_I_n = norm(p_I)
+    p_A_n = norm(p_A)
+    p_S_n = norm(p_S)
+    p_E_n = norm(p_E)
+    p_C_n = norm(p_C)
+
+    # RIASEC match (primary scoring - 60 points)
+    for p_val, c_val in [(p_R_n,R),(p_I_n,I),(p_A_n,A),(p_S_n,S),(p_E_n,E),(p_C_n,C)]:
+        max_score += 10
+        score += (1 - abs(p_val - c_val)/7.0) * 10
+
+    # Work values match (secondary - 25 points)
+    ach = float(career.get('value_achievement') or 0)
+    ind = float(career.get('value_independence') or 0)
+    rec = float(career.get('value_recognition') or 0)
+    rel = float(career.get('value_relationships') or 0)
+    
+    p_ach = min(profile.get('impact',0)/9.0, 1.0) * 7
+    p_ind = min(profile.get('autonomy',0)/9.0, 1.0) * 7
+    p_rec = min(profile.get('prestige',0)/9.0, 1.0) * 7
+    p_rel = min(profile.get('people',0)/9.0, 1.0) * 7
+
+    for p_val, c_val in [(p_ach,ach),(p_ind,ind),(p_rec,rec),(p_rel,rel)]:
+        max_score += 6
+        score += (1 - abs(p_val - c_val)/7.0) * 6
+
+    # Income preference match (15 points)
+    salary = float(career.get('median_annual') or 0)
+    income_pref = profile.get('income', 0)
+    if income_pref > 0 and salary > 0:
+        sal_norm = min(salary/150000.0, 1.0)
+        inc_norm = min(income_pref/9.0, 1.0)
+        max_score += 15
+        score += (1 - abs(sal_norm - inc_norm)) * 15
+    
+    # Education/study willingness match
+    jzone = int(career.get('job_zone') or 3)
+    y2 = profile.get('y2', 0)
+    y4 = profile.get('y4', 0)
+    ygrad = profile.get('ygrad', 0)
+    
+    if jzone <= 2 and y2 > 0:
+        score += 5
+    elif jzone == 3 and y4 > 0:
+        score += 5
+    elif jzone >= 4 and ygrad > 0:
+        score += 5
+    elif jzone == 3:
+        score += 3  # neutral match for 4yr schools
+    max_score += 5
+
+    return round((score/max_score)*100) if max_score > 0 else 0
+    score = 0.0
+    max_score = 0.0
+    field = str(career.get('field','')).lower()
+    education = str(career.get('education','')).lower()
+    growth = str(career.get('growth_pct','')).replace('%','').replace('N/A','0')
+    try: growth_val = float(growth)
+    except: growth_val = 0
+
+    # Match field to student interests
+    field_map = {
+        'healthcare': ['helping','people','science','physical'],
+        'technology': ['data','analyzing','building','creating'],
+        'education': ['teaching','people','helping'],
+        'mental health': ['helping','people'],
+        'social services': ['helping','people','impact'],
+        'engineering': ['building','science','data','outdoors'],
+        'business & finance': ['business','data','leadership'],
+        'business': ['business','leadership','data'],
+        'marketing & communications': ['creating','people','creativity'],
+        'marketing': ['creating','people','creativity'],
+        'law & justice': ['analyzing','leadership','data'],
+        'criminal justice': ['physical','leadership','outdoors'],
+        'arts & media': ['creating','creativity'],
+        'media': ['creating','creativity','people'],
+        'science & research': ['science','data','analyzing'],
+        'skilled trades': ['physical','building','outdoors'],
+        'public health': ['helping','people','science','data'],
+        'sports & fitness': ['physical','people','outdoors'],
+        'culinary arts': ['creating','physical'],
+        'agriculture': ['outdoors','science','physical'],
+        'transportation': ['physical','outdoors'],
+        'architecture': ['creating','building','science'],
+        'communications': ['people','creating'],
+        'hospitality': ['people','creating'],
+        'government': ['leadership','data'],
+        'personal care': ['people','physical'],
+    }
+    
+    relevant_traits = field_map.get(field, [])
+    for trait in relevant_traits:
+        pv = profile.get(trait, 0)
+        max_score += 10
+        score += min(pv / 5.0, 1.0) * 10
+
+    # Education preference match
+    study_pref = profile.get('y4', 0) + profile.get('ygrad', 0) * 2 + profile.get('y2', 0) * 0.5
+    if 'doctoral' in education or 'professional' in education:
+        edu_score = profile.get('ygrad', 0) / 3.0
+    elif "master" in education:
+        edu_score = (profile.get('ygrad', 0) + profile.get('y4', 0)) / 6.0
+    elif "bachelor" in education:
+        edu_score = profile.get('y4', 0) / 3.0
+    elif "associate" in education or "certificate" in education:
+        edu_score = (profile.get('y2', 0) + profile.get('y4', 0)) / 6.0
+    else:
+        edu_score = 0.5
+    max_score += 15
+    score += edu_score * 15
+
+    # Income priority match
+    salary = career.get('median_annual', 0) or 0
+    income_pref = profile.get('income', 0)
+    if income_pref > 0:
+        salary_norm = min(salary / 150000.0, 1.0)
+        pref_norm = min(income_pref / 9.0, 1.0)
+        max_score += 15
+        score += (1 - abs(salary_norm - pref_norm)) * 15
+
+    # Growth / stability match
+    stability_pref = profile.get('stability', 0)
+    if stability_pref > 0 and growth_val >= 0:
+        growth_norm = min(growth_val / 30.0, 1.0)
+        stability_norm = min(stability_pref / 9.0, 1.0)
+        max_score += 10
+        score += (stability_norm * 0.5 + growth_norm * 0.5) * 10
+
+    # Impact preference
+    impact_pref = profile.get('impact', 0)
+    helping_fields = ['healthcare','social services','mental health','education','public health']
+    if impact_pref > 0 and any(f in field for f in helping_fields):
+        max_score += 10
+        score += min(impact_pref / 9.0, 1.0) * 10
+
+    return round((score / max_score) * 100) if max_score > 0 else 0
+
 def run_career_match(answers):
     profile={}
     for vals in answers.values():
         for k,v in vals.items(): profile[k]=profile.get(k,0)+v
-    scored=[{**c,'fit':score_career(c,profile)} for c in CAREERS]
-    return sorted(scored,key=lambda x:x['fit'],reverse=True)
+    # Use CAREERS_FULL from CSV if available, else fall back to hardcoded
+    career_list = CAREERS_FULL if CAREERS_FULL else CAREERS
+    scored=[]
+    for c in career_list:
+        fit = score_career_onet(c, profile) if CAREERS_FULL else score_career(c, profile)
+        scored.append({**c, 'fit': fit})
+    return sorted(scored, key=lambda x: x['fit'], reverse=True)
 
 # ── PDF GENERATOR ─────────────────────────────────────────────
 def generate_pdf(my_list, aid, career_top, gpa, sat, act):
@@ -700,29 +874,57 @@ with tab2:
         # Show BLS career database stats
         if CAREERS_FULL:
             st.caption(f"Career matching from {len(CAREERS_FULL)} occupations across {len(set(c['field'] for c in CAREERS_FULL))} fields — BLS Occupational Employment Statistics 2023")
+        t_name = t.get('name') or t.get('title','')
+        t_icon = t.get('icon','💼')
+        t_why = t.get('why') or t.get('field','')
+        t_sal = t.get('salary_mid') or t.get('median_annual') or 0
+        try: t_sal_int = int(float(t_sal))
+        except: t_sal_int = 0
+        t_growth = t.get('growth') or t.get('growth_pct','N/A')
+        t_demand = t.get('demand') or t.get('outlook','N/A')
         st.markdown(f"""
         <div style="background:#0D1B2A;border-radius:12px;padding:22px 26px;margin-bottom:20px;color:white">
             <div style="font-size:11px;opacity:.4;margin-bottom:4px;letter-spacing:1px;text-transform:uppercase">Your best match</div>
-            <div style="font-size:26px;font-family:Georgia,serif;margin-bottom:5px">{t['icon']} {t['name']}</div>
-            <div style="font-size:13px;opacity:.55;margin-bottom:12px">{t['why']}</div>
-            <span style="color:#E8AD58;font-size:20px;font-weight:700">${t['salary_mid']:,}/yr avg</span>
+            <div style="font-size:26px;font-family:Georgia,serif;margin-bottom:5px">{t_icon} {t_name}</div>
+            <div style="font-size:13px;opacity:.55;margin-bottom:12px">{t_why}</div>
+            <span style="color:#E8AD58;font-size:20px;font-weight:700">${t_sal_int:,}/yr avg</span>
             &nbsp;&nbsp;
-            <span style="background:rgba(42,96,73,.4);padding:4px 12px;border-radius:8px;font-size:12px">{t['growth']} job growth</span>
+            <span style="background:rgba(42,96,73,.4);padding:4px 12px;border-radius:8px;font-size:12px">{t_growth} job growth</span>
             &nbsp;
-            <span style="background:rgba(255,255,255,.1);padding:4px 12px;border-radius:8px;font-size:12px">{t['demand']} demand</span>
+            <span style="background:rgba(255,255,255,.1);padding:4px 12px;border-radius:8px;font-size:12px">{t_demand} demand</span>
         </div>
         """, unsafe_allow_html=True)
         st.caption("Results update live as you change your answers on the left")
         for c in career_results[:10]:
-            with st.expander(f"{c['icon']} {c['name']}  —  **{c['fit']}% match** · ${c['salary_mid']:,}/yr"):
+            # Handle both hardcoded and CSV career formats
+            name = c.get('name') or c.get('title','Unknown')
+            icon = c.get('icon','💼')
+            sal_mid = c.get('salary_mid') or c.get('median_annual') or 0
+            sal_entry = c.get('salary_entry') or c.get('entry_annual') or 0
+            sal_senior = c.get('salary_senior') or c.get('experienced_annual') or 0
+            growth = c.get('growth') or c.get('growth_pct','N/A')
+            demand = c.get('demand') or c.get('outlook','N/A')
+            field = c.get('field','N/A')
+            education = c.get('education','N/A')
+            fit = c.get('fit',0)
+            try: sal_mid_int = int(float(sal_mid)) if sal_mid else 0
+            except: sal_mid_int = 0
+            try: sal_entry_int = int(float(sal_entry)) if sal_entry else 0
+            except: sal_entry_int = 0
+            try: sal_senior_int = int(float(sal_senior)) if sal_senior else 0
+            except: sal_senior_int = 0
+
+            with st.expander(f"{icon} {name}  —  **{fit}% match** · ${sal_mid_int:,}/yr"):
                 c1,c2,c3=st.columns(3)
-                c1.metric("Entry",f"${c['salary_entry']:,}")
-                c2.metric("Mid career",f"${c['salary_mid']:,}")
-                c3.metric("Senior",f"${c['salary_senior']:,}")
-                st.progress(c['fit']/100)
-                st.markdown(f"**A day in the life:** {c['day']}")
-                st.markdown(f"**Majors:** {', '.join(c['majors'])}")
-                st.caption(f"Growth: {c['growth']} · Demand: {c['demand']}")
+                c1.metric("Entry", f"${sal_entry_int:,}")
+                c2.metric("Mid career", f"${sal_mid_int:,}")
+                c3.metric("Senior", f"${sal_senior_int:,}")
+                st.progress(fit/100)
+                if c.get('day'):
+                    st.markdown(f"**A day in the life:** {c['day']}")
+                if c.get('majors'):
+                    st.markdown(f"**Majors:** {', '.join(c['majors'])}")
+                st.caption(f"Field: {field} · Growth: {growth} · Demand: {demand} · Education: {education}")
 
 # ── TAB 3: AID ────────────────────────────────────────────────
 with tab3:
