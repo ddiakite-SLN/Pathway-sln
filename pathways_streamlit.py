@@ -1013,4 +1013,3 @@ with tab4:
 
 st.divider()
 st.caption("Pathways by SLN · IPEDS 2023-24 · Aid thresholds 2025-26 · Verify all deadlines on official college websites")
-        
