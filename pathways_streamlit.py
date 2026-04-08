@@ -1075,16 +1075,129 @@ with tab1:
                 key="career_search")
 
             if search_career:
+                # Alias map — maps what students type to O*NET job titles
+                SEARCH_ALIASES = {
+                    # Engineering
+                    "computer engineering": ["computer hardware", "computer systems", "software"],
+                    "computer engineer": ["computer hardware engineer", "computer systems"],
+                    "software engineering": ["software developer", "software engineer", "computer programmer"],
+                    "electrical engineering": ["electrical engineer", "electronics engineer"],
+                    "mechanical engineering": ["mechanical engineer"],
+                    "civil engineering": ["civil engineer"],
+                    "chemical engineering": ["chemical engineer"],
+                    "biomedical engineering": ["biomedical engineer", "medical scientist"],
+                    "aerospace engineering": ["aerospace engineer"],
+                    "industrial engineering": ["industrial engineer"],
+                    "environmental engineering": ["environmental engineer", "environmental scientist"],
+                    # Technology
+                    "computer science": ["software developer", "computer systems analyst", "data scientist"],
+                    "information technology": ["network administrator", "computer support", "it manager"],
+                    "cybersecurity": ["information security", "cybersecurity", "network security"],
+                    "data science": ["data scientist", "statistician", "data analyst"],
+                    "web development": ["web developer", "software developer"],
+                    "coding": ["software developer", "computer programmer", "web developer"],
+                    # Healthcare
+                    "nursing": ["registered nurse", "nurse practitioner", "licensed practical"],
+                    "pre-med": ["physician", "doctor", "medical scientist", "physician assistant"],
+                    "pre-medicine": ["physician", "doctor", "medical scientist"],
+                    "medicine": ["physician", "surgeon", "doctor"],
+                    "pharmacy": ["pharmacist", "pharmacy technician"],
+                    "physical therapy": ["physical therapist", "occupational therapist"],
+                    "occupational therapy": ["occupational therapist"],
+                    "dental": ["dentist", "dental hygienist"],
+                    "public health": ["health educator", "epidemiologist", "public health"],
+                    "nutrition": ["dietitian", "nutritionist"],
+                    # Business
+                    "business": ["financial analyst", "marketing manager", "management analyst", "business"],
+                    "business administration": ["operations manager", "business analyst", "management"],
+                    "finance": ["financial analyst", "financial manager", "accountant", "financial advisor"],
+                    "accounting": ["accountant", "auditor", "tax"],
+                    "marketing": ["marketing manager", "market research", "advertising"],
+                    "economics": ["economist", "financial analyst", "economic"],
+                    "management": ["operations manager", "management analyst", "general manager"],
+                    "human resources": ["human resources", "hr specialist", "recruiting"],
+                    "entrepreneurship": ["entrepreneur", "business owner", "operations manager"],
+                    # Social Sciences
+                    "psychology": ["psychologist", "counselor", "therapist", "mental health"],
+                    "social work": ["social worker", "counselor", "case manager"],
+                    "sociology": ["sociologist", "community service", "social worker"],
+                    "criminal justice": ["police officer", "detective", "probation", "criminal"],
+                    "political science": ["political scientist", "policy analyst", "lawyer"],
+                    "law": ["lawyer", "attorney", "paralegal", "judge"],
+                    "pre-law": ["lawyer", "attorney", "paralegal"],
+                    # Education
+                    "education": ["teacher", "school counselor", "principal", "instructional"],
+                    "teaching": ["teacher", "educator", "instructor"],
+                    "early childhood": ["preschool teacher", "childcare"],
+                    "special education": ["special education teacher"],
+                    # Arts & Media
+                    "graphic design": ["graphic designer", "art director", "ux designer"],
+                    "communication": ["public relations", "journalist", "communications"],
+                    "journalism": ["reporter", "journalist", "editor", "writer"],
+                    "film": ["producer", "director", "film"],
+                    "music": ["musician", "music director", "music teacher"],
+                    "theater": ["actor", "director", "theater"],
+                    "architecture": ["architect", "urban planner"],
+                    "interior design": ["interior designer"],
+                    # Science
+                    "biology": ["biologist", "biological scientist", "microbiologist"],
+                    "chemistry": ["chemist", "chemical engineer"],
+                    "environmental science": ["environmental scientist", "conservationist"],
+                    "marine biology": ["marine biologist", "zoologist"],
+                    "forensic science": ["forensic scientist", "detective"],
+                    # Trades
+                    "construction": ["construction manager", "carpenter", "electrician"],
+                    "electrician": ["electrician", "electrical technician"],
+                    "culinary": ["chef", "cook", "food service"],
+                    "hospitality": ["hotel manager", "food service manager", "chef"],
+                    "fashion": ["fashion designer", "merchandise buyer"],
+                    # Sports & Fitness
+                    "kinesiology": ["physical therapist", "athletic trainer", "fitness"],
+                    "sports management": ["sports manager", "athletic director"],
+                    "athletic training": ["athletic trainer", "physical therapist"],
+                }
+
                 search_lower = search_career.lower().strip()
+
+                # Check aliases first
+                alias_terms = []
+                for alias_key, alias_vals in SEARCH_ALIASES.items():
+                    if alias_key in search_lower or search_lower in alias_key:
+                        alias_terms.extend(alias_vals)
+
+                search_words = [w for w in search_lower.split() if len(w) > 2]
                 matches = []
+                exact = []
+                partial = []
+                seen = set()
                 for c in (CAREERS_FULL or []):
                     title = str(c.get('title','')).lower()
                     field_c = str(c.get('field','')).lower()
-                    desc_c = str(c.get('description','')).lower()
-                    if (search_lower in title or
-                        any(w in title for w in search_lower.split() if len(w)>3) or
-                        search_lower in field_c):
-                        matches.append(c)
+                    soc = c.get('soc_code','')
+                    if soc in seen: continue
+
+                    # Alias matches (highest priority)
+                    if alias_terms and any(term in title for term in alias_terms):
+                        exact.append(c)
+                        seen.add(soc)
+                    # Exact phrase match
+                    elif search_lower in title:
+                        exact.append(c)
+                        seen.add(soc)
+                    # All words match
+                    elif search_words and all(w in title for w in search_words):
+                        exact.append(c)
+                        seen.add(soc)
+                    # Any word match in title
+                    elif any(w in title for w in search_words):
+                        partial.append(c)
+                        seen.add(soc)
+                    # Field match
+                    elif search_lower in field_c:
+                        partial.append(c)
+                        seen.add(soc)
+                # Exact/alias matches first, then partial
+                matches = exact + partial
 
                 if not matches:
                     st.warning(f"No exact match for '{search_career}' in our database.")
@@ -1099,9 +1212,16 @@ with tab1:
                     career = matches[0]
                     title = career.get('title','')
                     field = career.get('field','')
+                    FIELD_AVG = {'Arts & Media': 72460, 'Business & Finance': 84005, 'Construction & Trades': 61550, 'Criminal Justice': 67290, 'Culinary Arts': 56520, 'Education': 62615, 'Engineering': 98176, 'Healthcare': 102084, 'Law & Justice': 139540, 'Management': 144658, 'Personal Care': 44160, 'Science & Research': 92995, 'Social Services': 57458, 'Technology': 115734, 'Transportation': 158115, 'Other': 65000}
                     sal_mid = int(float(career.get('median_annual',0) or 0))
                     sal_entry = int(float(career.get('entry_annual',0) or 0))
                     sal_senior = int(float(career.get('experienced_annual',0) or 0))
+                    # Use field average if no individual salary
+                    if not sal_mid:
+                        _favg = FIELD_AVG.get(field, 65000)
+                        sal_mid = _favg
+                        sal_entry = int(_favg * 0.65)
+                        sal_senior = int(_favg * 1.45)
                     growth = career.get('growth_pct','N/A')
                     outlook = career.get('outlook','N/A')
                     education = career.get('education','N/A')
