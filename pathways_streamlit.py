@@ -724,7 +724,7 @@ with st.sidebar:
 
     st.markdown("### 📚 Academics")
     gpa = st.slider("Unweighted GPA", 0.0, 4.0, 3.0, 0.1, key="gpa_slider")
-    score_type = st.selectbox("Test scores", ["None (test-optional)","SAT","ACT"])
+    score_type = st.selectbox("Test scores", ["None (test-optional)","SAT","ACT"], key="test_scores")
     sat = act = None
     if score_type == "SAT":
         sat = st.number_input("SAT Score", 400, 1600, 1100, 10)
@@ -738,32 +738,32 @@ with st.sidebar:
         "📚 Majors you're interested in",
         placeholder="e.g. Nursing, Computer Science, Business",
         help="Add one or more majors — we'll show careers that match"
-    )
+    , key="majors_input")
 
     st.caption("Or answer these questions to discover careers:")
-    q1 = st.selectbox("What excites you most?",["— Select an answer —"] + list(CAREER_MAPS['i1'].keys()))
-    q2 = st.selectbox("What matters most in a career?",["— Select an answer —"] + list(CAREER_MAPS['i2'].keys()))
-    q3 = st.selectbox("Where do you want to work?",["— Select an answer —"] + list(CAREER_MAPS['i3'].keys()))
-    q4 = st.selectbox("Best subject in school?",["— Select an answer —"] + list(CAREER_MAPS['i4'].keys()))
-    q5 = st.selectbox("How long willing to study?",["— Select an answer —"] + list(CAREER_MAPS['i5'].keys()))
-    q6 = st.selectbox("Which describes you best?",["— Select an answer —"] + list(CAREER_MAPS['i6'].keys()))
-    q7 = st.selectbox("In 10 years I see myself...",["— Select an answer —"] + list(CAREER_MAPS['i7'].keys()))
-    q8 = st.selectbox("Best work environment?",["— Select an answer —"] + list(CAREER_MAPS['i8'].keys()))
+    q1 = st.selectbox("What excites you most?",["— Select an answer —"] + list(CAREER_MAPS['i1'].keys()), key="q1")
+    q2 = st.selectbox("What matters most in a career?",["— Select an answer —"] + list(CAREER_MAPS['i2'].keys()), key="q2")
+    q3 = st.selectbox("Where do you want to work?",["— Select an answer —"] + list(CAREER_MAPS['i3'].keys()), key="q3")
+    q4 = st.selectbox("Best subject in school?",["— Select an answer —"] + list(CAREER_MAPS['i4'].keys()), key="q4")
+    q5 = st.selectbox("How long willing to study?",["— Select an answer —"] + list(CAREER_MAPS['i5'].keys()), key="q5")
+    q6 = st.selectbox("Which describes you best?",["— Select an answer —"] + list(CAREER_MAPS['i6'].keys()), key="q6")
+    q7 = st.selectbox("In 10 years I see myself...",["— Select an answer —"] + list(CAREER_MAPS['i7'].keys()), key="q7")
+    q8 = st.selectbox("Best work environment?",["— Select an answer —"] + list(CAREER_MAPS['i8'].keys()), key="q8")
 
     st.markdown("### 💰 Financial Aid")
     income    = st.number_input("Annual household income ($)", 0, 500000, 42000, 1000)
     hsize     = st.slider("Household size", 1, 10, 4, key="household_slider")
-    ny_res    = st.checkbox("NY State resident (12+ months)", value=True)
-    immig     = st.selectbox("Immigration/citizenship status",list(IMMIG_MAP.keys()))
-    first_gen = st.checkbox("First-generation college student", value=True)
+    ny_res    = st.checkbox("NY State resident (12+ months)", value=True, key="ny_res")
+    immig     = st.selectbox("Immigration/citizenship status",list(IMMIG_MAP.keys()), key="immig")
+    first_gen = st.checkbox("First-generation college student", value=True, key="first_gen")
 
     st.markdown("### 🗺️ Preferences")
     states_list = ["NY","NJ","CT","PA","MA","CA","TX","FL","IL","GA","VA","MD","NC","OH","MI","WA","CO","AZ","MN","WI","OR","IN","TN","MO","SC","AL","LA","KY","OK","UT","IA","AR","MS","KS","NV","NM","NE","ID","HI","NH","ME","RI","MT","DE","SD","ND","AK","VT","WY","WV","DC","PR"]
-    state_pref = st.multiselect("Preferred state(s)", states_list, default=["NY"], help="Select one or more states. Leave empty to search all states.")
-    school_size = st.selectbox("School size",["Any","Small (<5k)","Medium (5-20k)","Large (20k+)"])
-    school_type = st.selectbox("School type",["Any","Public","Private"])
-    env_pref    = st.selectbox("Campus environment",["Any","HBCU","Women's College","Diverse"])
-    study_yrs   = st.selectbox("Years willing to study",["Any","2 years (Associate)","4 years (Bachelor's+)"])
+    state_pref = st.multiselect("Preferred state(s)", states_list, default=["NY"], help="Select one or more states. Leave empty to search all states.", key="states_multi")
+    school_size = st.selectbox("School size",["Any","Small (<5k)","Medium (5-20k)","Large (20k+)"], key="school_size")
+    school_type = st.selectbox("School type",["Any","Public","Private"], key="school_type")
+    env_pref    = st.selectbox("Campus environment",["Any","HBCU","Women's College","Diverse"], key="campus_env")
+    study_yrs   = st.selectbox("Years willing to study",["Any","2 years (Associate's)","4 years (Bachelor's+)"], key="study_yrs")
     n_results   = st.select_slider("Number of results",[5,10,15,20],10, key="n_results_slider")
 
     run_btn = st.button("🔍 Find My Colleges", type="primary", use_container_width=True)
@@ -966,7 +966,7 @@ with tab1:
         if CAREERS_FULL:
             st.caption(f"Career matching from {len(CAREERS_FULL):,} occupations across {len(set(c['field'] for c in CAREERS_FULL))} fields — O*NET 30.2 + BLS 2024")
 
-        career_sub = st.radio("", ["🎯 Match me to careers", "🔍 Explore any career"], horizontal=True, label_visibility="collapsed")
+        career_sub = st.radio("", ["🎯 Match me to careers", "🔍 Explore any career"], horizontal=True, label_visibility="collapsed", key="career_sub_radio")
 
         # If student typed a major → auto-switch to explore mode
         if majors_input and majors_input.strip():
@@ -1155,7 +1155,14 @@ with tab1:
                     "journalism": ["reporter", "journalist", "editor", "writer"],
                     "film": ["producer", "director", "film"],
                     "music": ["musician", "music director", "music teacher"],
+                    "dance": ["dancer", "choreographer", "dance teacher"],
+                    "dancing": ["dancer", "choreographer"],
+                    "choreography": ["choreographer", "dancer"],
                     "theater": ["actor", "director", "theater"],
+                    "theatre": ["actor", "director", "theater"],
+                    "fine arts": ["art director", "graphic designer", "artist"],
+                    "visual arts": ["art director", "graphic designer", "fine artist"],
+                    "performing arts": ["dancer", "actor", "musician", "choreographer"],
                     "architecture": ["architect", "urban planner"],
                     "interior design": ["interior designer"],
                     # Science
@@ -1186,36 +1193,51 @@ with tab1:
 
                 search_words = [w for w in search_lower.split() if len(w) > 2]
                 matches = []
+                import re as _re
+                def _word_match(term, title):
+                    """Match term as whole word, also trying common suffixes"""
+                    t = title.lower()
+                    term = term.lower().strip()
+                    # Direct word boundary match
+                    if _re.search(r'\b' + _re.escape(term) + r'\b', t):
+                        return True
+                    # Try stemmed versions
+                    for sfx in ['s','er','ers','ing','or','ors','ist','ists','ian','ians']:
+                        if _re.search(r'\b' + _re.escape(term) + sfx + r'\b', t):
+                            return True
+                    return False
+
                 exact = []
                 partial = []
                 seen = set()
                 for c in (CAREERS_FULL or []):
-                    title = str(c.get('title','')).lower()
+                    title = str(c.get('title',''))
+                    title_lower = title.lower()
                     field_c = str(c.get('field','')).lower()
                     soc = c.get('soc_code','')
                     if soc in seen: continue
 
-                    # Alias matches (highest priority)
-                    if alias_terms and any(term in title for term in alias_terms):
+                    # Alias matches (highest priority — word boundary)
+                    if alias_terms and any(_word_match(term, title) for term in alias_terms):
                         exact.append(c)
                         seen.add(soc)
-                    # Exact phrase match
-                    elif search_lower in title:
+                    # Exact phrase word boundary match
+                    elif _word_match(search_lower, title):
                         exact.append(c)
                         seen.add(soc)
-                    # All words match
-                    elif search_words and all(w in title for w in search_words):
+                    # All search words match as whole words
+                    elif search_words and all(_word_match(w, title) for w in search_words):
                         exact.append(c)
                         seen.add(soc)
-                    # Any word match in title
-                    elif any(w in title for w in search_words):
+                    # Any search word matches as whole word
+                    elif any(_word_match(w, title) for w in search_words):
                         partial.append(c)
                         seen.add(soc)
-                    # Field match
-                    elif search_lower in field_c:
+                    # Field name match
+                    elif _re.search(r'\b' + _re.escape(search_lower) + r'\b', field_c):
                         partial.append(c)
                         seen.add(soc)
-                # Exact/alias matches first, then partial
+                # Exact/alias first, then partial
                 matches = exact + partial
 
                 if not matches:
