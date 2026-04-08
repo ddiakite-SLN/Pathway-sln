@@ -976,7 +976,7 @@ with tab2:
             cols = st.columns(2)
             for i, (activity, riasec) in enumerate(full_q.items()):
                 with cols[i % 2]:
-                    full_scores[riasec] = full_scores.get(riasec, 0) + st.slider(activity, 1, 5, 3, key=f"fq_{i}")
+                    full_scores[riasec] = full_scores.get(riasec, 0) + st.slider(activity, 1, 5, 3, key=f"careertest_q_{i}")
 
             if st.button("🎯 See My Career Matches", type="primary"):
                 # Convert RIASEC scores to profile
@@ -1197,7 +1197,7 @@ with tab4:
                     cols_q = st.columns(2)
                     for i, (activity, riasec) in enumerate(full_q.items()):
                         with cols_q[i % 2]:
-                            val = st.slider(activity, 1, 5, 3, key=f"fq_{i}")
+                            val = st.slider(activity, 1, 5, 3, key=f"fulltest_q_{i}")
                             full_scores[riasec] = full_scores.get(riasec, 0) + val
                     if st.button("🎯 See My Career Matches", type="primary"):
                         full_profile = {
