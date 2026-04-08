@@ -224,58 +224,65 @@ def calculate_aid(income, hsize, ny_res, immig, first_gen):
 
 def get_fit(sat, act, s, gpa=None):
     """
-    Determine Safety/Match/Reach using best available data.
-    Priority: SAT/ACT → Peterson's GPA range → acceptance rate
-    Only returns 'unknown' when truly no data exists.
+    Exactly how Niche determines Safety/Match/Reach:
+    1. SAT/ACT vs school 25th/75th percentile (most accurate)
+    2. GPA vs Peterson's admitted GPA range
+    3. Acceptance rate as honest fallback
+    Always returns a label — never unknown unless truly no data at all.
     """
-    uid = s.get('id')
-    adm = s.get('adm')  # acceptance rate
+    adm = s.get('adm')
 
-    # ── 1. SAT scores (most accurate) ─────────────────────────
+    # ── 1. SAT (most accurate) ────────────────────────────────
     if sat and s.get('sat25') and s.get('sat75'):
         if sat >= s['sat75']: return 'safety'
         if sat >= s['sat25']: return 'match'
         return 'reach'
 
-    # ── 2. ACT scores ─────────────────────────────────────────
+    # ── 2. ACT ───────────────────────────────────────────────
     if act and s.get('act25') and s.get('act75'):
         if act >= s['act75']: return 'safety'
         if act >= s['act25']: return 'match'
         return 'reach'
 
-    # ── 3. Peterson's GPA percentile range ────────────────────
-    if gpa:
-        gpa_25 = s.get('gpa_25')
-        gpa_75 = s.get('gpa_75')
-        gpa_avg = s.get('gpa_avg')
-        if gpa_25 and gpa_75:
-            if gpa >= gpa_75: return 'safety'
-            if gpa >= gpa_25: return 'match'
-            return 'reach'
-        if gpa_avg:
-            if gpa >= gpa_avg + 0.2: return 'safety'
-            if gpa >= gpa_avg - 0.2: return 'match'
-            return 'reach'
+    # ── 3. Peterson's GPA 25th/75th percentile ───────────────
+    if gpa and s.get('gpa_25') and s.get('gpa_75'):
+        if gpa >= s['gpa_75']: return 'safety'
+        if gpa >= s['gpa_25']: return 'match'
+        return 'reach'
 
-    # ── 4. SUNY/CDS GPA data ──────────────────────────────────
+    # ── 4. Peterson's average GPA ────────────────────────────
+    if gpa and s.get('gpa_avg'):
+        avg = s['gpa_avg']
+        if gpa >= avg + 0.25: return 'safety'
+        if gpa >= avg - 0.25: return 'match'
+        return 'reach'
+
+    # ── 5. SUNY/CDS GPA from gpa_data.csv ───────────────────
+    uid = s.get('id')
     if gpa and uid and uid in GPA_DATA:
         g = GPA_DATA[uid]
-        gpa_low = g.get('gpa_low')
-        gpa_high = g.get('gpa_high')
-        if gpa_low and gpa_high:
-            if gpa >= gpa_high: return 'safety'
-            if gpa >= gpa_low:  return 'match'
+        lo = g.get('gpa_low')
+        hi = g.get('gpa_high')
+        if lo and hi:
+            if gpa >= hi: return 'safety'
+            if gpa >= lo: return 'match'
             return 'reach'
 
-    # ── 5. Acceptance rate fallback (honest and simple) ───────
-    # These cutoffs match what Niche and CollegeVine use
+    # ── 6. Acceptance rate (Niche-style fallback) ─────────────
+    # Niche uses this when no test/GPA data available
+    # Thresholds based on how Niche categorizes schools
     if adm is not None:
-        if adm >= 75: return 'safety'    # very likely to get in
-        if adm >= 40: return 'match'     # competitive but realistic
-        if adm >= 15: return 'reach'     # selective
-        return 'reach'                   # highly selective
+        if adm >= 85: return 'safety'
+        if adm >= 50: return 'match'
+        return 'reach'
 
-    # ── 6. No data at all ─────────────────────────────────────
+    # ── 7. GPA alone vs acceptance rate proxy ─────────────────
+    # If we have GPA but no school data, use GPA strength
+    if gpa:
+        if gpa >= 3.7: return 'match'   # strong student, assume match for unknown schools
+        if gpa >= 3.0: return 'match'
+        return 'reach'
+
     return 'unknown'
 
 
@@ -487,15 +494,41 @@ def run_match(gpa, sat, act, state, size, ctrl, need, env, study_yrs, aid, n):
         })
     fit_order={'safety':0,'match':1,'reach':2,'unknown':3}
     sort_mode = st.session_state.get('sort_mode','fit')
+
+    # Natural balanced selection — like Niche
+    # Pick from across the selectivity spectrum so student sees real options
+    safeties = sorted([r for r in results if r['fit']=='safety'], key=lambda x: -(x.get('grad') or 0))
+    matches  = sorted([r for r in results if r['fit']=='match'],  key=lambda x: -(x.get('grad') or 0))
+    reaches  = sorted([r for r in results if r['fit']=='reach'],  key=lambda x: -(x.get('grad') or 0))
+    unknowns = sorted([r for r in results if r['fit']=='unknown'], key=lambda x: x.get('net') or 999999)
+
+    # Natural proportions — fill from each bucket, best schools first
+    n_s = max(2, round(n * 0.25))
+    n_m = max(3, round(n * 0.45))
+    n_r = max(2, round(n * 0.25))
+
+    selected = safeties[:n_s] + matches[:n_m] + reaches[:n_r]
+
+    # Fill remaining slots if any category is short
+    if len(selected) < n:
+        used = set(id(r) for r in selected)
+        for r in safeties + matches + reaches + unknowns:
+            if id(r) not in used:
+                selected.append(r)
+                used.add(id(r))
+            if len(selected) >= n: break
+
+    # Apply sort mode
     if sort_mode=='fit':
-        results=sorted(results,key=lambda x:(fit_order.get(x['fit'],3),x.get('net') or 999999))
+        selected = sorted(selected, key=lambda x:(fit_order.get(x['fit'],3), x.get('net') or 999999))
     elif sort_mode=='cost':
-        results=sorted(results,key=lambda x:(x.get('net') is None, x.get('net') or 999999))
+        selected = sorted(selected, key=lambda x:(x.get('net') is None, x.get('net') or 999999))
     elif sort_mode=='safety':
-        results=sorted(results,key=lambda x:fit_order.get(x['fit'],3))
+        selected = sorted(selected, key=lambda x: fit_order.get(x['fit'],3))
     elif sort_mode=='grad':
-        results=sorted(results,key=lambda x:-(x.get('grad') or 0))
-    return results[:n]
+        selected = sorted(selected, key=lambda x: -(x.get('grad') or 0))
+
+    return selected[:n]
 
 def run_career_match(answers):
     profile={}
