@@ -6,6 +6,12 @@
 import streamlit as st
 from io import BytesIO
 
+# ════════════════════════════════════════════════════════════
+# SECTION 8: STREAMLIT UI
+# Everything below is the user interface
+# Sidebar = student inputs
+# Main panel = tabs (College Matches, Careers, Aid, My List)
+# ════════════════════════════════════════════════════════════
 st.set_page_config(
     page_title="Pathways by SLN",
     page_icon="🎓",
@@ -37,6 +43,11 @@ if 'ran_match' not in st.session_state:
     st.session_state.ran_match = False
 
 # ── DATA ──────────────────────────────────────────────────────
+# ════════════════════════════════════════════════════════════
+# SECTION 1: DATA LOADERS
+# Loads colleges, GPA data, careers from CSV files on GitHub
+# To update data: replace the CSV files in the repo
+# ════════════════════════════════════════════════════════════
 def load_schools():
     import pandas as pd, os
     csv_path = 'schools_full.csv'
@@ -86,6 +97,8 @@ def load_schools():
 
 @st.cache_data
 @st.cache_data
+# ── GPA Data Loader (Peterson's 2025 + SUNY PDF) ────────────
+# Source: gpa_data.csv — 76 schools with admitted GPA ranges
 def load_gpa_data():
     import pandas as pd, os
     csv_path = 'gpa_data.csv'
@@ -110,6 +123,8 @@ def load_gpa_data():
 
 GPA_DATA = load_gpa_data()
 
+# ── Career Data Loader (O*NET 30.2 + BLS 2023) ──────────────
+# Source: careers.csv — 1,016 occupations with RIASEC scores
 def load_careers():
     import pandas as pd, os
     csv_path = 'careers.csv'
@@ -181,6 +196,12 @@ CAREERS = [
 ]
 
 
+# ════════════════════════════════════════════════════════════
+# SECTION 7: HARDCODED DATA
+# Update deadlines annually before application season (August)
+# Add more schools by copying the format: {unitid: {rd, ea, ed, sys}}
+# UNITID comes from schools_full.csv
+# ════════════════════════════════════════════════════════════
 DEADLINES = {
     190637:{"rd":"Feb 1","ea":"Nov 21","sys":"CUNY"},
     190512:{"rd":"Feb 1","ea":"Nov 21","sys":"CUNY"},
@@ -201,6 +222,12 @@ DEADLINES = {
 }
 
 # ── ENGINES ───────────────────────────────────────────────────
+# ════════════════════════════════════════════════════════════
+# SECTION 2: FINANCIAL AID CALCULATOR
+# Calculates Pell Grant, NY TAP, Dream Act, HEOP eligibility
+# Update thresholds annually: studentaid.gov + hesc.ny.gov
+# Income thresholds from SUNY PDF 2026-27
+# ════════════════════════════════════════════════════════════
 def calculate_aid(income, hsize, ny_res, immig, first_gen):
     pell=tap=dream=0; heop=False
     if immig in ('citizen','daca'):
@@ -222,6 +249,11 @@ def calculate_aid(income, hsize, ny_res, immig, first_gen):
         heop=True
     return {"pell":pell,"tap":tap,"dream":dream,"heop":heop,"total":pell+tap+dream}
 
+# ════════════════════════════════════════════════════════════
+# SECTION 3: COLLEGE FIT ENGINE (Safety/Match/Reach)
+# Priority: SAT/ACT → Peterson's GPA range → Acceptance rate
+# Same methodology as Niche and CollegeVine
+# ════════════════════════════════════════════════════════════
 def get_fit(sat, act, s, gpa=None):
     """
     Exactly how Niche determines Safety/Match/Reach:
@@ -286,6 +318,12 @@ def get_fit(sat, act, s, gpa=None):
     return 'unknown'
 
 
+# ════════════════════════════════════════════════════════════
+# SECTION 4: CAREER SCORING ENGINE
+# Uses O*NET RIASEC Holland codes to match student to careers
+# R=Realistic I=Investigative A=Artistic S=Social E=Enterprising C=Conventional
+# Dominant interest gets 2x weight — stability doesn't override interest
+# ════════════════════════════════════════════════════════════
 def score_career_onet(career, profile):
     """
     Score a career using O*NET RIASEC interest codes and work values.
@@ -456,6 +494,13 @@ def score_career_onet(career, profile):
     return round((score / max_score) * 100) if max_score > 0 else 0
 
 
+# ════════════════════════════════════════════════════════════
+# SECTION 5: COLLEGE MATCH ENGINE
+# Filters 3,690 schools by student preferences
+# Returns balanced Safety/Match/Reach list
+# To change income filter: find 'need==full and tin > 55000'
+# To change 2yr filter: find 'study_yrs==any and s.get(yr2)'
+# ════════════════════════════════════════════════════════════
 def run_match(gpa, sat, act, state, size, ctrl, need, env, study_yrs, aid, n):
     size_codes={'any':[1,2,3,4,5],'small':[1,2],'medium':[3,4],'large':[5]}.get(size,[1,2,3,4,5])
     results=[]
@@ -530,6 +575,9 @@ def run_match(gpa, sat, act, state, size, ctrl, need, env, study_yrs, aid, n):
 
     return selected[:n]
 
+# ── Career Match Runner ──────────────────────────────────────
+# Scores all 1,016 careers against student profile
+# Returns sorted list highest match first
 def run_career_match(answers):
     profile={}
     for vals in answers.values():
@@ -543,6 +591,11 @@ def run_career_match(answers):
     return sorted(scored, key=lambda x: x['fit'], reverse=True)
 
 # ── PDF GENERATOR ─────────────────────────────────────────────
+# ════════════════════════════════════════════════════════════
+# SECTION 6: PDF GENERATOR
+# Creates downloadable college list + aid summary
+# Uses reportlab library
+# ════════════════════════════════════════════════════════════
 def generate_pdf(my_list, aid, career_top, gpa, sat, act):
     try:
         from reportlab.lib.pagesizes import letter
@@ -685,13 +738,54 @@ def generate_pdf(my_list, aid, career_top, gpa, sat, act):
         return None
 
 # ── CAREER MAPS ───────────────────────────────────────────────
+# ── Career Assessment Question Maps ─────────────────────────
+# Maps each dropdown answer to RIASEC trait scores
+# To add a new question: add 'i9' here and a selectbox in the UI
+# Values are 0-9 scale — higher = stronger signal
 CAREER_MAPS = {
-    'i1': {"Helping and healing people":{"helping":3,"people":3},"Building and engineering things":{"building":3,"science":2},"Teaching and shaping communities":{"teaching":3,"people":2},"Running businesses and managing money":{"business":3,"leadership":2},"Creating, designing and communicating":{"creating":3,"creativity":3},"Researching, analyzing and discovering":{"analyzing":3,"data":3}},
-    'i2': {"High income":{"income":3,"prestige":1},"Making a real difference":{"impact":3,"helping":2},"Creative freedom":{"creativity":3,"autonomy":3},"Stability and security":{"stability":3},"Prestige and recognition":{"prestige":3,"leadership":2}},
-    'i3': {"With people (patients, students, clients)":{"people":3,"helping":2},"At a desk or computer":{"data":2,"analyzing":2},"Out in the field (moving, hands-on)":{"outdoors":3,"physical":3},"In a lab, hospital, or studio":{"science":2,"creating":2},"Anywhere (remote/flexible)":{"autonomy":3}},
-    'i4': {"Science or Math":{"science":3,"data":2},"English, Writing, or Communication":{"creating":2,"people":2},"Art, Music, or Design":{"creativity":3,"creating":2},"Social Studies or History":{"people":2,"teaching":2},"Technology or Computer Science":{"building":3,"data":3},"Physical Education or Health":{"physical":3,"helping":2}},
-    'i5': {"1-2 years (start earning soon)":{"stability":2},"4 years (bachelor's degree)":{"income":1},"6-8 years (graduate school)":{"prestige":2,"income":2},"Whatever it takes":{"prestige":3,"income":3}},
-    'i6': {"I love working with my hands":{"physical":3,"building":2},"I love understanding how people feel":{"people":3,"helping":3},"I love solving complex problems":{"analyzing":3,"data":3},"I love building or making things":{"creating":3,"building":2},"I love organizing, planning and leading":{"leadership":3,"business":2}},
+    'i1': {
+        "Helping and healing people":        {"helping":9,"people":7,"S":9},
+        "Building and fixing things":        {"physical":9,"building":9,"R":9},
+        "Teaching and shaping communities":  {"teaching":9,"people":7,"S":8},
+        "Running businesses and managing":   {"business":9,"leadership":8,"E":9},
+        "Creating and designing things":     {"creating":9,"creativity":9,"A":9},
+        "Researching and analyzing data":    {"analyzing":9,"data":9,"science":7,"I":9}
+    },
+    'i2': {
+        "High income":                       {"income":9},
+        "Making a real difference":          {"impact":9,"helping":7},
+        "Creative freedom":                  {"creativity":9,"autonomy":9},
+        "Stability and security":            {"stability":9},
+        "Prestige and recognition":          {"prestige":9,"leadership":7}
+    },
+    'i3': {
+        "With people (patients, students)":  {"people":9,"helping":7,"S":8},
+        "At a desk or computer":             {"data":7,"analyzing":7,"C":7},
+        "Out in the field or moving around": {"outdoors":9,"physical":9,"R":8},
+        "In a lab, hospital, or studio":     {"science":8,"creating":6,"I":7},
+        "Anywhere remote or flexible":       {"autonomy":9}
+    },
+    'i4': {
+        "Science or Math":                   {"science":9,"data":7,"I":8},
+        "English, Writing, Communication":   {"creating":7,"people":6,"A":6},
+        "Art, Music, or Design":             {"creativity":9,"creating":9,"A":9},
+        "Social Studies or History":         {"people":7,"teaching":7,"S":7},
+        "Technology or Computer Science":    {"building":8,"data":9,"I":8},
+        "Physical Education or Health":      {"physical":9,"helping":7,"R":7}
+    },
+    'i5': {
+        "1-2 years (start earning soon)":    {"stability":7,"R":5},
+        "4 years (bachelor degree)":         {"income":5},
+        "6-8 years (graduate school)":       {"prestige":7,"income":6},
+        "Whatever it takes":                 {"prestige":9,"income":9}
+    },
+    'i6': {
+        "I love working with my hands":      {"physical":9,"building":8,"R":9},
+        "I love understanding people":       {"people":9,"helping":9,"S":9},
+        "I love solving complex problems":   {"analyzing":9,"data":9,"I":9},
+        "I love building or making things":  {"creating":9,"building":8,"A":7},
+        "I love organizing and leading":     {"leadership":9,"business":8,"E":9}
+    },
     'i7': {"Running my own business":{"autonomy":3,"leadership":3},"Recognized expert in my field":{"prestige":3,"science":2},"Making a meaningful community impact":{"impact":3,"helping":3},"Financially secure":{"stability":3,"income":3},"Doing creative work I am proud of":{"creativity":3,"creating":3}},
     'i8': {"Fast-paced with new challenges":{"variety":3,"leadership":2},"Steady and predictable":{"stability":3,"routine":2},"Collaborative team work":{"people":2,"team":3},"Independent, working alone":{"autonomy":3,"analyzing":2},"Helping individuals one-on-one":{"helping":3,"people":3}},
 }
