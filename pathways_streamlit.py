@@ -1005,14 +1005,58 @@ with tab1:
 
         # Apply multi-sort
         fit_order = {'safety':0,'match':1,'reach':2,'unknown':3}
+        def aaron_default_sort(x):
+            """
+            SLN default sort — Aaron Hawn's recommended exploration order:
+            1. In-state first (NY students see NY schools first)
+            2. 4-year before 2-year (bachelor's path prioritized)
+            3. Highest reasonable selectivity sweet spot:
+               - Prioritize high targets + low reaches (most motivating, realistic)
+               - Safeties shown but not buried
+            4. Strong completion outcomes (grad rate as tiebreaker)
+            Based on Hossler & Gallagher (1987) college choice theory:
+            students explore best when shown aspirational but achievable options first.
+            """
+            # 1. In-state preference (NY first for NY students)
+            state_val_list = state_val if isinstance(state_val, list) else [state_val]
+            primary_state = state_val_list[0] if state_val_list else 'NY'
+            in_state = 0 if x.get('state') == primary_state else 1
+
+            # 2. Degree level (4-year = 0, 2-year = 1)
+            is_2yr = 1 if x.get('yr2') else 0
+
+            # 3. Selectivity sweet spot
+            # match=0 (ideal), reach=1 (aspirational), safety=2 (fallback), unknown=3
+            fit = x.get('fit', 'unknown')
+            fit_sweet = {'match': 0, 'reach': 1, 'safety': 2, 'unknown': 3}.get(fit, 3)
+
+            # Within reach — prefer low reaches (adm 25-50%) over long reaches (<10%)
+            adm = x.get('adm') or 50
+            if fit == 'reach':
+                # Lower acceptance = harder reach = sort later within reach tier
+                reach_difficulty = 0 if adm >= 25 else 1 if adm >= 15 else 2
+            else:
+                reach_difficulty = 0
+
+            # 4. Completion outcomes (higher grad rate = better)
+            grad = -(x.get('grad') or 0)
+
+            return [in_state, is_2yr, fit_sweet, reach_difficulty, grad]
+
         def sort_key(x):
-            keys = []
-            for sm in (sort_opts or ["Best Fit"]):
-                if sm == "Best Fit": keys.extend([fit_order.get(x['fit'],3), x.get('net') or 999999])
-                elif sm == "Lowest Cost": keys.extend([x.get('net') is None, x.get('net') or 999999])
-                elif sm == "Safety First": keys.append(fit_order.get(x['fit'],3))
-                elif sm == "Grad Rate": keys.append(-(x.get('grad') or 0))
-            return keys
+            # If student selected a custom sort, use that
+            # Otherwise use Aaron's default exploration sort
+            if sort_opts and sort_opts != ["Best Fit"]:
+                keys = []
+                for sm in sort_opts:
+                    if sm == "Best Fit": keys.extend([fit_order.get(x['fit'],3), x.get('net') or 999999])
+                    elif sm == "Lowest Cost": keys.extend([x.get('net') is None, x.get('net') or 999999])
+                    elif sm == "Safety First": keys.append(fit_order.get(x['fit'],3))
+                    elif sm == "Grad Rate": keys.append(-(x.get('grad') or 0))
+                return keys
+            else:
+                return aaron_default_sort(x)
+
         matches = sorted(matches, key=sort_key)
 
         # ── TABLE VIEW ───────────────────────────────────────────
