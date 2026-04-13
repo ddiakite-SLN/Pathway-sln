@@ -505,7 +505,7 @@ def run_match(gpa, sat, act, state, size, ctrl, need, env, study_yrs, aid, n, ma
             'sys': dl.get('sys',''),
         })
     fit_order={'safety':0,'match':1,'reach':2,'unknown':3}
-    sort_mode = st.session_state.get('sort_mode','fit')
+    sort_mode = st.session_state.get('sort_multi', ['Best Fit'])
 
     # Natural balanced selection — like Niche
     # Pick from across the selectivity spectrum so student sees real options
@@ -531,14 +531,16 @@ def run_match(gpa, sat, act, state, size, ctrl, need, env, study_yrs, aid, n, ma
             if len(selected) >= n: break
 
     # Apply sort mode
-    if sort_mode=='fit':
-        selected = sorted(selected, key=lambda x:(fit_order.get(x['fit'],3), x.get('net') or 999999))
-    elif sort_mode=='cost':
-        selected = sorted(selected, key=lambda x:(x.get('net') is None, x.get('net') or 999999))
-    elif sort_mode=='safety':
-        selected = sorted(selected, key=lambda x: fit_order.get(x['fit'],3))
-    elif sort_mode=='grad':
-        selected = sorted(selected, key=lambda x: -(x.get('grad') or 0))
+    sort_modes = sort_mode if isinstance(sort_mode, list) else [sort_mode]
+    def multi_sort_key(x):
+        keys = []
+        for sm in sort_modes:
+            if sm in ('fit','Best Fit'): keys.extend([fit_order.get(x['fit'],3), x.get('net') or 999999])
+            elif sm in ('cost','Lowest Cost'): keys.extend([x.get('net') is None, x.get('net') or 999999])
+            elif sm in ('safety','Safety First'): keys.append(fit_order.get(x['fit'],3))
+            elif sm in ('grad','Grad Rate'): keys.append(-(x.get('grad') or 0))
+        return keys
+    selected = sorted(selected, key=multi_sort_key)
 
     return selected[:n]
 
@@ -842,11 +844,13 @@ with st.sidebar:
     st.markdown("### 📚 Academics")
     gpa_scale = st.radio("GPA scale", ["4.0 scale","100 scale"], horizontal=True, key="gpa_scale_radio")
     if gpa_scale == "4.0 scale":
-        gpa = st.slider("Unweighted GPA", 0.0, 4.0, 3.0, 0.1, key="gpa_slider")
+        gpa = st.slider("Unweighted GPA (4.0 scale)", 0.0, 4.0, 3.0, 0.1, key="gpa_slider")
+        gpa_display = f"{gpa:.1f} / 4.0"
     else:
-        gpa_100 = st.slider("GPA (0-100)", 0, 100, 80, 1, key="gpa_slider_100")
-        gpa = round(gpa_100 / 25.0, 2)  # convert to 4.0 scale
-        st.caption(f"= {gpa:.1f} on 4.0 scale")
+        gpa_100 = st.slider("Unweighted GPA (100 scale)", 0, 100, 80, 1, key="gpa_slider_100")
+        gpa = round(gpa_100 / 25.0, 2)
+        gpa_display = f"{gpa_100} / 100  (= {gpa:.1f} on 4.0 scale)"
+    st.caption(f"Your GPA: **{gpa_display}**")
     score_type = st.selectbox("Test scores", ["None (test-optional)","SAT","ACT"], key="test_scores")
     sat = act = None
     if score_type == "SAT":
@@ -947,6 +951,16 @@ with tab1:
     else:
         m = matches
         c1,c2,c3,c4 = st.columns(4)
+        # Build dynamic filter description
+        filter_parts = []
+        if state_pref: filter_parts.append(f"{',' .join(state_pref)} schools")
+        if school_type != 'Any': filter_parts.append(school_type.lower())
+        if school_size != 'Any': filter_parts.append(school_size.lower())
+        if majors_input: filter_parts.append(f"offering {majors_input}")
+        if only_gpa_data: filter_parts.append("with verified GPA data")
+        if only_adm_data: filter_parts.append("with published acceptance rate")
+        filter_desc = " · ".join(filter_parts) if filter_parts else "all states"
+        st.caption(f"Showing **{len(m)} schools** — {filter_desc} · Source: IPEDS 2023-24 + Peterson's 2025")
         c1.metric("Colleges Found", len(m))
         c2.metric("Est. Annual Aid", f"${aid['total']:,}")
         safety_n=sum(1 for s in m if s['fit']=='safety')
@@ -962,7 +976,7 @@ with tab1:
 
         # Sort buttons
         sort_col1,sort_col2,sort_col3,sort_col4 = st.columns(4)
-        sort_mode = st.session_state.get('sort_mode','fit')
+        sort_mode = st.session_state.get('sort_multi', ['Best Fit'])
         with sort_col1:
             if st.button("🎯 Best Fit First", use_container_width=True,
                         type="primary" if sort_mode=='fit' else "secondary"):
@@ -981,7 +995,7 @@ with tab1:
                 st.session_state.sort_mode='grad'; st.rerun()
 
         # Apply sort
-        sort_mode = st.session_state.get('sort_mode','fit')
+        sort_mode = st.session_state.get('sort_multi', ['Best Fit'])
         fit_order = {'safety':0,'match':1,'reach':2,'unknown':3}
         if sort_mode == 'fit':
             m = sorted(m, key=lambda x: (fit_order.get(x.get('fit','unknown'),3), x.get('net') or 999999))
