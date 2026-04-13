@@ -832,7 +832,20 @@ YRS_MAP   = {"Any":"any","2 years (Associate)":"2yr","4 years (Bachelor's+)":"4y
 col_h1, col_h2 = st.columns([3,1])
 with col_h1:
     st.markdown("# 🎓 Pathways by SLN")
-    st.markdown(f"*Your college list, built around your life. Browsing **{len(SCHOOLS):,} US colleges** from IPEDS 2023-24.*")
+    # Dynamic subtitle based on active filters
+    _filt = []
+    _states = st.session_state.get('states_multi', [])
+    _gpa_f = st.session_state.get('filter_gpa', False)
+    _adm_f = st.session_state.get('filter_adm', False)
+    _maj = st.session_state.get('majors_input', '')
+    if _states: _filt.append(f"{', '.join(_states)}")
+    if _gpa_f: _filt.append("verified GPA data only")
+    if _adm_f: _filt.append("published acceptance rate only")
+    if _maj: _filt.append(f"offering {_maj}")
+    if _filt:
+        st.markdown(f"*Your college list, built around your life. Filtered: **{' · '.join(_filt)}** · from IPEDS 2023-24.*")
+    else:
+        st.markdown(f"*Your college list, built around your life. Browsing **{len(SCHOOLS):,} US colleges** from IPEDS 2023-24.*")
 with col_h2:
     st.caption("Built by SLN RITA Tech & Data Intern\nIPEDS 2023-24 · Aid thresholds 2025-26")
 st.divider()
@@ -975,3 +988,512 @@ with tab1:
             st.info("💡 **Tip:** Adding your SAT or ACT score makes your Safety/Match/Reach analysis much more accurate. Test scores are optional — but they give you a clearer picture of where you stand at each school.")
 
         # Sort buttons
+
+        # ── Sort & View ──────────────────────────────────────────
+        sort_opts = st.multiselect(
+            "Sort by (first = primary sort):",
+            ["Best Fit", "Lowest Cost", "Safety First", "Grad Rate"],
+            default=["Best Fit"],
+            key="sort_multi",
+            help="Pick up to 2 — combine Safety First + Lowest Cost to find affordable safeties"
+        )
+
+        # View toggle
+        view_mode = st.radio("View as", ["📋 Cards", "📊 Table"], horizontal=True, key="view_mode")
+        st.caption("📊 Data: IPEDS 2023-24 · Peterson's 2025 · Aid: Federal & NY HESC 2026-27")
+        st.markdown("---")
+
+        # Apply multi-sort
+        fit_order = {'safety':0,'match':1,'reach':2,'unknown':3}
+        def sort_key(x):
+            keys = []
+            for sm in (sort_opts or ["Best Fit"]):
+                if sm == "Best Fit": keys.extend([fit_order.get(x['fit'],3), x.get('net') or 999999])
+                elif sm == "Lowest Cost": keys.extend([x.get('net') is None, x.get('net') or 999999])
+                elif sm == "Safety First": keys.append(fit_order.get(x['fit'],3))
+                elif sm == "Grad Rate": keys.append(-(x.get('grad') or 0))
+            return keys
+        matches = sorted(matches, key=sort_key)
+
+        # ── TABLE VIEW ───────────────────────────────────────────
+        if view_mode == "📊 Table":
+            import pandas as _pd
+            table_rows = []
+            for s in matches:
+                fit = s.get('fit','unknown')
+                fit_label = {'safety':'✅ Safety','match':'🎯 Match','reach':'⚠️ Reach','unknown':'⚪ No data'}.get(fit,fit)
+                table_rows.append({
+                    'School': s.get('name',''),
+                    'State': s.get('state',''),
+                    'Fit': fit_label,
+                    'You Pay/yr': f"${int(s.get('net') or 0):,}" if s.get('net') is not None else 'N/A',
+                    'Sticker': f"${int(s.get('tin') or 0):,}" if s.get('tin') else 'N/A',
+                    'Acceptance %': f"{s['adm']:.0f}%" if s.get('adm') and s['adm']==s['adm'] else 'N/A',
+                    'SAT Range': f"{int(s['sat25'])}–{int(s['sat75'])}" if s.get('sat25') else 'N/A',
+                    'GPA Range': f"{s['gpa_25']}–{s['gpa_75']}" if s.get('gpa_25') else 'N/A',
+                    'Grad Rate': f"{int(s['grad'])}%" if s.get('grad') else 'N/A',
+                    'Type': 'Public' if s.get('ctrl')==1 else 'Private',
+                    'RD Deadline': s.get('rd','Check website'),
+                })
+            df = _pd.DataFrame(table_rows)
+            st.dataframe(df, use_container_width=True, hide_index=True,
+                column_config={
+                    "School": st.column_config.TextColumn(width="large"),
+                    "You Pay/yr": st.column_config.TextColumn(help="After your estimated aid"),
+                })
+            csv_data = df.to_csv(index=False)
+            st.download_button("⬇️ Download as spreadsheet", csv_data,
+                file_name="my_college_list.csv", mime="text/csv", key="dl_csv")
+
+        else:
+            # ── CARD VIEW ────────────────────────────────────────
+            fit_icons = {'safety':'🟢','match':'🎯','reach':'⚠️','unknown':'⚪'}
+            for s in matches:
+                fit = s.get('fit','unknown')
+                sat25 = s.get('sat25'); sat75 = s.get('sat75')
+                act25 = s.get('act25'); act75 = s.get('act75')
+                in_list = any(x['id']==s['id'] for x in st.session_state.my_list)
+
+                with st.container():
+                    ca,cb,cc = st.columns([3,1.5,1])
+                    with ca:
+                        st.markdown(f"**{fit_icons.get(fit,'⚪')} [{s['name']}]({s.get('web','#')})**")
+                        env_tags = get_env_fit(s, env_pref, school_size, school_type)
+                        env_tag_str = ' · '.join(env_tags[:3]) if env_tags else ''
+                        adm_val = s.get('adm'); adm_display = f"{float(adm_val):.1f}% acceptance" if adm_val and adm_val == adm_val else "Acceptance rate N/A"
+                        st.caption(f"{s.get('city','')}, {s['state']} · {adm_display} · {env_tag_str}" + (" · 🏛️ HBCU" if s.get('hbcu') else ""))
+                        # Major badge
+                        _majors_typed = majors_input.strip() if majors_input else ''
+                        if _majors_typed and s.get('major_cips'):
+                            st.success(f"✅ Confirmed offers: {_majors_typed}")
+                        # Academic match chips
+                        fit_label = {'safety':'✅ Safety','match':'🎯 Match','reach':'⚠️ Reach','unknown':'⚪ Limited data'}.get(fit, fit)
+                        acad_chips = f"`{fit_label}`"
+                        if sat and sat25 and sat75:
+                            acad_chips += f"  `SAT {s['sat25']}–{s['sat75']}`"
+                        elif s.get('act25') and act:
+                            acad_chips += f"  `ACT {s['act25']}–{s['act75']}`"
+                        elif s.get('gpa_25') and gpa:
+                            acad_chips += f"  `GPA {s['gpa_25']}–{s['gpa_75']}`"
+                        elif s.get('gpa_avg') and gpa:
+                            acad_chips += f"  `Avg GPA {s['gpa_avg']}`"
+                        elif s.get('adm'):
+                            acad_chips += f"  `{s['adm']:.0f}% acceptance`"
+                        else:
+                            acad_chips += "  `⚠️ Limited data`"
+                        st.markdown(f"**Academic match:** {acad_chips}")
+                        # Aid & fit chips
+                        aid_chips = ""
+                        if aid['tap']>0 and s['state']=='NY': aid_chips += "  `TAP eligible`"
+                        if aid['heop'] and s['state']=='NY': aid_chips += "  `HEOP`"
+                        school_uid = str(s.get('id',''))
+                        if school_uid in EOP_DATA:
+                            for prog in EOP_DATA[school_uid]:
+                                aid_chips += f"  `{prog}`"
+                        if s.get('hbcu'): aid_chips += "  `HBCU`"
+                        if s.get('womens'): aid_chips += "  `Women's college`"
+                        if aid_chips: st.markdown(f"**Aid & fit:** {aid_chips.strip()}")
+                    with cb:
+                        sticker = int(s.get('tin') or 0)
+                        net = int(s.get('net') or 0)
+                        st.markdown(f"**Sticker:** ${sticker:,}" if sticker else "**Sticker:** N/A")
+                        st.markdown(f"**You pay:** ${net:,}/yr" if s.get('net') is not None else "**You pay:** N/A")
+                        grad = s.get('grad')
+                        st.markdown(f"**Grad rate:** {int(grad)}%" if grad else "**Grad rate:** N/A")
+                        rd = s.get('rd','Check website')
+                        st.markdown(f"**RD:** {rd}")
+                    with cc:
+                        if in_list:
+                            st.success("✅ Added")
+                        else:
+                            if st.button("+ Add to list", key=f"add_{s['id']}", use_container_width=True):
+                                st.session_state.my_list.append(s)
+                                st.rerun()
+
+                        fit_exp = ""
+                        gpa_25s = s.get('gpa_25'); gpa_75s = s.get('gpa_75'); gpa_avgs = s.get('gpa_avg')
+                        if sat and sat25 and sat75:
+                            if fit=='safety': fit_exp = f"✅ **Safety** — Your SAT {sat} is above their range ({sat25}–{sat75})."
+                            elif fit=='match': fit_exp = f"🎯 **Match** — Your SAT {sat} is in their range ({sat25}–{sat75})."
+                            elif fit=='reach': fit_exp = f"⚠️ **Reach** — Their SAT range is {sat25}–{sat75}, yours is {sat}."
+                        elif gpa and gpa_25s and gpa_75s:
+                            if fit=='safety': fit_exp = f"✅ **Safety** — Your GPA {gpa} is above their 75th percentile ({gpa_75s})."
+                            elif fit=='match': fit_exp = f"🎯 **Match** — Your GPA {gpa} falls in their range ({gpa_25s}–{gpa_75s})."
+                            elif fit=='reach': fit_exp = f"⚠️ **Reach** — Their GPA range is {gpa_25s}–{gpa_75s}, yours is {gpa}. A strong application can still get you in."
+                        elif gpa and gpa_avgs:
+                            if fit=='safety': fit_exp = f"✅ **Safety** — Your GPA {gpa} is above their average ({gpa_avgs})."
+                            elif fit=='match': fit_exp = f"🎯 **Match** — Your GPA {gpa} is near their average ({gpa_avgs})."
+                            elif fit=='reach': fit_exp = f"⚠️ **Reach** — Their average GPA is {gpa_avgs}, yours is {gpa}."
+                        elif s.get('adm'):
+                            adm = s['adm']
+                            if fit=='safety': fit_exp = f"✅ **Safety** — {adm:.0f}% of applicants are admitted."
+                            elif fit=='match': fit_exp = f"🎯 **Match** — {adm:.0f}% acceptance rate — competitive but realistic."
+                            elif fit=='reach': fit_exp = f"⚠️ **Reach** — Only {adm:.0f}% acceptance rate."
+                        if fit_exp:
+                            if fit=='safety': st.success(fit_exp)
+                            elif fit=='match': st.info(fit_exp)
+                            elif fit=='reach': st.warning(fit_exp)
+                    st.divider()
+
+    with tab2:
+        # ── CAREER RESULTS TAB ──────────────────────────────────
+        if CAREERS_FULL:
+            st.caption(f"Career matching from {len(CAREERS_FULL):,} occupations across {len(set(c['field'] for c in CAREERS_FULL))} fields — O*NET 30.2 + BLS 2024")
+
+        if majors_input and majors_input.strip():
+            career_sub = "🔍 Explore any career"
+        else:
+            career_sub = st.radio("", ["🎯 Match me to careers", "🔍 Explore any career"], horizontal=True, label_visibility="collapsed", key="career_sub_radio")
+
+        if career_sub == "🎯 Match me to careers":
+            if not _all_answered:
+                answered = sum(1 for q in [q1,q2,q3,q4,q5,q6,q7,q8] if q != "— Select an answer —")
+                st.info(f"🎯 Answer the career questions on the left to see your matches. ({answered}/8 answered)")
+                st.markdown("### Or take the full 20-question career assessment")
+                with st.expander("▶️ Click to take the full career test", expanded=False):
+                    st.markdown("**Rate how much you enjoy each activity (1 = not at all, 5 = very much)**")
+                    full_q = {
+                        "Build or repair electronic equipment": "R",
+                        "Work on cars or machines": "R",
+                        "Do physical outdoor work": "R",
+                        "Use hand tools or power tools": "R",
+                        "Study how plants or animals grow": "I",
+                        "Do science experiments": "I",
+                        "Analyze data or solve math problems": "I",
+                        "Research topics in depth": "I",
+                        "Create art, music, or writing": "A",
+                        "Design websites, graphics, or videos": "A",
+                        "Express yourself through creative projects": "A",
+                        "Perform or present in front of others": "A",
+                        "Help people with personal problems": "S",
+                        "Teach or train others": "S",
+                        "Work as part of a care team": "S",
+                        "Volunteer in your community": "S",
+                        "Lead a group or project": "E",
+                        "Persuade or sell ideas to others": "E",
+                        "Start or manage a business": "E",
+                        "Compete to win in business situations": "E",
+                    }
+                    full_scores = {}
+                    cols_q = st.columns(2)
+                    for i, (activity, riasec) in enumerate(full_q.items()):
+                        with cols_q[i % 2]:
+                            val = st.slider(activity, 1, 5, 3, key=f"ft_{hash(activity) % 99999}")
+                            full_scores[riasec] = full_scores.get(riasec, 0) + val
+                    if st.button("🎯 See My Career Matches", type="primary", key="full_test_submit_btn"):
+                        full_profile = {
+                            'physical': full_scores.get('R',0)*2, 'building': full_scores.get('R',0)*2,
+                            'outdoors': full_scores.get('R',0)*2, 'science': full_scores.get('I',0)*2,
+                            'data': full_scores.get('I',0)*2, 'analyzing': full_scores.get('I',0)*2,
+                            'creativity': full_scores.get('A',0)*2, 'creating': full_scores.get('A',0)*2,
+                            'helping': full_scores.get('S',0)*2, 'people': full_scores.get('S',0)*2,
+                            'teaching': full_scores.get('S',0)*2, 'leadership': full_scores.get('E',0)*2,
+                            'business': full_scores.get('E',0)*2,
+                        }
+                        full_results = run_career_match({}, direct_profile=full_profile)
+                        st.session_state.career_results = full_results
+                        st.rerun()
+            elif not career_results:
+                st.info("Answer the career questions on the left to see your matches.")
+            else:
+                t = career_results[0]
+                t_name = t.get('name') or t.get('title','')
+                t_sal = t.get('salary_mid') or t.get('median_annual') or 0
+                try: t_sal_int = int(float(t_sal))
+                except: t_sal_int = 0
+                t_growth = t.get('growth') or t.get('growth_pct','N/A')
+                t_demand = t.get('demand') or t.get('outlook','N/A')
+                t_field = t.get('field','')
+                st.markdown(f"""
+                <div style="background:#0D1B2A;border-radius:12px;padding:22px 26px;margin-bottom:20px;color:white">
+                    <div style="font-size:11px;opacity:.4;margin-bottom:4px;letter-spacing:1px;text-transform:uppercase">Your best match</div>
+                    <div style="font-size:26px;font-family:Georgia,serif;margin-bottom:5px">💼 {t_name}</div>
+                    <div style="font-size:13px;opacity:.55;margin-bottom:12px">{t_field}</div>
+                    <span style="color:#E8AD58;font-size:20px;font-weight:700">${t_sal_int:,}/yr avg</span>
+                    &nbsp;&nbsp;
+                    <span style="background:rgba(42,96,73,.4);padding:4px 12px;border-radius:8px;font-size:12px">{t_growth} growth</span>
+                    &nbsp;
+                    <span style="background:rgba(255,255,255,.1);padding:4px 12px;border-radius:8px;font-size:12px">{t_demand} demand</span>
+                </div>
+                """, unsafe_allow_html=True)
+
+                for c in career_results[:10]:
+                    name = c.get('name') or c.get('title','Unknown')
+                    sal_mid = c.get('salary_mid') or c.get('median_annual') or 0
+                    sal_entry = c.get('salary_entry') or c.get('entry_annual') or 0
+                    sal_senior = c.get('salary_senior') or c.get('experienced_annual') or 0
+                    growth = c.get('growth') or c.get('growth_pct','N/A')
+                    field = c.get('field','N/A')
+                    education = c.get('education','N/A')
+                    fit_pct = c.get('fit',0)
+                    daily = str(c.get('daily_tasks','') or '')
+                    tools = str(c.get('tech_tools','') or '')
+                    try: sal_mid_int = int(float(sal_mid)) if sal_mid else 0
+                    except: sal_mid_int = 0
+                    try: sal_entry_int = int(float(sal_entry)) if sal_entry else 0
+                    except: sal_entry_int = 0
+                    try: sal_senior_int = int(float(sal_senior)) if sal_senior else 0
+                    except: sal_senior_int = 0
+
+                    with st.expander(f"💼 {name}  —  **{fit_pct}% match** · ${sal_mid_int:,}/yr"):
+                        c1,c2,c3 = st.columns(3)
+                        c1.metric("Entry", f"${sal_entry_int:,}" if sal_entry_int else "N/A")
+                        c2.metric("Mid career", f"${sal_mid_int:,}" if sal_mid_int else "N/A")
+                        c3.metric("Senior", f"${sal_senior_int:,}" if sal_senior_int else "N/A")
+                        st.progress(fit_pct/100)
+                        if daily:
+                            st.markdown("**What you do:**")
+                            for task in daily.split(' | ')[:3]:
+                                if task.strip(): st.markdown(f"• {task.strip()}")
+                        if tools:
+                            tool_list = [t.strip() for t in tools.split(',') if t.strip()][:5]
+                            if tool_list: st.caption(f"Tools: {', '.join(tool_list)}")
+                        st.caption(f"Field: {field} · Growth: {growth} · Education: {education}")
+
+        else:
+            # ── EXPLORE ANY CAREER ───────────────────────────────
+            st.markdown("### Explore any career")
+            _pop = st.session_state.pop('pop_career', '')
+            default_search = majors_input.strip() if majors_input and majors_input.strip() else _pop
+            search_career = st.text_input("Search any career or job title",
+                value=default_search,
+                placeholder="e.g. Nurse, Software Engineer, Lawyer, Chef, Cybersecurity...",
+                key="career_search")
+
+            if search_career:
+                search_lower = search_career.lower().strip()
+                SEARCH_ALIASES = {
+                    "computer engineering": ["computer hardware","computer systems","software"],
+                    "software engineering": ["software developer","software engineer"],
+                    "nursing": ["registered nurse","nurse practitioner","licensed practical"],
+                    "business": ["financial analyst","marketing manager","management analyst","business"],
+                    "psychology": ["psychologist","counselor","therapist","mental health"],
+                    "social work": ["social worker","counselor","case manager"],
+                    "criminal justice": ["police officer","detective","probation","criminal"],
+                    "education": ["teacher","school counselor","principal","instructional"],
+                    "dance": ["dancer","choreographer"],
+                    "performing arts": ["dancer","actor","musician","choreographer"],
+                    "law": ["lawyer","attorney","paralegal"],
+                    "pre-law": ["lawyer","attorney","paralegal"],
+                    "pre-med": ["physician","doctor","medical scientist","physician assistant"],
+                    "marketing": ["marketing manager","market research","advertising"],
+                    "finance": ["financial analyst","financial manager","accountant"],
+                    "accounting": ["accountant","auditor","tax"],
+                    "cybersecurity": ["information security","cybersecurity","network security"],
+                    "data science": ["data scientist","statistician","data analyst"],
+                    "graphic design": ["graphic designer","art director","ux designer"],
+                    "architecture": ["architect","urban planner"],
+                }
+                alias_terms = []
+                for k, v in SEARCH_ALIASES.items():
+                    if k in search_lower or search_lower in k:
+                        alias_terms.extend(v)
+                search_words = [w for w in search_lower.split() if len(w) > 2]
+
+                import re as _re
+                def _word_match(term, title):
+                    t = title.lower()
+                    if _re.search(r'\b' + _re.escape(term) + r'\b', t): return True
+                    for sfx in ['s','er','ers','ing','or','ors','ist','ists']:
+                        if _re.search(r'\b' + _re.escape(term) + sfx + r'\b', t): return True
+                    return False
+
+                exact = []; partial = []; seen = set()
+                for c in (CAREERS_FULL or []):
+                    title = str(c.get('title',''))
+                    field_c = str(c.get('field','')).lower()
+                    soc = c.get('soc_code','')
+                    if soc in seen: continue
+                    if alias_terms and any(_word_match(term, title) for term in alias_terms):
+                        exact.append(c); seen.add(soc)
+                    elif _word_match(search_lower, title):
+                        exact.append(c); seen.add(soc)
+                    elif search_words and all(_word_match(w, title) for w in search_words):
+                        exact.append(c); seen.add(soc)
+                    elif any(_word_match(w, title) for w in search_words):
+                        partial.append(c); seen.add(soc)
+                    elif search_lower in field_c:
+                        partial.append(c); seen.add(soc)
+                matches_c = exact + partial
+
+                if not matches_c:
+                    st.warning(f"No match for '{search_career}'. Try: Nurse, Engineer, Teacher, Designer")
+                    fields_list = sorted(set(c.get('field','') for c in (CAREERS_FULL or []) if c.get('field')))
+                    f_cols = st.columns(4)
+                    for fi, fn in enumerate(fields_list[:12]):
+                        with f_cols[fi % 4]: st.markdown(f"• {fn}")
+                else:
+                    career = matches_c[0]
+                    title = career.get('title','')
+                    field = career.get('field','')
+                    sal_mid = int(float(career.get('median_annual',0) or 0))
+                    sal_entry = int(float(career.get('entry_annual',0) or 0))
+                    sal_senior = int(float(career.get('experienced_annual',0) or 0))
+                    growth = career.get('growth_pct','N/A')
+                    education = career.get('education','N/A')
+                    job_zone = int(float(career.get('job_zone',3) or 3))
+                    desc = str(career.get('description','') or '')[:300]
+                    daily = str(career.get('daily_tasks','') or '')
+                    tools_str = str(career.get('tech_tools','') or '')
+                    skills = str(career.get('top_skills','') or '')
+                    zone_map = {1:"No degree needed",2:"High school — 0-2 years",
+                                3:"Associate's or Bachelor's — 2-4 years",
+                                4:"Bachelor's degree — 4 years",5:"Graduate degree — 6+ years"}
+                    study_req = zone_map.get(job_zone,"Bachelor's degree — 4 years")
+                    can_now = job_zone <= 3
+
+                    st.markdown(f"### {title}")
+                    st.caption(f"{field} · {study_req}")
+                    if desc: st.markdown(f"*{desc[:250]}...*" if len(desc)>250 else f"*{desc}*")
+                    m1,m2,m3,m4 = st.columns(4)
+                    FIELD_AVG = {'Arts & Media':72460,'Business & Finance':84005,'Construction & Trades':61550,
+                        'Criminal Justice':67290,'Culinary Arts':56520,'Education':62615,'Engineering':98176,
+                        'Healthcare':102084,'Law & Justice':139540,'Management':144658,'Personal Care':44160,
+                        'Science & Research':92995,'Social Services':57458,'Technology':115734,'Transportation':158115}
+                    if not sal_mid: sal_mid = FIELD_AVG.get(field, 65000); sal_entry = int(sal_mid*0.62); sal_senior = int(sal_mid*1.45)
+                    m1.metric("Median salary", f"${sal_mid:,}/yr")
+                    m2.metric("Entry salary", f"${sal_entry:,}/yr")
+                    m3.metric("Senior salary", f"${sal_senior:,}/yr")
+                    m4.metric("Job growth", growth)
+                    st.divider()
+                    if can_now:
+                        st.success(f"✅ You can get entry-level roles in {field} without finishing your full degree!")
+                    else:
+                        st.info(f"📚 This career requires {study_req} before most entry-level roles.")
+
+                    CAREER_MAJORS = {
+                        "Healthcare":["Nursing (BSN)","Health Sciences","Biology","Pre-Medicine"],
+                        "Technology":["Computer Science","Software Engineering","Information Technology","Cybersecurity"],
+                        "Engineering":["Civil Engineering","Mechanical Engineering","Electrical Engineering","Computer Engineering"],
+                        "Education":["Education (K-12)","Early Childhood Education","Special Education"],
+                        "Social Services":["Social Work (BSW)","Psychology","Sociology","Human Services"],
+                        "Business & Finance":["Finance","Accounting","Business Administration","Economics"],
+                        "Management":["Business Administration","Management","MBA"],
+                        "Law & Justice":["Pre-Law","Criminal Justice","Political Science"],
+                        "Arts & Media":["Communications","Journalism","Graphic Design","Marketing"],
+                        "Science & Research":["Biology","Chemistry","Environmental Science","Physics"],
+                        "Criminal Justice":["Criminal Justice","Criminology","Forensic Science"],
+                    }
+                    rec_majors = CAREER_MAJORS.get(field, [])
+                    if rec_majors:
+                        st.markdown(f"**📚 Recommended majors to become a {title.split(',')[0]}:**")
+                        m_cols = st.columns(min(len(rec_majors[:4]),4))
+                        for mi, maj in enumerate(rec_majors[:4]):
+                            with m_cols[mi]: st.markdown(f"`{maj}`")
+
+                    if daily:
+                        st.markdown("**What you do every day:**")
+                        for task in daily.split(' | ')[:5]:
+                            if task.strip(): st.markdown(f"• {task.strip()}")
+                    if tools_str:
+                        st.markdown("**Tools & software used:**")
+                        tool_list = [t.strip() for t in tools_str.split(',') if t.strip()]
+                        t_cols = st.columns(4)
+                        for ti, tool in enumerate(tool_list[:8]):
+                            with t_cols[ti % 4]: st.markdown(f"`{tool}`")
+                    if skills:
+                        st.markdown("**Top skills needed:**")
+                        sk_list = [s.strip() for s in skills.split(',') if s.strip()]
+                        s_cols = st.columns(5)
+                        for si, sk in enumerate(sk_list[:5]):
+                            with s_cols[si % 5]: st.markdown(f"**{sk}**")
+                    R=float(career.get('interest_realistic',0) or 0)
+                    I=float(career.get('interest_investigative',0) or 0)
+                    A=float(career.get('interest_artistic',0) or 0)
+                    S=float(career.get('interest_social',0) or 0)
+                    E=float(career.get('interest_enterprising',0) or 0)
+                    C=float(career.get('interest_conventional',0) or 0)
+                    st.divider()
+                    st.markdown("**What kind of person thrives here (O*NET)**")
+                    r_cols = st.columns(6)
+                    for col,(lbl,val) in zip(r_cols,[("Hands-on",R),("Analytical",I),("Creative",A),("Social",S),("Leadership",E),("Detail",C)]):
+                        col.metric(lbl, f"{val:.1f}/7")
+                    if len(matches_c) > 1:
+                        st.divider()
+                        st.markdown(f"**{len(matches_c)-1} related roles:**")
+                        for mc in matches_c[1:6]:
+                            mc_sal = int(float(mc.get('median_annual',0) or 0))
+                            st.caption(f"• {mc.get('title','')} — ${mc_sal:,}/yr" if mc_sal else f"• {mc.get('title','')}")
+                    st.caption("Source: O*NET 30.2 · BLS 2024")
+            else:
+                st.markdown("**Popular searches:**")
+                popular = ["Software Engineer","Registered Nurse","Lawyer","Data Scientist",
+                          "Teacher","Social Worker","Cybersecurity","Accountant","Marketing Manager","Pharmacist"]
+                p_cols = st.columns(5)
+                for pi, p in enumerate(popular):
+                    with p_cols[pi % 5]:
+                        if st.button(p, key=f"pop_{pi}", use_container_width=True):
+                            st.session_state['pop_career'] = p
+                            st.rerun()
+
+    with tab3:
+        # ── AID ELIGIBILITY TAB ──────────────────────────────────
+        st.markdown("### 💰 Your Financial Aid Eligibility")
+        st.caption("Based on 2025-26 federal and NY State thresholds")
+        aid = st.session_state.get('aid', calculate_aid(income, hsize, ny_res, IMMIG_MAP.get(immig,'citizen'), first_gen))
+        total = aid.get('total',0); pell = aid.get('pell',0)
+        tap = aid.get('tap',0); dream = aid.get('dream',0); heop = aid.get('heop',False)
+        c1,c2,c3,c4 = st.columns(4)
+        c1.metric("Total Est. Aid", f"${total:,}/yr")
+        c2.metric("Pell Grant", f"${pell:,}/yr" if pell else "Not eligible")
+        c3.metric("NY TAP", f"${tap:,}/yr" if tap else "Not eligible")
+        c4.metric("Dream Act", f"${dream:,}/yr" if dream else "Not eligible")
+        st.divider()
+        if pell: st.success(f"✅ **Federal Pell Grant** — ${pell:,}/yr · No repayment required")
+        else: st.info("ℹ️ **Federal Pell Grant** — Not eligible. Check studentaid.gov for FAFSA.")
+        if tap: st.success(f"✅ **NY TAP** — ${tap:,}/yr · NY residents only · No repayment")
+        else: st.info("ℹ️ **NY TAP** — Not eligible. Must be NY resident with income under $80,000.")
+        if dream: st.success(f"✅ **NY Dream Act** — ${dream:,}/yr · Undocumented/DACA students")
+        if heop: st.success("✅ **HEOP** — Full scholarship at many NY private colleges")
+        else: st.info("ℹ️ **HEOP** — Not eligible based on your profile.")
+        st.divider()
+        st.markdown("• File your FAFSA at studentaid.gov every year — opens October 1")
+        st.markdown("• TAP application opens after FAFSA — apply at hesc.ny.gov")
+        st.markdown("• These are estimates — actual aid depends on your full FAFSA")
+        st.caption("Aid thresholds: Federal 2025-26 · NY HESC 2025-26")
+
+    with tab4:
+        # ── MY COLLEGE LIST TAB ──────────────────────────────────
+        st.markdown("### 📋 My College List")
+        my_list = st.session_state.get('my_list', [])
+        if not my_list:
+            st.info("Your list is empty — go to College Matches and click **+ Add to list** on any school.")
+        else:
+            aid = st.session_state.get('aid', {})
+            gpa_val = st.session_state.get('gpa', 3.0)
+            safety_n = sum(1 for s in my_list if s.get('fit')=='safety')
+            match_n  = sum(1 for s in my_list if s.get('fit')=='match')
+            reach_n  = sum(1 for s in my_list if s.get('fit')=='reach')
+            c1,c2,c3,c4 = st.columns(4)
+            c1.metric("Total", len(my_list)); c2.metric("Safety", safety_n)
+            c3.metric("Match", match_n); c4.metric("Reach", reach_n)
+            if safety_n == 0: st.warning("⚠️ No safety schools — add at least 2.")
+            if reach_n == 0: st.info("💡 Consider adding a reach school — a dream school worth applying to.")
+            st.divider()
+            fit_icons = {'safety':'🟢','match':'🎯','reach':'⚠️','unknown':'⚪'}
+            for s in my_list:
+                fit = s.get('fit','unknown')
+                with st.container():
+                    col_a,col_b,col_c = st.columns([3,1.5,1])
+                    with col_a:
+                        st.markdown(f"**{fit_icons.get(fit,'⚪')} [{s.get('name','')}]({s.get('web','#')})**")
+                        st.caption(f"{s.get('state','')} · Sticker: ${int(s.get('tin') or 0):,} · You pay: ${int(s.get('net') or 0):,}/yr · Grad rate: {int(s.get('grad') or 0)}%")
+                    with col_b:
+                        st.markdown(f"**RD:** {s.get('rd','Check website')}")
+                        if s.get('ea'): st.caption(f"EA: {s.get('ea')}")
+                    with col_c:
+                        if st.button("Remove", key=f"rm_{s.get('id',s.get('name',''))}", use_container_width=True):
+                            st.session_state.my_list = [x for x in my_list if x.get('id') != s.get('id')]
+                            st.rerun()
+                    st.divider()
+            if st.button("⬇️ Download as PDF", type="primary", key="pdf_download"):
+                try:
+                    pdf_bytes = generate_pdf(my_list, aid, gpa_val)
+                    st.download_button("📄 Save College List PDF", data=pdf_bytes,
+                        file_name="my_college_list.pdf", mime="application/pdf", key="pdf_save")
+                except ImportError:
+                    st.warning("PDF export requires reportlab.")
+            st.caption("⚠️ Always verify deadlines on each college's official website before applying.")
+
+st.divider()
+st.caption("Pathways by SLN · IPEDS 2023-24 · Peterson's 2025 · O*NET 30.2 · Aid thresholds 2025-26 · Verify all deadlines on official college websites")
