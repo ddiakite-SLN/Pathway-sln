@@ -1455,9 +1455,12 @@ with tab1:
                     career = matches_c[0]
                     title = career.get('title','')
                     field = career.get('field','')
-                    sal_mid = int(float(career.get('median_annual',0) or 0))
-                    sal_entry = int(float(career.get('entry_annual',0) or 0))
-                    sal_senior = int(float(career.get('experienced_annual',0) or 0))
+                    try: sal_mid = int(float(career.get('median_annual') or 0))
+                    except: sal_mid = 0
+                    try: sal_entry = int(float(career.get('entry_annual') or 0))
+                    except: sal_entry = 0
+                    try: sal_senior = int(float(career.get('experienced_annual') or 0))
+                    except: sal_senior = 0
                     growth = career.get('growth_pct','N/A')
                     growth = 'N/A' if str(growth) in ['nan','None','','null'] else growth
                     education = career.get('education','N/A')
