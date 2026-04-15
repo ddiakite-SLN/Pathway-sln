@@ -106,8 +106,6 @@ def load_schools():
         s['gpa_75']  = safe_gpa(s.get('gpa_75'))
     return schools
 
-@st.cache_data
-@st.cache_data
 # ── GPA Data Loader (Peterson's 2025 + SUNY PDF) ────────────
 # Source: gpa_data.csv — 76 schools with admitted GPA ranges
 @st.cache_data(ttl=3600, show_spinner=False)
@@ -512,10 +510,11 @@ def run_match(gpa, sat, act, state, size, ctrl, need, env, study_yrs, aid, n, ma
         if ctrl == 'any' and s_ctrl == 3: continue
         tin = s.get('tin') or 0
         if tin <= 0: continue
+        tuition_only = tin  # save raw tuition before adding R&B
         # Add room & board to total cost of attendance (Alex feedback Apr 15)
         # Community colleges are mostly commuter (~$3k), 4-yr schools avg ~$14k
         rb = s.get('roomboard') or (3000 if s.get('yr2') else 14000)
-        tin = tin + rb
+        tin = tin + rb  # tin is now full cost of attendance
         # Data quality filters
         if only_gpa and not (s.get('gpa_25') or s.get('gpa_avg')): continue
         if only_adm and (not s.get('adm') or s.get('adm') != s.get('adm')): continue
@@ -537,6 +536,8 @@ def run_match(gpa, sat, act, state, size, ctrl, need, env, study_yrs, aid, n, ma
             'net': net,
             'adm_display': adm_display,
             'sticker': sticker,
+            'tuition_only': int(tuition_only) if tuition_only else 0,
+            'roomboard_added': int(rb) if rb else 0,
             'rd': dl.get('rd','Check website'),
             'ea': dl.get('ea',''),
             'ed': dl.get('ed',''),
@@ -1118,12 +1119,24 @@ with tab1:
             # 4. Completion outcomes (higher grad rate = better)
             grad = -(x.get('grad') or 0)
 
-            # CUNY first, SUNY second, private last — reads from eop_schools.csv
+            # CUNY first, SUNY second, private last
+            # Reads from eop_schools.csv + hardcoded unitid fallback
             sid = x.get('id', 0)
             eop_progs = EOP_DATA.get(str(sid), [])
-            if any(p in ['SEEK','CD'] for p in eop_progs): sys_order = 0
-            elif any(p in ['EOP'] for p in eop_progs): sys_order = 1
-            else: sys_order = 2
+            # Hardcoded CUNY unitids (SEEK/CD programs = tier 0)
+            CUNY_IDS = {190637,190512,190549,190558,190576,190600,190615,190624,
+                        190099,190213,190372,190044,190045,190046,190589,190678}
+            # Hardcoded SUNY unitids (EOP programs = tier 1)
+            SUNY_IDS = {196060,196097,196105,196183,196200,196219,196264,196097,
+                        196088,196246,196176,196130,196051,196006,196113,196158}
+            if sid in CUNY_IDS or any(p in ['SEEK','CD'] for p in eop_progs):
+                sys_order = 0   # CUNY first
+            elif sid in SUNY_IDS or any(p in ['EOP'] for p in eop_progs):
+                sys_order = 1   # SUNY second
+            elif x.get('ctrl') == 1:
+                sys_order = 2   # Other public
+            else:
+                sys_order = 3   # Private last
             return [sys_order, in_state, is_2yr, fit_sweet, reach_difficulty, grad]
 
         def sort_key(x):
@@ -1225,9 +1238,16 @@ with tab1:
                             aid_chips += f"  `{badge}`"
                         if aid_chips: st.markdown(f"**Aid & fit:** {aid_chips.strip()}")
                     with cb:
-                        sticker = int(s.get('tin') or 0)
+                        tuition_only = int(s.get('tuition_only') or 0)
+                        rb_added = int(s.get('roomboard_added') or 0)
+                        sticker = int(s.get('sticker') or 0)  # tuition + R&B
                         net = int(s.get('net') or 0)
-                        st.markdown(f"**Sticker:** ${sticker:,}" if sticker else "**Sticker:** N/A")
+                        if tuition_only:
+                            st.markdown(f"**Tuition:** ${tuition_only:,}")
+                            st.markdown(f"**+ R&B:** ~${rb_added:,}")
+                            st.markdown(f"**Total CoA:** ${sticker:,}")
+                        else:
+                            st.markdown("**Cost:** N/A")
                         st.markdown(f"**You pay:** ${net:,}/yr" if s.get('net') is not None else "**You pay:** N/A")
                         grad = s.get('grad')
                         st.markdown(f"**Grad rate:** {int(grad)}%" if grad else "**Grad rate:** N/A")
@@ -1266,7 +1286,7 @@ with tab1:
                             elif fit=='reach': st.warning(fit_exp)
                     st.divider()
 
-    with tab2:
+with tab2:
         # ── CAREER RESULTS TAB ──────────────────────────────────
         if CAREERS_FULL:
             st.caption(f"Career matching from {len(CAREERS_FULL):,} occupations across {len(set(c['field'] for c in CAREERS_FULL))} fields — O*NET 30.2 + BLS 2024")
@@ -1403,141 +1423,137 @@ with tab1:
                 value=default_search,
                 placeholder="e.g. Nurse, Software Engineer, Lawyer, Chef, Cybersecurity...",
                 key="career_search")
+            # Clear selected career when search term changes
+            if search_career != st.session_state.get('_last_career_search',''):
+                st.session_state['career_selected_soc'] = ''
+                st.session_state['_last_career_search'] = search_career
 
             if search_career:
                 search_lower = search_career.lower().strip()
-                search_words = [w for w in search_lower.split() if len(w) > 2]
 
-                # Direct major/career → O*NET title mapping
-                MAJOR_TO_CAREER = {
-                    "computer engineering":"Computer Hardware Engineers","software engineering":"Software Developers",
-                    "electrical engineering":"Electrical Engineers","mechanical engineering":"Mechanical Engineers",
-                    "civil engineering":"Civil Engineers","biomedical engineering":"Bioengineers and Biomedical Engineers",
-                    "chemical engineering":"Chemical Engineers","industrial engineering":"Industrial Engineers",
-                    "aerospace engineering":"Aerospace Engineers","nursing":"Registered Nurses",
-                    "nurse":"Registered Nurses","rn":"Registered Nurses","pre-med":"Physicians, All Other",
-                    "pre-nursing":"Registered Nurses","medicine":"Physicians, All Other","doctor":"Physicians, All Other",
-                    "physician":"Physicians, All Other","dentist":"Dentists, All Other Specialists",
-                    "pharmacy":"Pharmacists","physical therapy":"Physical Therapists",
-                    "occupational therapy":"Occupational Therapists","dental hygiene":"Dental Hygienists",
-                    "social work":"Social Workers, All Other","social worker":"Social Workers, All Other",
-                    "psychology":"Psychologists, All Other","psychologist":"Psychologists, All Other",
-                    "education":"Elementary School Teachers, Except Special Education",
-                    "teaching":"Elementary School Teachers, Except Special Education",
-                    "teacher":"Elementary School Teachers, Except Special Education",
-                    "teach":"Elementary School Teachers, Except Special Education",
-                    "early childhood education":"Preschool Teachers, Except Special Education",
-                    "special education":"Special Education Teachers, All Other",
-                    "accounting":"Accountants and Auditors","accountant":"Accountants and Auditors",
-                    "finance":"Financial Analysts","financial advisor":"Personal Financial Advisors",
-                    "business administration":"General and Operations Managers",
-                    "management":"General and Operations Managers","marketing":"Marketing Managers",
-                    "human resources":"Human Resources Specialists","criminal justice":"Police and Sheriff Patrol Officers",
-                    "law":"Lawyers","lawyer":"Lawyers","attorney":"Lawyers","paralegal":"Paralegals and Legal Assistants",
-                    "graphic design":"Graphic Designers","architecture":"Architects, Except Landscape and Naval",
-                    "urban planning":"Urban and Regional Planners","data science":"Data Scientists",
-                    "cybersecurity":"Information Security Analysts","information technology":"Computer User Support Specialists",
-                    "computer science":"Software Developers","biology":"Biological Scientists, All Other",
-                    "bio":"Biological Scientists, All Other","chemistry":"Chemists","chem":"Chemists",
-                    "environmental science":"Environmental Scientists and Specialists, Including Health",
-                    "public health":"Epidemiologists","nutrition":"Dietitians and Nutritionists",
-                    "communications":"Public Relations Specialists","comm":"Public Relations Specialists",
-                    "journalism":"News Analysts, Reporters, and Journalists","film":"Producers and Directors",
-                    "music":"Musicians and Singers","dance":"Dancers","theater":"Actors",
-                    "fashion":"Fashion Designers","interior design":"Interior Designers",
-                    "construction management":"Construction Managers","culinary":"Chefs and Head Cooks",
-                    "chef":"Chefs and Head Cooks","radiologist":"Radiologists",
-                    "cop":"Police and Sheriff Patrol Officers","police":"Police and Sheriff Patrol Officers",
-                    "firefighter":"Firefighters","emt":"Emergency Medical Technicians",
-                    "paramedic":"Paramedics","therapist":"Mental Health Counselors",
-                    "counselor":"Mental Health Counselors","web developer":"Web Developers",
-                    "game design":"Software Developers","product manager":"Project Management Specialists",
-                    "real estate":"Real Estate Sales Agents","animator":"Special Effects Artists and Animators",
+                # SEARCH_STEMS: maps broad student terms → O*NET title keywords
+                # This is what makes "nursing" find RN, LPN, NP, CRNA, Nursing Instructor
+                # instead of just one exact match.
+                SEARCH_STEMS = {
+                    "nursing":      ["nurse","nursing"],
+                    "nurse":        ["nurse","nursing"],
+                    "doctor":       ["physician","surgeon","psychiatrist","internist","radiolog"],
+                    "medicine":     ["physician","surgeon","anesthesiolog","radiolog","pediatric","internist"],
+                    "teacher":      ["teacher","instructor","educator"],
+                    "teaching":     ["teacher","instructor","educator"],
+                    "engineer":     ["engineer","engineering"],
+                    "engineering":  ["engineer","engineering"],
+                    "computer":     ["software","computer","programmer","developer","systems analyst"],
+                    "tech":         ["software","developer","computer","technician","systems"],
+                    "law":          ["lawyer","attorney","legal","paralegal","judge"],
+                    "lawyer":       ["lawyer","attorney","legal"],
+                    "social work":  ["social worker","social service","community service"],
+                    "social worker":["social worker","social service"],
+                    "psychology":   ["psychologist","counselor","therapist","behavioral"],
+                    "therapist":    ["therapist","counselor","therapy"],
+                    "counselor":    ["counselor","therapist","advisor","guidance"],
+                    "business":     ["manager","administrator","executive","operations","officer"],
+                    "finance":      ["financial","accountant","analyst","banker","economist","budget"],
+                    "accounting":   ["accountant","auditor","tax","bookkeeper"],
+                    "marketing":    ["marketing","advertising","brand","public relations","promotions"],
+                    "design":       ["designer","design","art director","creative director"],
+                    "art":          ["artist","designer","art director","illustrator","animator","sculptor"],
+                    "science":      ["scientist","researcher","biologist","chemist","physicist","geoscientist"],
+                    "biology":      ["biologist","biological","microbiolog","geneticist","ecologist"],
+                    "health":       ["health","medical","clinical","patient","care","therapist","technician"],
+                    "criminal justice":["detective","officer","investigator","correctional","probation","parole"],
+                    "police":       ["police","detective","investigator","patrol"],
+                    "education":    ["teacher","instructor","principal","educator","school counselor"],
+                    "data":         ["data scientist","data analyst","statistician","database","machine learning"],
+                    "cyber":        ["cybersecurity","information security","network security","penetration"],
+                    "construction": ["construction","contractor","carpenter","electrician","plumber","mason"],
+                    "culinary":     ["chef","cook","food","culinary","baker","pastry"],
+                    "film":         ["producer","director","editor","filmmaker","cinematographer"],
+                    "music":        ["musician","singer","composer","music","conductor"],
+                    "public health":["epidemiologist","health educator","public health","environmental health"],
+                    "pharmacy":     ["pharmacist","pharmacy","pharmaceutical"],
+                    "dental":       ["dentist","dental","orthodontist","periodontist"],
+                    "physical therapy":["physical therapist","physiotherapist"],
+                    "occupational": ["occupational therapist"],
+                    "architecture": ["architect","architectural","urban planner"],
+                    "accounting":   ["accountant","auditor","tax preparer","bookkeeper"],
+                    "hr":           ["human resources","recruiting","talent","labor relations"],
+                    "human resources":["human resources","recruiting","talent","labor relations"],
+                    "writing":      ["writer","editor","author","journalist","copywriter","content"],
+                    "journalism":   ["journalist","reporter","news","editor","correspondent"],
+                    "environment":  ["environmental","ecologist","conservation","wildlife","geoscientist"],
+                    "aviation":     ["pilot","air traffic","flight","aviation"],
+                    "military":     ["military","army","navy","air force","officer","enlisted"],
                 }
 
-                # Layer 1: check direct mapping first
-                direct_match = None
-                for key, career_title in MAJOR_TO_CAREER.items():
-                    if key == search_lower or key in search_lower or search_lower in key:
-                        for c in (CAREERS_FULL or []):
-                            if career_title.lower() in c.get('title','').lower():
-                                direct_match = c
-                                break
-                        if direct_match:
-                            break
-
                 import re as _re
-                def _matches(term, career):
-                    # Check title, description, field, and daily tasks
-                    haystack = ' '.join([
-                        career.get('title',''),
-                        career.get('description','')[:200],
-                        career.get('field',''),
-                        career.get('daily_tasks','')[:100],
-                    ]).lower()
-                    # Word boundary match
-                    return bool(_re.search(r'\b' + _re.escape(term) + r'\b', haystack))
 
-                exact = []    # full phrase match in title
-                strong = []   # all words match in title
-                partial = []  # partial match in title or description
-                seen = set()
+                def career_search_results(term, career_list):
+                    """Return ranked O*NET careers for a search term using stems + word matching."""
+                    tl = term.lower().strip()
+                    stems = SEARCH_STEMS.get(tl, [])
+                    # Also try partial key matches (e.g. "physical therapy" matches "physical")
+                    if not stems:
+                        for key, kstems in SEARCH_STEMS.items():
+                            if tl in key or key in tl:
+                                stems = kstems
+                                break
+                    raw_words = [w for w in tl.split() if len(w) > 2]
 
-                for c in (CAREERS_FULL or []):
-                    soc = c.get('soc','')
-                    if soc in seen: continue
-                    title_lower = c.get('title','').lower()
-                    desc_lower = c.get('description','').lower()
-                    field_lower = c.get('field','').lower()
+                    seen = set()
+                    exact, strong, partial = [], [], []
 
-                    # Tier 1: full phrase in title
-                    if search_lower in title_lower:
-                        exact.append(c); seen.add(soc); continue
+                    for c in career_list:
+                        soc = c.get('soc','')
+                        if soc in seen: continue
+                        title_l = c.get('title','').lower()
+                        desc_l  = (c.get('description','') or '')[:300].lower()
+                        field_l = c.get('field','').lower()
 
-                    # Tier 2: all search words in title
-                    if search_words and all(w in title_lower for w in search_words):
-                        strong.append(c); seen.add(soc); continue
+                        # Tier 1: exact phrase in title (highest confidence)
+                        if tl in title_l:
+                            exact.append(c); seen.add(soc); continue
 
-                    # Tier 3: most words in title
-                    word_hits = sum(1 for w in search_words if w in title_lower)
-                    if word_hits >= max(1, len(search_words)-1):
-                        strong.append(c); seen.add(soc); continue
+                        # Tier 2: stem keywords match title (e.g. nursing→nurse)
+                        if stems and any(s in title_l for s in stems):
+                            strong.append(c); seen.add(soc); continue
 
-                    # Tier 4: any word matches title or field or description
-                    if any(w in title_lower or w in field_lower for w in search_words):
-                        partial.append(c); seen.add(soc); continue
+                        # Tier 3: all raw words in title
+                        if raw_words and all(w in title_l for w in raw_words):
+                            strong.append(c); seen.add(soc); continue
 
-                    # Tier 5: full phrase in description
-                    if search_lower in desc_lower:
-                        partial.append(c); seen.add(soc)
+                        # Tier 4: any word in title or field
+                        if raw_words and any(w in title_l or w in field_l for w in raw_words):
+                            partial.append(c); seen.add(soc); continue
 
-                # Sort each tier by salary desc so best-paying comes first
-                def sal(c): return int(float(c.get('median_annual',0) or 0))
-                exact   = sorted(exact,   key=sal, reverse=True)
-                strong  = sorted(strong,  key=sal, reverse=True)
-                partial = sorted(partial, key=sal, reverse=True)
+                        # Tier 5: stem in description
+                        if stems and any(s in desc_l for s in stems):
+                            partial.append(c); seen.add(soc)
 
-                matches_c = exact + strong + partial
-                # Prepend direct match if found
-                if direct_match:
-                    matches_c = [direct_match] + [c for c in matches_c if c.get('soc') != direct_match.get('soc')]
+                    def sal(c): return int(float(c.get('median_annual', 0) or 0))
+                    return (
+                        sorted(exact,   key=sal, reverse=True) +
+                        sorted(strong,  key=sal, reverse=True) +
+                        sorted(partial, key=sal, reverse=True)
+                    )
+
+                matches_c = career_search_results(search_lower, CAREERS_FULL or [])
 
                 if not matches_c:
-                    st.warning(f"No careers found for '{search_career}'. Try: Nurse, Software Engineer, Teacher, Accountant, Social Worker")
+                    st.warning(f"No careers found for '{search_career}'. Try: Nurse, Software Engineer, Teacher, Social Worker, Accountant")
                     fields_list = sorted(set(c.get('field','') for c in (CAREERS_FULL or []) if c.get('field')))
                     f_cols = st.columns(4)
                     for fi, fn in enumerate(fields_list[:12]):
                         with f_cols[fi % 4]: st.markdown(f"• {fn}")
                 elif not st.session_state.get('career_selected_soc',''):
-                    # Always show list first — Aaron feedback Apr 15
-                    # Show all matches so student can pick, even if only 1 result
-                    top_careers = matches_c[:8]
-                    st.markdown(f"**Found {len(top_careers)} career{'s' if len(top_careers)>1 else ''} matching '{search_career}'** — pick one to explore:")
+                    # Show list first — student picks which one before seeing detail
+                    top_careers = matches_c[:10]
+                    st.markdown(f"**Found {len(top_careers)} {'roles' if len(top_careers)>1 else 'role'} matching '{search_career}'** — pick one to explore:")
                     for idx_c, mc in enumerate(top_careers):
-                        mc_sal = int(float(mc.get('median_annual',0) or 0))
-                        mc_field = mc.get('field','')
-                        mc_edu = mc.get('education','')
-                        col_a, col_b = st.columns([4,1])
+                        mc_sal = int(float(mc.get('median_annual', 0) or 0))
+                        mc_field = mc.get('field', '')
+                        mc_edu   = mc.get('education', '')
+                        col_a, col_b = st.columns([4, 1])
                         with col_a:
                             if st.button(
                                 f"{mc.get('title','')}  ·  {mc_field}",
@@ -1550,43 +1566,46 @@ with tab1:
                             st.caption(f"${mc_sal:,}/yr" if mc_sal else mc_edu)
                     st.caption("Source: O*NET 30.2 · BLS 2024")
                 else:
-                    # User selected from list — show detail card
-                    selected_soc = st.session_state.get('career_selected_soc','')
+                    # User picked from list — show detail card
+                    selected_soc = st.session_state.get('career_selected_soc', '')
                     career = next((c for c in matches_c if c.get('soc') == selected_soc), matches_c[0])
                     if st.button("← Back to results", key="back_career"):
                         st.session_state['career_selected_soc'] = ''
                         st.rerun()
-                    title = career.get('title','')
-                    field = career.get('field','')
+                    title = career.get('title', '')
+                    field = career.get('field', '')
                     try: sal_mid = int(float(career.get('median_annual') or 0))
                     except: sal_mid = 0
                     try: sal_entry = int(float(career.get('entry_annual') or 0))
                     except: sal_entry = 0
                     try: sal_senior = int(float(career.get('experienced_annual') or 0))
                     except: sal_senior = 0
-                    growth = career.get('growth_pct','N/A')
+                    growth = career.get('growth_pct', 'N/A')
                     growth = 'N/A' if str(growth) in ['nan','None','','null'] else growth
-                    education = career.get('education','N/A')
-                    job_zone = int(float(career.get('job_zone',3) or 3))
-                    desc = str(career.get('description','') or '')[:300]
-                    daily = str(career.get('daily_tasks','') or '')
-                    tools_str = str(career.get('tech_tools','') or '')
-                    skills = str(career.get('top_skills','') or '')
-                    zone_map = {1:"No degree needed",2:"High school — 0-2 years",
+                    education = career.get('education', 'N/A')
+                    job_zone = int(float(career.get('job_zone', 3) or 3))
+                    desc = str(career.get('description', '') or '')[:300]
+                    daily = str(career.get('daily_tasks', '') or '')
+                    tools_str = str(career.get('tech_tools', '') or '')
+                    skills = str(career.get('top_skills', '') or '')
+                    zone_map = {1:"No degree needed", 2:"High school — 0-2 years",
                                 3:"Associate's or Bachelor's — 2-4 years",
-                                4:"Bachelor's degree — 4 years",5:"Graduate degree — 6+ years"}
-                    study_req = zone_map.get(job_zone,"Bachelor's degree — 4 years")
+                                4:"Bachelor's degree — 4 years", 5:"Graduate degree — 6+ years"}
+                    study_req = zone_map.get(job_zone, "Bachelor's degree — 4 years")
                     can_now = job_zone <= 3
 
                     st.markdown(f"### {title}")
                     st.caption(f"{field} · {study_req}")
-                    if desc: st.markdown(f"*{desc[:250]}...*" if len(desc)>250 else f"*{desc}*")
-                    m1,m2,m3,m4 = st.columns(4)
+                    if desc: st.markdown(f"*{desc[:250]}...*" if len(desc) > 250 else f"*{desc}*")
+                    m1, m2, m3, m4 = st.columns(4)
                     FIELD_AVG = {'Arts & Media':72460,'Business & Finance':84005,'Construction & Trades':61550,
                         'Criminal Justice':67290,'Culinary Arts':56520,'Education':62615,'Engineering':98176,
                         'Healthcare':102084,'Law & Justice':139540,'Management':144658,'Personal Care':44160,
                         'Science & Research':92995,'Social Services':57458,'Technology':115734,'Transportation':158115}
-                    if not sal_mid: sal_mid = FIELD_AVG.get(field, 65000); sal_entry = int(sal_mid*0.62); sal_senior = int(sal_mid*1.45)
+                    if not sal_mid:
+                        sal_mid = FIELD_AVG.get(field, 65000)
+                        sal_entry = int(sal_mid * 0.62)
+                        sal_senior = int(sal_mid * 1.45)
                     m1.metric("Median salary", f"${sal_mid:,}/yr")
                     m2.metric("Entry salary", f"${sal_entry:,}/yr")
                     m3.metric("Senior salary", f"${sal_senior:,}/yr")
@@ -1613,7 +1632,7 @@ with tab1:
                     rec_majors = CAREER_MAJORS.get(field, [])
                     if rec_majors:
                         st.markdown(f"**📚 Recommended majors for {title.split(',')[0]}:**")
-                        m_cols = st.columns(min(len(rec_majors[:4]),4))
+                        m_cols = st.columns(min(len(rec_majors[:4]), 4))
                         for mi, maj in enumerate(rec_majors[:4]):
                             with m_cols[mi]: st.markdown(f"`{maj}`")
 
@@ -1633,22 +1652,22 @@ with tab1:
                         s_cols = st.columns(5)
                         for si, sk in enumerate(sk_list[:5]):
                             with s_cols[si % 5]: st.markdown(f"**{sk}**")
-                    R=float(career.get('interest_realistic',0) or 0)
-                    I=float(career.get('interest_investigative',0) or 0)
-                    A=float(career.get('interest_artistic',0) or 0)
-                    S=float(career.get('interest_social',0) or 0)
-                    E=float(career.get('interest_enterprising',0) or 0)
-                    C=float(career.get('interest_conventional',0) or 0)
+                    R = float(career.get('interest_realistic', 0) or 0)
+                    I = float(career.get('interest_investigative', 0) or 0)
+                    A = float(career.get('interest_artistic', 0) or 0)
+                    S = float(career.get('interest_social', 0) or 0)
+                    E = float(career.get('interest_enterprising', 0) or 0)
+                    C = float(career.get('interest_conventional', 0) or 0)
                     st.divider()
                     st.markdown("**What kind of person thrives here (O*NET)**")
                     r_cols = st.columns(6)
-                    for col,(lbl,val) in zip(r_cols,[("Hands-on",R),("Analytical",I),("Creative",A),("Social",S),("Leadership",E),("Detail",C)]):
+                    for col, (lbl, val) in zip(r_cols, [("Hands-on",R),("Analytical",I),("Creative",A),("Social",S),("Leadership",E),("Detail",C)]):
                         col.metric(lbl, f"{val:.1f}/7")
                     if len(matches_c) > 1:
                         st.divider()
                         st.markdown(f"**{len(matches_c)-1} related roles:**")
                         for mc in matches_c[1:6]:
-                            mc_sal = int(float(mc.get('median_annual',0) or 0))
+                            mc_sal = int(float(mc.get('median_annual', 0) or 0))
                             st.caption(f"• {mc.get('title','')} — ${mc_sal:,}/yr" if mc_sal else f"• {mc.get('title','')}")
                     st.caption("Source: O*NET 30.2 · BLS 2024")
 
@@ -1662,7 +1681,7 @@ with tab1:
                         if st.button(p, key=f"pop_{pi}", use_container_width=True):
                             st.session_state['pop_career'] = p
                             st.rerun()
-    with tab3:
+with tab3:
         # ── AID ELIGIBILITY TAB ──────────────────────────────────
         st.markdown("### 💰 Your Financial Aid Eligibility")
         st.caption("Based on 2025-26 federal and NY State thresholds")
@@ -1688,7 +1707,7 @@ with tab1:
         st.markdown("• These are estimates — actual aid depends on your full FAFSA")
         st.caption("Aid thresholds: Federal 2025-26 · NY HESC 2025-26")
 
-    with tab4:
+with tab4:
         # ── MY COLLEGE LIST TAB ──────────────────────────────────
         st.markdown("### 📋 My College List")
         my_list = st.session_state.get('my_list', [])
@@ -1703,8 +1722,31 @@ with tab1:
             c1,c2,c3,c4 = st.columns(4)
             c1.metric("Total", len(my_list)); c2.metric("Safety", safety_n)
             c3.metric("Match", match_n); c4.metric("Reach", reach_n)
-            if safety_n == 0: st.warning("⚠️ No safety schools — add at least 2.")
-            if reach_n == 0: st.info("💡 Consider adding a reach school — a dream school worth applying to.")
+            # ── Balance Checker ─────────────────────────────────
+            st.markdown("#### 📊 List Balance Check")
+            total_n = len(my_list)
+            col_s, col_m, col_r = st.columns(3)
+            col_s.metric("🟢 Safety", safety_n, help="Schools very likely to admit you")
+            col_m.metric("🎯 Match", match_n, help="Schools where you're a realistic candidate")
+            col_r.metric("⚠️ Reach", reach_n, help="Aspirational schools — worth applying to")
+
+            # Advice based on balance
+            advice = []
+            if safety_n == 0:
+                advice.append("⚠️ **No safety schools.** Add at least 2 schools where you're very likely to get in.")
+            elif safety_n < 2:
+                advice.append("💡 Consider adding one more safety school — having 2+ gives you a real backup.")
+            if match_n < 2:
+                advice.append("⚠️ **Not enough match schools.** Add 2–4 schools where your GPA/scores are in their range.")
+            if reach_n == 0:
+                advice.append("💡 **No reach schools.** Add at least 1 dream school — you might get in!")
+            if total_n < 5:
+                advice.append("💡 Counselors recommend applying to at least 5–8 schools for the best odds.")
+            if total_n >= 5 and safety_n >= 1 and match_n >= 2 and reach_n >= 1:
+                advice.append("✅ **Solid list!** Good mix of safety, match, and reach schools.")
+
+            for a in advice:
+                st.markdown(a)
             st.divider()
             fit_icons = {'safety':'🟢','match':'🎯','reach':'⚠️','unknown':'⚪'}
             for s in my_list:
