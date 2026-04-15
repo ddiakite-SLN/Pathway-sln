@@ -1026,7 +1026,7 @@ with tab1:
 
         # Apply multi-sort
         fit_order = {'safety':0,'match':1,'reach':2,'unknown':3}
-        def aaron_default_sort(x):
+        def aaron_default_sort(x, _state_val=state_val):
             """
             SLN default sort — Aaron Hawn's recommended exploration order:
             1. In-state first (NY students see NY schools first)
@@ -1039,8 +1039,8 @@ with tab1:
             students explore best when shown aspirational but achievable options first.
             """
             # 1. In-state preference (NY first for NY students)
-            state_val_list = state_val if isinstance(state_val, list) else [state_val]
-            primary_state = state_val_list[0] if state_val_list else 'NY'
+            state_val_list = _state_val if isinstance(_state_val, list) else [_state_val]
+            primary_state = state_val_list[0] if state_val_list and state_val_list[0] != 'any' else 'NY'
             in_state = 0 if x.get('state') == primary_state else 1
 
             # 2. Degree level (4-year = 0, 2-year = 1)
