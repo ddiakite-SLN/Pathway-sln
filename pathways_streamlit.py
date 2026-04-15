@@ -41,6 +41,8 @@ if 'career_results' not in st.session_state:
     st.session_state.career_results = []
 if 'ran_match' not in st.session_state:
     st.session_state.ran_match = False
+if 'career_selected_soc' not in st.session_state:
+    st.session_state.career_selected_soc = ''
 
 # ── DATA ──────────────────────────────────────────────────────
 # ════════════════════════════════════════════════════════════
@@ -264,11 +266,16 @@ DEADLINES = {
 # ════════════════════════════════════════════════════════════
 def calculate_aid(income, hsize, ny_res, immig, first_gen):
     pell=tap=dream=0; heop=False
+    # Pell Grant — ANNUAL amounts (2025-26) · studentaid.gov
+    # Household size adjustments: larger families qualify at higher incomes
+    size_adj = max(0, (hsize - 4) * 2000)
     if immig in ('citizen','daca'):
-        if income<=26000: pell=7395
-        elif income<=32000: pell=5546
-        elif income<=42000: pell=3698
-        elif income<=60000: pell=1849
+        if income <= 20000 + size_adj:   pell = 7395
+        elif income <= 30000 + size_adj: pell = 6195
+        elif income <= 40000 + size_adj: pell = 4746
+        elif income <= 50000 + size_adj: pell = 3098
+        elif income <= 60000 + size_adj: pell = 1848
+        elif income <= 65000 + size_adj: pell = 924
     if ny_res and immig in ('citizen','daca') and income<=80000:
         if income<=10000: tap=5665
         elif income<=20000: tap=4700
@@ -499,6 +506,10 @@ def run_match(gpa, sat, act, state, size, ctrl, need, env, study_yrs, aid, n, ma
         if ctrl == 'any' and s_ctrl == 3: continue
         tin = s.get('tin') or 0
         if tin <= 0: continue
+        # Add room & board to total cost of attendance (Alex feedback Apr 15)
+        # Community colleges are mostly commuter (~$3k), 4-yr schools avg ~$14k
+        rb = s.get('roomboard') or (3000 if s.get('yr2') else 14000)
+        tin = tin + rb
         # Data quality filters
         if only_gpa and not (s.get('gpa_25') or s.get('gpa_avg')): continue
         if only_adm and (not s.get('adm') or s.get('adm') != s.get('adm')): continue
@@ -876,7 +887,7 @@ with st.sidebar:
     st.markdown("## 📝 Your Profile")
 
     st.markdown("### 📚 Academics")
-    gpa_scale = st.radio("GPA scale", ["4.0 scale","100 scale"], horizontal=True, key="gpa_scale_radio")
+    gpa_scale = st.radio("GPA scale", ["100 scale","4.0 scale"], horizontal=True, key="gpa_scale_radio")
     if gpa_scale == "4.0 scale":
         gpa = st.slider("Unweighted GPA (4.0 scale)", 0.0, 4.0, 3.0, 0.1, key="gpa_slider")
         gpa_display = f"{gpa:.1f} / 4.0"
@@ -912,7 +923,25 @@ with st.sidebar:
     q8 = st.selectbox("Best work environment?",["— Select an answer —"] + list(CAREER_MAPS['i8'].keys()), key="q8")
 
     st.markdown("### 💰 Financial Aid")
-    income    = st.number_input("Annual household income ($)", 0, 500000, 42000, 1000)
+    INCOME_BRACKETS = {
+        "Under $20,000": 10000,
+        "$20,000 – $30,000": 25000,
+        "$30,000 – $40,000": 35000,
+        "$40,000 – $50,000": 45000,
+        "$50,000 – $60,000": 55000,
+        "$60,000 – $75,000": 67500,
+        "$75,000 – $100,000": 87500,
+        "Over $100,000": 120000,
+        "Prefer not to say": 42000,
+    }
+    income_label = st.selectbox(
+        "Annual household income",
+        list(INCOME_BRACKETS.keys()),
+        index=3,
+        help="Used to estimate Pell Grant, TAP, and Dream Act eligibility",
+        key="income_bracket"
+    )
+    income = INCOME_BRACKETS[income_label]
     hsize     = st.slider("Household size", 1, 10, 4, key="household_slider")
     ny_res    = st.checkbox("NY State resident (12+ months)", value=True, key="ny_res")
     immig     = st.selectbox("Immigration/citizenship status",list(IMMIG_MAP.keys()), key="immig")
@@ -1059,7 +1088,12 @@ with tab1:
             # 4. Completion outcomes (higher grad rate = better)
             grad = -(x.get('grad') or 0)
 
-            return [in_state, is_2yr, fit_sweet, reach_difficulty, grad]
+            # CUNY first, then SUNY, then private (Alex Hitch Apr 15)
+            sid = x.get('id', 0)
+            CUNY = {190637,190512,190549,190558,190576,190600,190615,190624,190099,190172,190289,190407,190543,190698}
+            SUNY = {196060,196097,196105,196183,196200,196185,196079}
+            sys_order = 0 if sid in CUNY else 1 if sid in SUNY else 2
+            return [sys_order, in_state, is_2yr, fit_sweet, reach_difficulty, grad]
 
         def sort_key(x):
             # If student selected a custom sort, use that
@@ -1154,6 +1188,13 @@ with tab1:
                                 aid_chips += f"  `{prog}`"
                         if s.get('hbcu'): aid_chips += "  `HBCU`"
                         if s.get('womens'): aid_chips += "  `Women's college`"
+                        QUESTBRIDGE = {190150,190415,190688,193900,196105,197197,166027,131520,198419,186131,215062,243744}
+                        POSSE = {190415,193900,196105,197197,189097,193654,196667,190150}
+                        SLN_PARTNERS = {195165,196704,144050}  # Mercy, St. Bonaventure, Gettysburg
+                        sid = s.get('id',0)
+                        if sid in QUESTBRIDGE: aid_chips += "  `QuestBridge`"
+                        if sid in POSSE: aid_chips += "  `Posse`"
+                        if sid in SLN_PARTNERS: aid_chips += "  `SLN Partner`"
                         if aid_chips: st.markdown(f"**Aid & fit:** {aid_chips.strip()}")
                     with cb:
                         sticker = int(s.get('tin') or 0)
@@ -1448,8 +1489,30 @@ with tab1:
                     f_cols = st.columns(4)
                     for fi, fn in enumerate(fields_list[:12]):
                         with f_cols[fi % 4]: st.markdown(f"• {fn}")
+                elif len(matches_c) > 1 and st.session_state.get('career_selected_soc','') == '':
+                    # Show list of matches first — Aaron feedback Apr 15
+                    st.markdown(f"**Found {min(len(matches_c),8)} careers matching '{search_career}'** — pick one:")
+                    for idx_c, mc in enumerate(matches_c[:8]):
+                        mc_sal = int(float(mc.get('median_annual',0) or 0))
+                        mc_field = mc.get('field','')
+                        mc_edu = mc.get('education','')
+                        col_a, col_b = st.columns([4,1])
+                        with col_a:
+                            if st.button(f"**{mc.get('title','')}** · {mc_field}", key=f"sel_{idx_c}", use_container_width=True):
+                                st.session_state['career_selected_soc'] = mc.get('soc','')
+                                st.rerun()
+                        with col_b:
+                            st.caption(f"${mc_sal:,}/yr" if mc_sal else mc_edu)
+                    st.caption("Source: O*NET 30.2 · BLS 2024")
                 else:
-                    career = matches_c[0]
+                    # Single result OR user selected from list
+                    if st.session_state.get('career_selected_soc',''):
+                        career = next((c for c in matches_c if c.get('soc') == st.session_state['career_selected_soc']), matches_c[0])
+                        if st.button("← Back to results", key="back_career"):
+                            st.session_state['career_selected_soc'] = ''
+                            st.rerun()
+                    else:
+                        career = matches_c[0]
                     title = career.get('title','')
                     field = career.get('field','')
                     try: sal_mid = int(float(career.get('median_annual') or 0))
