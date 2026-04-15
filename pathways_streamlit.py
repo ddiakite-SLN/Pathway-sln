@@ -450,12 +450,33 @@ def run_match(gpa, sat, act, state, size, ctrl, need, env, study_yrs, aid, n, ma
     results=[]
 
     # Parse majors input into CIP codes for filtering
+    # Strategy: try full phrase first, then individual words
+    # This prevents "computer" matching everything under "computer"
     major_cips_filter = set()
     if majors_input:
-        for m in [x.strip().lower() for x in majors_input.replace(',', ' ').split()]:
-            for keyword, cips in KEYWORD_MAP.items():
-                if keyword in m or m in keyword or (len(m)>4 and m in keyword):
-                    major_cips_filter.update(cips)
+        raw_majors = [x.strip().lower() for x in majors_input.replace(';',',').split(',')]
+        for major in raw_majors:
+            if not major: continue
+            matched = False
+            # 1. Exact full phrase match
+            if major in KEYWORD_MAP:
+                major_cips_filter.update(KEYWORD_MAP[major])
+                matched = True
+            # 2. Full phrase is substring of a keyword
+            if not matched:
+                for keyword, cips in KEYWORD_MAP.items():
+                    if major in keyword or keyword in major:
+                        major_cips_filter.update(cips)
+                        matched = True
+                        break
+            # 3. Word-by-word only if no phrase match and words are meaningful (5+ chars)
+            if not matched:
+                words = [w for w in major.split() if len(w) >= 5]
+                for w in words:
+                    for keyword, cips in KEYWORD_MAP.items():
+                        if w in keyword:
+                            major_cips_filter.update(cips)
+                            break
     # Only filter by major if we actually found CIP codes
     # If student typed a career ("lawyer") not a major, don't block colleges
     use_major_filter = len(major_cips_filter) > 0
@@ -1246,6 +1267,7 @@ with tab1:
                 try: t_sal_int = int(float(t_sal))
                 except: t_sal_int = 0
                 t_growth = t.get('growth') or t.get('growth_pct','N/A')
+                t_growth = 'N/A' if str(t_growth) in ['nan','None','','null'] else t_growth
                 t_demand = t.get('demand') or t.get('outlook','N/A')
                 t_field = t.get('field','')
                 st.markdown(f"""
@@ -1267,6 +1289,7 @@ with tab1:
                     sal_entry = c.get('salary_entry') or c.get('entry_annual') or 0
                     sal_senior = c.get('salary_senior') or c.get('experienced_annual') or 0
                     growth = c.get('growth') or c.get('growth_pct','N/A')
+                    growth = 'N/A' if str(growth) in ['nan','None','','null'] else growth
                     field = c.get('field','N/A')
                     education = c.get('education','N/A')
                     fit_pct = c.get('fit',0)
@@ -1306,62 +1329,69 @@ with tab1:
 
             if search_career:
                 search_lower = search_career.lower().strip()
-                SEARCH_ALIASES = {
-                    "computer engineering": ["computer hardware","computer systems","software"],
-                    "software engineering": ["software developer","software engineer"],
-                    "nursing": ["registered nurse","nurse practitioner","licensed practical"],
-                    "business": ["financial analyst","marketing manager","management analyst","business"],
-                    "psychology": ["psychologist","counselor","therapist","mental health"],
-                    "social work": ["social worker","counselor","case manager"],
-                    "criminal justice": ["police officer","detective","probation","criminal"],
-                    "education": ["teacher","school counselor","principal","instructional"],
-                    "dance": ["dancer","choreographer"],
-                    "performing arts": ["dancer","actor","musician","choreographer"],
-                    "law": ["lawyer","attorney","paralegal"],
-                    "pre-law": ["lawyer","attorney","paralegal"],
-                    "pre-med": ["physician","doctor","medical scientist","physician assistant"],
-                    "marketing": ["marketing manager","market research","advertising"],
-                    "finance": ["financial analyst","financial manager","accountant"],
-                    "accounting": ["accountant","auditor","tax"],
-                    "cybersecurity": ["information security","cybersecurity","network security"],
-                    "data science": ["data scientist","statistician","data analyst"],
-                    "graphic design": ["graphic designer","art director","ux designer"],
-                    "architecture": ["architect","urban planner"],
-                }
-                alias_terms = []
-                for k, v in SEARCH_ALIASES.items():
-                    if k in search_lower or search_lower in k:
-                        alias_terms.extend(v)
                 search_words = [w for w in search_lower.split() if len(w) > 2]
 
                 import re as _re
-                def _word_match(term, title):
-                    t = title.lower()
-                    if _re.search(r'\b' + _re.escape(term) + r'\b', t): return True
-                    for sfx in ['s','er','ers','ing','or','ors','ist','ists']:
-                        if _re.search(r'\b' + _re.escape(term) + sfx + r'\b', t): return True
-                    return False
+                def _matches(term, career):
+                    # Check title, description, field, and daily tasks
+                    haystack = ' '.join([
+                        career.get('title',''),
+                        career.get('description','')[:200],
+                        career.get('field',''),
+                        career.get('daily_tasks','')[:100],
+                    ]).lower()
+                    # Word boundary match
+                    return bool(_re.search(r'\b' + _re.escape(term) + r'\b', haystack))
 
-                exact = []; partial = []; seen = set()
+                exact = []    # full phrase match in title
+                strong = []   # all words match in title
+                partial = []  # partial match in title or description
+                seen = set()
+
                 for c in (CAREERS_FULL or []):
-                    title = str(c.get('title',''))
-                    field_c = str(c.get('field','')).lower()
                     soc = c.get('soc_code','')
                     if soc in seen: continue
-                    if alias_terms and any(_word_match(term, title) for term in alias_terms):
-                        exact.append(c); seen.add(soc)
-                    elif _word_match(search_lower, title):
-                        exact.append(c); seen.add(soc)
-                    elif search_words and all(_word_match(w, title) for w in search_words):
-                        exact.append(c); seen.add(soc)
-                    elif any(_word_match(w, title) for w in search_words):
+                    title_lower = c.get('title','').lower()
+                    desc_lower = c.get('description','').lower()
+                    field_lower = c.get('field','').lower()
+
+                    # Tier 1: full phrase in title
+                    if search_lower in title_lower:
+                        exact.append(c); seen.add(soc); continue
+
+                    # Tier 2: all search words in title
+                    if search_words and all(w in title_lower for w in search_words):
+                        strong.append(c); seen.add(soc); continue
+
+                    # Tier 3: most words in title
+                    word_hits = sum(1 for w in search_words if w in title_lower)
+                    if word_hits >= max(1, len(search_words)-1):
+                        strong.append(c); seen.add(soc); continue
+
+                    # Tier 4: any word matches title or field or description
+                    if any(w in title_lower or w in field_lower for w in search_words):
+                        partial.append(c); seen.add(soc); continue
+
+                    # Tier 5: full phrase in description
+                    if search_lower in desc_lower:
                         partial.append(c); seen.add(soc)
-                    elif search_lower in field_c:
-                        partial.append(c); seen.add(soc)
-                matches_c = exact + partial
+
+                # Sort each tier by salary desc so best-paying comes first
+                def sal(c): return int(float(c.get('median_annual',0) or 0))
+                exact   = sorted(exact,   key=sal, reverse=True)
+                strong  = sorted(strong,  key=sal, reverse=True)
+                partial = sorted(partial, key=sal, reverse=True)
+
+                matches_c = exact + strong + partial
+                # If direct mapping found, put it first
+                if direct_match and direct_match not in matches_c:
+                    matches_c = [direct_match] + matches_c
+                elif direct_match and direct_match in matches_c:
+                    matches_c.remove(direct_match)
+                    matches_c = [direct_match] + matches_c
 
                 if not matches_c:
-                    st.warning(f"No match for '{search_career}'. Try: Nurse, Engineer, Teacher, Designer")
+                    st.warning(f"No careers found for '{search_career}'. Try: Nurse, Software Engineer, Teacher, Accountant, Social Worker")
                     fields_list = sorted(set(c.get('field','') for c in (CAREERS_FULL or []) if c.get('field')))
                     f_cols = st.columns(4)
                     for fi, fn in enumerate(fields_list[:12]):
@@ -1374,6 +1404,7 @@ with tab1:
                     sal_entry = int(float(career.get('entry_annual',0) or 0))
                     sal_senior = int(float(career.get('experienced_annual',0) or 0))
                     growth = career.get('growth_pct','N/A')
+                    growth = 'N/A' if str(growth) in ['nan','None','','null'] else growth
                     education = career.get('education','N/A')
                     job_zone = int(float(career.get('job_zone',3) or 3))
                     desc = str(career.get('description','') or '')[:300]
@@ -1420,7 +1451,7 @@ with tab1:
                     }
                     rec_majors = CAREER_MAJORS.get(field, [])
                     if rec_majors:
-                        st.markdown(f"**📚 Recommended majors to become a {title.split(',')[0]}:**")
+                        st.markdown(f"**📚 Recommended majors for {title.split(',')[0]}:**")
                         m_cols = st.columns(min(len(rec_majors[:4]),4))
                         for mi, maj in enumerate(rec_majors[:4]):
                             with m_cols[mi]: st.markdown(f"`{maj}`")
@@ -1459,6 +1490,7 @@ with tab1:
                             mc_sal = int(float(mc.get('median_annual',0) or 0))
                             st.caption(f"• {mc.get('title','')} — ${mc_sal:,}/yr" if mc_sal else f"• {mc.get('title','')}")
                     st.caption("Source: O*NET 30.2 · BLS 2024")
+
             else:
                 st.markdown("**Popular searches:**")
                 popular = ["Software Engineer","Registered Nurse","Lawyer","Data Scientist",
@@ -1469,7 +1501,6 @@ with tab1:
                         if st.button(p, key=f"pop_{pi}", use_container_width=True):
                             st.session_state['pop_career'] = p
                             st.rerun()
-
     with tab3:
         # ── AID ELIGIBILITY TAB ──────────────────────────────────
         st.markdown("### 💰 Your Financial Aid Eligibility")
