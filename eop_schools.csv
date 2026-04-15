@@ -1,53 +1,105 @@
-unitid,school_name,program_name,program_type,system,city,notes
-196097,Binghamton University,Educational Opportunity Program,EOP,SUNY,Binghamton,Competitive SUNY EOP
-196060,University at Albany,Educational Opportunity Program,EOP,SUNY,Albany,
-196105,University at Buffalo,Educational Opportunity Program,EOP,SUNY,Buffalo,
-196183,Stony Brook University,Educational Opportunity Program,EOP,SUNY,Stony Brook,
-196200,SUNY Geneseo,Educational Opportunity Program,EOP,SUNY,Geneseo,
-196121,SUNY Brockport,Educational Opportunity Program,EOP,SUNY,Brockport,
-196176,SUNY Oswego,Educational Opportunity Program,EOP,SUNY,Oswego,
-196158,SUNY New Paltz,Educational Opportunity Program,EOP,SUNY,New Paltz,
-196167,SUNY Old Westbury,Educational Opportunity Program,EOP,SUNY,Old Westbury,High % first-gen students
-196194,SUNY Plattsburgh,Educational Opportunity Program,EOP,SUNY,Plattsburgh,
-196130,SUNY Cortland,Educational Opportunity Program,EOP,SUNY,Cortland,
-196112,SUNY Buffalo State University,Educational Opportunity Program,EOP,SUNY,Buffalo,
-196149,SUNY Fredonia,Educational Opportunity Program,EOP,SUNY,Fredonia,
-196219,SUNY Purchase College,Educational Opportunity Program,EOP,SUNY,Purchase,Arts-focused
-196264,Empire State University,Educational Opportunity Program,EOP,SUNY,Saratoga Springs,Online/flexible
-196228,SUNY Oneonta,Educational Opportunity Program,EOP,SUNY,Oneonta,
-196210,SUNY Potsdam,Educational Opportunity Program,EOP,SUNY,Potsdam,
-190512,CUNY City College,Search for Education Elevation and Knowledge,SEEK,CUNY,New York,Flagship CUNY SEEK
-190549,CUNY Hunter College,Search for Education Elevation and Knowledge,SEEK,CUNY,New York,
-190558,CUNY John Jay College,Search for Education Elevation and Knowledge,SEEK,CUNY,New York,Criminal justice focus
-190576,CUNY Lehman College,Search for Education Elevation and Knowledge,SEEK,CUNY,Bronx,Bronx-based
-190600,CUNY Queens College,Search for Education Elevation and Knowledge,SEEK,CUNY,Queens,
-190615,CUNY Brooklyn College,Search for Education Elevation and Knowledge,SEEK,CUNY,Brooklyn,
-190624,CUNY Baruch College,Search for Education Elevation and Knowledge,SEEK,CUNY,New York,Business focus
-190637,CUNY College of Staten Island,Search for Education Elevation and Knowledge,SEEK,CUNY,Staten Island,
-190660,CUNY Medgar Evers College,Search for Education Elevation and Knowledge,SEEK,CUNY,Brooklyn,Majority Black institution
-190681,CUNY York College,Search for Education Elevation and Knowledge,SEEK,CUNY,Jamaica,
-190716,CUNY New York City College of Technology,Search for Education Elevation and Knowledge,SEEK,CUNY,Brooklyn,Tech/applied focus
-190099,CUNY Bronx Community College,College Discovery,CD,CUNY,Bronx,
-190107,CUNY Queensborough Community College,College Discovery,CD,CUNY,Queens,
-190116,CUNY Kingsborough Community College,College Discovery,CD,CUNY,Brooklyn,
-190125,CUNY LaGuardia Community College,College Discovery,CD,CUNY,Long Island City,Largest immigrant student population
-190134,CUNY Manhattan Community College,College Discovery,CD,CUNY,New York,
-190143,CUNY Hostos Community College,College Discovery,CD,CUNY,Bronx,Large Spanish-speaking population
-190152,CUNY Guttman Community College,College Discovery,CD,CUNY,New York,Small cohort model
-194824,Fordham University,Higher Education Opportunity Program,HEOP,Private,Bronx,Strong HEOP program
-193900,New York University,Higher Education Opportunity Program,HEOP,Private,New York,
-190150,Columbia University,Higher Education Opportunity Program,HEOP,Private,New York,
-191630,Manhattan College,Higher Education Opportunity Program,HEOP,Private,Bronx,
-193353,Pace University,Higher Education Opportunity Program,HEOP,Private,New York,
-190770,Adelphi University,Higher Education Opportunity Program,HEOP,Private,Garden City,
-192439,Hofstra University,Higher Education Opportunity Program,HEOP,Private,Hempstead,
-193283,Long Island University,Higher Education Opportunity Program,HEOP,Private,Brooklyn,
-195030,St. John's University,Higher Education Opportunity Program,HEOP,Private,Queens,Large HEOP cohort
-194317,Monroe College,Higher Education Opportunity Program,HEOP,Private,Bronx,Serves many first-gen students
-191515,Marist College,Higher Education Opportunity Program,HEOP,Private,Poughkeepsie,
-192819,Iona University,Higher Education Opportunity Program,HEOP,Private,New Rochelle,
-189097,Albany College of Pharmacy,Higher Education Opportunity Program,HEOP,Private,Albany,Health professions focus
-196085,Erie Community College,Access to Integrated Mentorship,AIM,SUNY,Buffalo,
-196237,Onondaga Community College,Access to Integrated Mentorship,AIM,SUNY,Syracuse,
-196076,Dutchess Community College,Access to Integrated Mentorship,AIM,SUNY,Poughkeepsie,
-196094,Finger Lakes Community College,Access to Integrated Mentorship,AIM,SUNY,Canandaigua,
+unitid,school_name,program_type,gpa_range,adm_options,commuter,heop_contact,source
+189097,Alfred University,HEOP,"General 74 – 85 (Biology: 78-85)
+Depends on strength of program and details from student's essay or letters of recommendation
+
+Engineering 80-90
+Those on the higher end: looking for lower grades or regents scores in science and math / lower SAT score in math. Mandatory pre-reqs: Chemistry, Physics, Pre-Calc","Rolling Admission, Regular Decision","All students, including HEOP students, must reside","Shawn Isaacs (isaacs@alfred.edu) - HEOP Admissions/Financial Aid Counselor
+Michele Doorley (tobin@alfred.edu) - Director H/EOP",Alex Hitch - 2026 HEOP Guide
+189356,Bard College,HEOP,Data unavailable,Data unavailable,Data unavailable,Data unavailable,Alex Hitch - 2026 HEOP Guide
+190688,Barnard College,HEOP,GPA of 85 (B+) and above,"Regular Decision, ED",Our institution offers housing and allows commuter,opportunityprograms@barnard.edu,Alex Hitch - 2026 HEOP Guide
+189705,Boricua College,HEOP,"70 – 80
+Holistic: more weight on admission entrance exam. Passing grade is 65 and higher. HEOP candidates can fall between 55-65.","Rolling Admission, RD, ED / EDI",Housing on a case-by-case basis - Based on need.,csouffrant@boricuacollege.edu,Alex Hitch - 2026 HEOP Guide
+190372,Canisius University,HEOP,"77-82 or higher with indicators of potential; considered in context with: lower regents exams, academic rigor, math and science, especially for intended major, coursework during high school.",No difference for HEOP because FAFSA has to be completed.,Our institution offers housing and allows commuter,"Fatima Rodriguez Johnson, Director, Cavina James, james37@canisius.edu, Associate Director, and Phil Splawski, HEOP Admissions Liaison, splawskp@canisius.edu",Alex Hitch - 2026 HEOP Guide
+190770,Clarkson University,HEOP,"68-84
+If SAT are submitted 1000 or below, Math/Science Regents below 80",Regular Decision,Our institution offers housing and allows for comm,"cuheop@clarkson.edu
+Marjorie Warden mwarden@clarkson.edu",Alex Hitch - 2026 HEOP Guide
+190150,Columbia University,HEOP,This link covers the holistic application review with a section on academic preparedness. https://undergrad.admissions.columbia.edu/apply/process. Please contact us with questions about how this may apply with HEOP candidates.,All applications are considered during Regular and Early Decision.,Our institution offers housing and allows for comm,asp@columbia.edu,Alex Hitch - 2026 HEOP Guide
+190415,Cornell University,HEOP,"No standard SAT or GPA requirement for our HEOP as things can vary depending on high school offerings as well as intended major.
+
+Review the college requirements to confirm students have needed courses specific to their program of study (for example Physics and Calc for Engineering)
+https://admissions.cornell.edu/how-to-apply/first-year-applicants/college-and-school-admissions-requirements",Regular Decision,Our institution offers housing and allows for comm,Woodg Horning - weh8@cornell.edu,Alex Hitch - 2026 HEOP Guide
+191213,Daemen University,HEOP,"General: 75-85
+Program-specific (regular admission):
+Nursing 1-2-1 = min 88 (w/ test scores - 1080 SAT, 22 ACT), min 90 (w/o test scores)
+PA = 90 w/test scores (1170 SAT/24 ACT); 94 (w/o test scores)
+PT = 88 (SAT 1080/ACT 22).
+
+HEOP-eligible applicants to these programs may be denied from the program and offered HEOP consideration. They then enter Daemen as B.A. or B.S. Nursing Exploration, Biology, or Natural Sciences majors. Once the student maintains the GPA requirements for the program of their choice, they are then able to declare Nursing, PA, or PT at the professional phase of the program sequence.","RD, Rolling. Students are waitlisted for HEOP AD to review application, supporting documentation, and send invitation to interview",Our institution offers housing and allows for comm,"HEOP = Kay Leach, assistant director (kleach@daemen.edu); HEOP Admissions Liaison - Coralys Diaz (cdiaz@daemen.edu)",Alex Hitch - 2026 HEOP Guide
+191515,D'Youville University,HEOP,"GPA requirement differs depending on major. HEOP accepts GPA of 73+, but may also look at candidates with lower GPAs. Please contact with questions.",Rolling Admission,Our institution offers housing and allows for comm,"Kiman Baldon, HEOP Director, baldonk@dyc.edu",Alex Hitch - 2026 HEOP Guide
+192819,Five Towns College,HEOP,"70 – 84, depending on major of study, auditions and portfolios. Applicant should contact HEOP office.",Rolling Admission,Our institution does provide housing but our HEOP ,"derrol.rhodes@ftc.edu, keyshawn.evans@ftc.edu",Alex Hitch - 2026 HEOP Guide
+192439,Fordham University - Lincoln Center,HEOP,2.50-3.00 preferred (holistic),Regular Decision,Mostly commuter; we have ten spots allocated for h,Jennifer Trujillo <jetrujillo@fordham.edu,Alex Hitch - 2026 HEOP Guide
+193283,Hamilton College,HEOP,92 – 100; rigor of HS curriculum and regents scores considered,Higher admit rate for EDI and EDII,Our institution offers housing and allows for comm,Aaron Ray-array@hamilton.edu,Alex Hitch - 2026 HEOP Guide
+193353,Hilbert College,HEOP,74 - 85,"Regular Decision, Early Action",Our institution offers housing and allows for comm,"Sandra Washington-Copeland, Director: scopeland@hilbert.edu",Alex Hitch - 2026 HEOP Guide
+193436,Hobart & William Smith Colleges,HEOP,75-90,Early Action,Fully residential campus. HEOP contract includes h,wormley@hws.edu / grant@hws.edu / heop@hws.edu,Alex Hitch - 2026 HEOP Guide
+193654,Ithaca College,HEOP,"73 – 83 for most majors; will go above/below (holistic review)
+Additional potential indicators of HEOP eligibility: Regents scores below 70, <50 % of HS grads attending 4-year colleges
+
+80 – 85: Physical Therapy / Occupational Therapy / Athletic Training
+Additional potential indicators of HEOP eligibility for these programs: Fewer than 4 yrs each of college preparatory math/science",Regular Decision (EA applicants will be moved to RD cycle but reviewed earlier),We are a residential campus but can support commut,"Sihaya Moraleda, Assistant Director: smoraleda@ithaca.edu",Alex Hitch - 2026 HEOP Guide
+194161,Keuka College,HEOP,76-81,Rolling Admission,We are a residential campus but can support commut,"Anna Ralph, Assistant Director of Admissions, aralph@keuka.edu",Alex Hitch - 2026 HEOP Guide
+194251,Le Moyne College,HEOP,"80-90 (Lib Arts/Bus)
+85-95 (Nat Sci/Nursing Majors)
+Nursing students need at least 75% in HS Chem",Regular Decision,Le Moyne is a residential campus and HEOP requires,Sarah Angrisano - angrissb@lemoyne.edu,Alex Hitch - 2026 HEOP Guide
+194958,Marist University,HEOP,80-87 GPA but consider other factors such as Regents exams,"Regular Decision, Early Action. EA apps are deferred to RD to allow for more in-depth review by CMA/HEOP office; EA typically read earlier than RD.",Our institution offers housing and allows for comm,"Mary Canto Rice, Associate Director, Multicultural Affairs/HEOP
+845-575-3204 / heop@marist.edu / mary.rice@marist.edu",Alex Hitch - 2026 HEOP Guide
+195030,Marymount Manhattan College,HEOP,2.0 - 3.19,Regular Decision,Our institution does provide housing but our HEOP ,Taz Cambridge (HEOP Office) - tcambridge@mmm.edu,Alex Hitch - 2026 HEOP Guide
+195165,Mercy University,HEOP,73-80,"Rolling Admission, Regular Decision",Our HEOP program is primarily a commuter program; ,"Overall Questions: HEOP@Mercy.edu
+Specific HEOP Application Questions: Jessica De Jesus jdejesus29@mercy.edu",Alex Hitch - 2026 HEOP Guide
+195809,Mount Saint Mary College,HEOP,72-75,"Rolling Admission, Regular Decision",Our institution offers housing and allows for comm,Emily.figuereo@msmc.edu,Alex Hitch - 2026 HEOP Guide
+195544,University of Mount Saint Vincent,HEOP,77 - 79,Early Decision / EDI,Our institution offers housing and allows for comm,Infinite Henry - infinite.henry@umsv.edu,Alex Hitch - 2026 HEOP Guide
+195814,Nazareth College,HEOP,85 and below,Regular Decision,Our institution offers housing and allows for comm,"Tonya Guzman, Director in Student Access and Achievement (tguzman7@naz.edu)",Alex Hitch - 2026 HEOP Guide
+195988,The New School,HEOP,"GPA 70-89
+2 Regents scores under 75%
+High School has college admissions under 65% / designated as a HNHS (high needs high school) by NYS Department of Education","Rolling Admission, Regular Decision",Housing is available; first year students must be ,Barrowj@newschool.edu,Alex Hitch - 2026 HEOP Guide
+196016,Niagara University,HEOP,74 - 88,Regular Decision,Our institution offers housing and allows for comm,"Tia Jackson: (716) 286-8064, trobinson@niagara.edu
+Shirha Clemons: sclemons@niagara.edu",Alex Hitch - 2026 HEOP Guide
+195003,New York Institute of Technology,HEOP,"70+ for all majors / if 80+ then we look at SAT/ACT and math/writing diagnostic scores
+85+ GPA for BS/DO degree",Rolling Admission,Our institution is a majority commuter school; our,Rachel Morrison - rfidis@nyit.edu,Alex Hitch - 2026 HEOP Guide
+193900,New York University,HEOP,"3.0 – 4.0; average GPA of for the HEOP class of 2028 was 3.7.
+Students applying for STEM-related and business programs should have taken pre-calculus or calculus.",Regular Decision,Our institution offers housing and allows for comm,"Temi Pedro, Assistant Director of Admissions - heop.admissions@nyu.edu, temi.pedro@nyu.edu",Alex Hitch - 2026 HEOP Guide
+196176,Paul Smith's College,HEOP,"85 or below (holistic)
+If 85+ additional factors considered: standardized test scores, IEP or 504 plans, high-need or high-grade-inflation high schools, academic rigor, trends in course performance (especially in math and English), curriculum, and diploma type (e.g., Regents).",Rolling Admission,Our institution offers housing and allows for comm,Amanda Vincent - Avincent@paulsmiths.edu,Alex Hitch - 2026 HEOP Guide
+196264,Pratt Institute,HEOP,"GPA 2.5-3.7 *, Portfolio is also considered (score 75 or below) (*varies by major)",Regular Decision,Our institution offers housing and allows for comm,"Michael Barry, Admissions: mbarry@pratt.edu; Kristopher Hudson, HEOP: khudso30@pratt.edu",Alex Hitch - 2026 HEOP Guide
+195664,University of Rochester,HEOP,Data unavailable,Data unavailable,Data unavailable,Data unavailable,Alex Hitch - 2026 HEOP Guide
+196413,Rochester Institute of Technology,HEOP,"GPA and other requirements are college/program specific, so no general range is possible.",Regular Decision,Our institution offers housing and allows for comm,"Sally Douglas, smdadm@rit.edu; Kris Shamp, kpsheo@rit.edu",Alex Hitch - 2026 HEOP Guide
+196468,Russell Sage College,HEOP,"73 – 78: general
+80 – 90: Nursing, Health Science, PT/OT, Forensic Science
+If 76 – 79 for above majors: B or higher in core science courses Biology, Chemistry, or physics, A&P, life science etc. IB or AP classes in core Math and Sciences with grade of B are also looked at favorably.",Regular Decision,Our institution offers housing and allows for comm,"HEOP - Associate Director, Ms. Tasha Pringle pringt2@sage.edu & Executive Director, Dr. Jay Privot privoj@sage.edu
+Assistant Director of Undergraduate Enrollment Management, Bobby Lang langb2@sage.edu",Alex Hitch - 2026 HEOP Guide
+196592,Siena University,HEOP,"75-83
+May go above/below. Additional factors: standardized test scores, high school curriculum, and major they're applying for.
+Automatically returned to Admissions: 86+ (liberal arts and business majors), 88+ (science majors)",Rolling Admission,"Siena HEOP is a resident-only program, and does no","Chris Faulkner and Dan Hulseapple, HEOPAdmissions@siena.edu",Alex Hitch - 2026 HEOP Guide
+196667,Skidmore College,HEOP,85-95,"Regular Decision, Early Decision / EDI",Our institution offers housing and allows for comm,"Ryan Roche, rroche@skidmore.edu",Alex Hitch - 2026 HEOP Guide
+196704,St. Bonaventure University,HEOP,"69-81 (holistic – can go above/below)
+If student is applying for nursing program, GPA can be higher because of higher nursing program requirements",Regular Decision,Our program requires students to reside on campus,"Amy Smerkar, Director Opportunity Programs; asmerkar@sbu.edu 716-375-7894",Alex Hitch - 2026 HEOP Guide
+196779,St. John Fisher University,HEOP,78-88 (review academic profile holistically),Regular Decision,Our institution offers housing and allows for comm,Brittany Zeager bzeager@sjf.edu,Alex Hitch - 2026 HEOP Guide
+196848,St. Lawrence University,HEOP,84-93 with flexibility for rigor of HS curriculum,Regular Decision,Our institution offers housing and allows for comm,"Bill Short, wshort@stlawu.edu",Alex Hitch - 2026 HEOP Guide
+196926,St. Thomas Aquinas College,HEOP,Below 2.8,Regular Decision,Our institution offers housing and allows for comm,"(HEOP Dir.) Elvie Vasquez - evasquez@stac.edu, (admissions) Vincent Vazquez vvazquez@stac.edu, (admissions) Daniel Johnson dajohnson@stac.edu",Alex Hitch - 2026 HEOP Guide
+197197,Syracuse University,HEOP,"80 - 100 depending on the major.
+93 – 100: if good test scores would likely not qualify",Regular Decision,Our institution offers housing and allows for comm,James Ryan jwryan@syr.edu (Admissions); Craig Tucker cmtuck01@syr.edu (HEOP),Alex Hitch - 2026 HEOP Guide
+197290,Trocaire College,HEOP,75-84,Rolling Admission,Our institution does not offer housing.,Joanne Warren warrenj@trocaire.edu,Alex Hitch - 2026 HEOP Guide
+197301,Union College,HEOP,"ELA Regents score 80+
+Regents average 80+
+No failing Regents exams, especially in areas of academic interest.","Early Decision / EDI, EDII",Our institution offers housing and allows for comm,Sandra Buchanan buchanas@union.edu,Alex Hitch - 2026 HEOP Guide
+197365,Utica University,HEOP,66 - 76 or denied from a program,Regular Decision,Our institution offers housing and allows for comm,Florence Toimil fatoil@utica.edu,Alex Hitch - 2026 HEOP Guide
+197419,Vaughn College of Aeronautics and Technology,HEOP,76 (average) – higher GPA students may be eligible based on College Board Accuplacer Placement Exam results,Rolling Admission,HEOP students have the option to either live on ca,"Nicole Lebron, Assistant Director of HEOP",Alex Hitch - 2026 HEOP Guide
+190637,City College of New York (CUNY),SEEK,,,,,CUNY/SUNY system data
+190512,CUNY - Bernard M Baruch College,SEEK,,,,,CUNY/SUNY system data
+190549,CUNY Hunter College,SEEK,,,,,CUNY/SUNY system data
+190558,CUNY John Jay College,SEEK,,,,,CUNY/SUNY system data
+190576,CUNY Lehman College,SEEK,,,,,CUNY/SUNY system data
+190600,CUNY Queens College,SEEK,,,,,CUNY/SUNY system data
+190615,CUNY Brooklyn College,SEEK,,,,,CUNY/SUNY system data
+190624,CUNY Baruch College,SEEK,,,,,CUNY/SUNY system data
+196060,SUNY Albany,EOP,,,,,CUNY/SUNY system data
+196097,SUNY Binghamton,EOP,,,,,CUNY/SUNY system data
+196105,University at Buffalo,EOP,,,,,CUNY/SUNY system data
+196183,Stony Brook University,EOP,,,,,CUNY/SUNY system data
+196200,SUNY Geneseo,EOP,,,,,CUNY/SUNY system data
+196185,SUNY New Paltz,EOP,,,,,CUNY/SUNY system data
+190099,CUNY Bronx Community College,CD,,,,,CUNY/SUNY system data
+190172,CUNY Borough of Manhattan CC,CD,,,,,CUNY/SUNY system data
+190289,CUNY Hostos Community College,CD,,,,,CUNY/SUNY system data
+190407,CUNY Kingsborough CC,CD,,,,,CUNY/SUNY system data
+190543,CUNY LaGuardia CC,CD,,,,,CUNY/SUNY system data
+190698,CUNY Queensborough CC,CD,,,,,CUNY/SUNY system data
