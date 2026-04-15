@@ -1,6 +1,6 @@
 # ═══════════════════════════════════════════════════════════════
 #  PATHWAYS BY SLN — Streamlit App v2
-#  Fixed: persistent college list + PDF export
+#  Version: APR15-FINAL — CUNY sort + career list + income dropdown
 # ═══════════════════════════════════════════════════════════════
 
 import streamlit as st
@@ -574,18 +574,6 @@ def run_match(gpa, sat, act, state, size, ctrl, need, env, study_yrs, aid, n, ma
                 selected.pop()
             selected.append(pr)
 
-    # Apply sort mode
-    sort_modes = sort_mode if isinstance(sort_mode, list) else [sort_mode]
-    def multi_sort_key(x):
-        keys = []
-        for sm in sort_modes:
-            if sm in ('fit','Best Fit'): keys.extend([fit_order.get(x['fit'],3), x.get('net') or 999999])
-            elif sm in ('cost','Lowest Cost'): keys.extend([x.get('net') is None, x.get('net') or 999999])
-            elif sm in ('safety','Safety First'): keys.append(fit_order.get(x['fit'],3))
-            elif sm in ('grad','Grad Rate'): keys.append(-(x.get('grad') or 0))
-        return keys
-    selected = sorted(selected, key=multi_sort_key)
-
     return selected[:n]
 
 # ── Career Match Runner ──────────────────────────────────────
@@ -915,7 +903,7 @@ with col_h1:
     else:
         st.markdown(f"*Your college list, built around your life. Browsing **{len(SCHOOLS):,} US colleges** from IPEDS 2023-24.*")
 with col_h2:
-    st.caption("Built by SLN RITA Tech & Data Intern\nIPEDS 2023-24 · Aid thresholds 2025-26")
+    st.caption("Built by SLN RITA Tech & Data Intern\nIPEDS 2023-24 · Aid thresholds 2025-26\n`v APR15-FINAL`")
 st.divider()
 
 # ── SIDEBAR ───────────────────────────────────────────────────
@@ -1025,7 +1013,7 @@ if run_btn:
     matches = run_match(gpa, sat, act, state_val,
                         SIZE_MAP[school_size], CTRL_MAP[school_type],
                         need_val, ENV_MAP[env_pref], YRS_MAP[study_yrs], aid, n_results,
-                        majors_input=st.session_state.get('college_major_filter',''),
+                        majors_input=majors_input,
                         only_gpa=only_gpa_data, only_adm=only_adm_data)
     st.session_state.matches  = matches
     st.session_state.ran_match = True
@@ -1330,6 +1318,17 @@ with tab1:
                         full_results = run_career_match({}, direct_profile=full_profile)
                         st.session_state.career_results = full_results
                         st.rerun()
+            elif not career_results and _all_answered:
+                # Questions answered but results empty — recompute now
+                career_answers_now = {
+                    'i1':CAREER_MAPS['i1'][q1],'i2':CAREER_MAPS['i2'][q2],
+                    'i3':CAREER_MAPS['i3'][q3],'i4':CAREER_MAPS['i4'][q4],
+                    'i5':CAREER_MAPS['i5'][q5],'i6':CAREER_MAPS['i6'][q6],
+                    'i7':CAREER_MAPS['i7'][q7],'i8':CAREER_MAPS['i8'][q8],
+                }
+                career_results = run_career_match(career_answers_now)
+                st.session_state.career_results = career_results
+                st.rerun()
             elif not career_results:
                 st.info("Answer the career questions on the left to see your matches.")
             else:
@@ -1479,7 +1478,7 @@ with tab1:
                 seen = set()
 
                 for c in (CAREERS_FULL or []):
-                    soc = c.get('soc_code','')
+                    soc = c.get('soc','')
                     if soc in seen: continue
                     title_lower = c.get('title','').lower()
                     desc_lower = c.get('description','').lower()
@@ -1515,7 +1514,7 @@ with tab1:
                 matches_c = exact + strong + partial
                 # Prepend direct match if found
                 if direct_match:
-                    matches_c = [direct_match] + [c for c in matches_c if c.get('soc_code') != direct_match.get('soc_code')]
+                    matches_c = [direct_match] + [c for c in matches_c if c.get('soc') != direct_match.get('soc')]
 
                 if not matches_c:
                     st.warning(f"No careers found for '{search_career}'. Try: Nurse, Software Engineer, Teacher, Accountant, Social Worker")
@@ -1523,30 +1522,34 @@ with tab1:
                     f_cols = st.columns(4)
                     for fi, fn in enumerate(fields_list[:12]):
                         with f_cols[fi % 4]: st.markdown(f"• {fn}")
-                elif len(matches_c) > 1 and st.session_state.get('career_selected_soc','') == '':
-                    # Show list of matches first — Aaron feedback Apr 15
-                    st.markdown(f"**Found {min(len(matches_c),8)} careers matching '{search_career}'** — pick one:")
-                    for idx_c, mc in enumerate(matches_c[:8]):
+                elif not st.session_state.get('career_selected_soc',''):
+                    # Always show list first — Aaron feedback Apr 15
+                    # Show all matches so student can pick, even if only 1 result
+                    top_careers = matches_c[:8]
+                    st.markdown(f"**Found {len(top_careers)} career{'s' if len(top_careers)>1 else ''} matching '{search_career}'** — pick one to explore:")
+                    for idx_c, mc in enumerate(top_careers):
                         mc_sal = int(float(mc.get('median_annual',0) or 0))
                         mc_field = mc.get('field','')
                         mc_edu = mc.get('education','')
                         col_a, col_b = st.columns([4,1])
                         with col_a:
-                            if st.button(f"**{mc.get('title','')}** · {mc_field}", key=f"sel_{idx_c}", use_container_width=True):
-                                st.session_state['career_selected_soc'] = mc.get('soc','')
+                            if st.button(
+                                f"{mc.get('title','')}  ·  {mc_field}",
+                                key=f"sel_{idx_c}",
+                                use_container_width=True
+                            ):
+                                st.session_state['career_selected_soc'] = mc.get('soc','') or '__single__'
                                 st.rerun()
                         with col_b:
                             st.caption(f"${mc_sal:,}/yr" if mc_sal else mc_edu)
                     st.caption("Source: O*NET 30.2 · BLS 2024")
                 else:
-                    # Single result OR user selected from list
-                    if st.session_state.get('career_selected_soc',''):
-                        career = next((c for c in matches_c if c.get('soc') == st.session_state['career_selected_soc']), matches_c[0])
-                        if st.button("← Back to results", key="back_career"):
-                            st.session_state['career_selected_soc'] = ''
-                            st.rerun()
-                    else:
-                        career = matches_c[0]
+                    # User selected from list — show detail card
+                    selected_soc = st.session_state.get('career_selected_soc','')
+                    career = next((c for c in matches_c if c.get('soc') == selected_soc), matches_c[0])
+                    if st.button("← Back to results", key="back_career"):
+                        st.session_state['career_selected_soc'] = ''
+                        st.rerun()
                     title = career.get('title','')
                     field = career.get('field','')
                     try: sal_mid = int(float(career.get('median_annual') or 0))
