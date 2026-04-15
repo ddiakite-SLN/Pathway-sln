@@ -1331,6 +1331,64 @@ with tab1:
                 search_lower = search_career.lower().strip()
                 search_words = [w for w in search_lower.split() if len(w) > 2]
 
+                # Direct major/career → O*NET title mapping
+                MAJOR_TO_CAREER = {
+                    "computer engineering":"Computer Hardware Engineers","software engineering":"Software Developers",
+                    "electrical engineering":"Electrical Engineers","mechanical engineering":"Mechanical Engineers",
+                    "civil engineering":"Civil Engineers","biomedical engineering":"Bioengineers and Biomedical Engineers",
+                    "chemical engineering":"Chemical Engineers","industrial engineering":"Industrial Engineers",
+                    "aerospace engineering":"Aerospace Engineers","nursing":"Registered Nurses",
+                    "nurse":"Registered Nurses","rn":"Registered Nurses","pre-med":"Physicians, All Other",
+                    "pre-nursing":"Registered Nurses","medicine":"Physicians, All Other","doctor":"Physicians, All Other",
+                    "physician":"Physicians, All Other","dentist":"Dentists, All Other Specialists",
+                    "pharmacy":"Pharmacists","physical therapy":"Physical Therapists",
+                    "occupational therapy":"Occupational Therapists","dental hygiene":"Dental Hygienists",
+                    "social work":"Social Workers, All Other","social worker":"Social Workers, All Other",
+                    "psychology":"Psychologists, All Other","psychologist":"Psychologists, All Other",
+                    "education":"Elementary School Teachers, Except Special Education",
+                    "teaching":"Elementary School Teachers, Except Special Education",
+                    "teacher":"Elementary School Teachers, Except Special Education",
+                    "teach":"Elementary School Teachers, Except Special Education",
+                    "early childhood education":"Preschool Teachers, Except Special Education",
+                    "special education":"Special Education Teachers, All Other",
+                    "accounting":"Accountants and Auditors","accountant":"Accountants and Auditors",
+                    "finance":"Financial Analysts","financial advisor":"Personal Financial Advisors",
+                    "business administration":"General and Operations Managers",
+                    "management":"General and Operations Managers","marketing":"Marketing Managers",
+                    "human resources":"Human Resources Specialists","criminal justice":"Police and Sheriff Patrol Officers",
+                    "law":"Lawyers","lawyer":"Lawyers","attorney":"Lawyers","paralegal":"Paralegals and Legal Assistants",
+                    "graphic design":"Graphic Designers","architecture":"Architects, Except Landscape and Naval",
+                    "urban planning":"Urban and Regional Planners","data science":"Data Scientists",
+                    "cybersecurity":"Information Security Analysts","information technology":"Computer User Support Specialists",
+                    "computer science":"Software Developers","biology":"Biological Scientists, All Other",
+                    "bio":"Biological Scientists, All Other","chemistry":"Chemists","chem":"Chemists",
+                    "environmental science":"Environmental Scientists and Specialists, Including Health",
+                    "public health":"Epidemiologists","nutrition":"Dietitians and Nutritionists",
+                    "communications":"Public Relations Specialists","comm":"Public Relations Specialists",
+                    "journalism":"News Analysts, Reporters, and Journalists","film":"Producers and Directors",
+                    "music":"Musicians and Singers","dance":"Dancers","theater":"Actors",
+                    "fashion":"Fashion Designers","interior design":"Interior Designers",
+                    "construction management":"Construction Managers","culinary":"Chefs and Head Cooks",
+                    "chef":"Chefs and Head Cooks","radiologist":"Radiologists",
+                    "cop":"Police and Sheriff Patrol Officers","police":"Police and Sheriff Patrol Officers",
+                    "firefighter":"Firefighters","emt":"Emergency Medical Technicians",
+                    "paramedic":"Paramedics","therapist":"Mental Health Counselors",
+                    "counselor":"Mental Health Counselors","web developer":"Web Developers",
+                    "game design":"Software Developers","product manager":"Project Management Specialists",
+                    "real estate":"Real Estate Sales Agents","animator":"Special Effects Artists and Animators",
+                }
+
+                # Layer 1: check direct mapping first
+                direct_match = None
+                for key, career_title in MAJOR_TO_CAREER.items():
+                    if key == search_lower or key in search_lower or search_lower in key:
+                        for c in (CAREERS_FULL or []):
+                            if career_title.lower() in c.get('title','').lower():
+                                direct_match = c
+                                break
+                        if direct_match:
+                            break
+
                 import re as _re
                 def _matches(term, career):
                     # Check title, description, field, and daily tasks
@@ -1383,12 +1441,9 @@ with tab1:
                 partial = sorted(partial, key=sal, reverse=True)
 
                 matches_c = exact + strong + partial
-                # If direct mapping found, put it first
-                if direct_match and direct_match not in matches_c:
-                    matches_c = [direct_match] + matches_c
-                elif direct_match and direct_match in matches_c:
-                    matches_c.remove(direct_match)
-                    matches_c = [direct_match] + matches_c
+                # Prepend direct match if found
+                if direct_match:
+                    matches_c = [direct_match] + [c for c in matches_c if c.get('soc_code') != direct_match.get('soc_code')]
 
                 if not matches_c:
                     st.warning(f"No careers found for '{search_career}'. Try: Nurse, Software Engineer, Teacher, Accountant, Social Worker")
