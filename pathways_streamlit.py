@@ -1026,21 +1026,18 @@ with tab1:
 
         # Apply multi-sort
         fit_order = {'safety':0,'match':1,'reach':2,'unknown':3}
-        def aaron_default_sort(x, _state_val=state_val):
+        def aaron_default_sort(x):
             """
             SLN default sort — Aaron Hawn's recommended exploration order:
             1. In-state first (NY students see NY schools first)
             2. 4-year before 2-year (bachelor's path prioritized)
-            3. Highest reasonable selectivity sweet spot:
-               - Prioritize high targets + low reaches (most motivating, realistic)
-               - Safeties shown but not buried
+            3. Highest reasonable selectivity sweet spot
             4. Strong completion outcomes (grad rate as tiebreaker)
-            Based on Hossler & Gallagher (1987) college choice theory:
-            students explore best when shown aspirational but achievable options first.
+            Based on Hossler & Gallagher (1987) college choice theory.
             """
-            # 1. In-state preference (NY first for NY students)
-            state_val_list = _state_val if isinstance(_state_val, list) else [_state_val]
-            primary_state = state_val_list[0] if state_val_list and state_val_list[0] != 'any' else 'NY'
+            # 1. In-state preference — read state from session_state directly
+            _sv = st.session_state.get('states_multi', ['NY']) or ['NY']
+            primary_state = _sv[0] if isinstance(_sv, list) and _sv else 'NY'
             in_state = 0 if x.get('state') == primary_state else 1
 
             # 2. Degree level (4-year = 0, 2-year = 1)
