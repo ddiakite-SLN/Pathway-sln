@@ -562,6 +562,18 @@ def run_match(gpa, sat, act, state, size, ctrl, need, env, study_yrs, aid, n, ma
                 used.add(id(r))
             if len(selected) >= n: break
 
+    # Guarantee EOP/SEEK/CD schools always appear for NY students
+    # Reads from eop_schools.csv via EOP_DATA — no hardcoding
+    state_list_check = state if isinstance(state, list) else ([state] if state != 'any' else [])
+    if 'NY' in state_list_check or not state_list_check:
+        priority_ids = {int(uid) for uid in EOP_DATA.keys() if uid.isdigit()}
+        selected_ids = {r.get('id') for r in selected}
+        priority_in_results = [r for r in results if r.get('id') in priority_ids and r.get('id') not in selected_ids]
+        for pr in priority_in_results[:4]:
+            if len(selected) >= n:
+                selected.pop()
+            selected.append(pr)
+
     # Apply sort mode
     sort_modes = sort_mode if isinstance(sort_mode, list) else [sort_mode]
     def multi_sort_key(x):
@@ -773,6 +785,30 @@ def load_eop_data():
 EOP_DATA = load_eop_data()
 if EOP_DATA:
     print(f"EOP data loaded: {len(EOP_DATA)} schools")
+
+# ── Partner Schools Loader ───────────────────────────────────
+# Source: partner_schools.csv — maintained by Aaron/Kieran
+# Format: unitid, school_name, badges (comma-separated)
+# Example badges: QuestBridge, Posse, SLN Partner
+# To add/remove schools: edit the CSV — no code changes needed
+def load_partner_data():
+    import os, csv
+    partners = {}
+    if not os.path.exists('partner_schools.csv'):
+        return partners
+    try:
+        with open('partner_schools.csv', encoding='utf-8-sig') as f:
+            for row in csv.DictReader(f):
+                uid = str(row.get('unitid','')).strip()
+                badges = [b.strip() for b in str(row.get('badges','')).split(',') if b.strip()]
+                if uid and badges:
+                    if uid not in partners:
+                        partners[uid] = []
+                    partners[uid].extend(badges)
+    except: pass
+    return partners
+
+PARTNER_DATA = load_partner_data()
 
 # ── SLN School Whitelist ─────────────────────────────────────
 # Schools that should always appear in results for NY students
@@ -1088,11 +1124,12 @@ with tab1:
             # 4. Completion outcomes (higher grad rate = better)
             grad = -(x.get('grad') or 0)
 
-            # CUNY first, then SUNY, then private (Alex Hitch Apr 15)
+            # CUNY first, SUNY second, private last — reads from eop_schools.csv
             sid = x.get('id', 0)
-            CUNY = {190637,190512,190549,190558,190576,190600,190615,190624,190099,190172,190289,190407,190543,190698}
-            SUNY = {196060,196097,196105,196183,196200,196185,196079}
-            sys_order = 0 if sid in CUNY else 1 if sid in SUNY else 2
+            eop_progs = EOP_DATA.get(str(sid), [])
+            if any(p in ['SEEK','CD'] for p in eop_progs): sys_order = 0
+            elif any(p in ['EOP'] for p in eop_progs): sys_order = 1
+            else: sys_order = 2
             return [sys_order, in_state, is_2yr, fit_sweet, reach_difficulty, grad]
 
         def sort_key(x):
@@ -1188,13 +1225,10 @@ with tab1:
                                 aid_chips += f"  `{prog}`"
                         if s.get('hbcu'): aid_chips += "  `HBCU`"
                         if s.get('womens'): aid_chips += "  `Women's college`"
-                        QUESTBRIDGE = {190150,190415,190688,193900,196105,197197,166027,131520,198419,186131,215062,243744}
-                        POSSE = {190415,193900,196105,197197,189097,193654,196667,190150}
-                        SLN_PARTNERS = {195165,196704,144050}  # Mercy, St. Bonaventure, Gettysburg
-                        sid = s.get('id',0)
-                        if sid in QUESTBRIDGE: aid_chips += "  `QuestBridge`"
-                        if sid in POSSE: aid_chips += "  `Posse`"
-                        if sid in SLN_PARTNERS: aid_chips += "  `SLN Partner`"
+                        # Partner badges from partner_schools.csv — no hardcoding
+                        # Aaron/Kieran can update CSV without touching code
+                        for badge in PARTNER_DATA.get(str(s.get('id',0)), []):
+                            aid_chips += f"  `{badge}`"
                         if aid_chips: st.markdown(f"**Aid & fit:** {aid_chips.strip()}")
                     with cb:
                         sticker = int(s.get('tin') or 0)
