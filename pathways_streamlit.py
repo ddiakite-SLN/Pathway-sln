@@ -61,6 +61,12 @@ def load_schools():
     df = df.where(pd.notnull(df), None)
     schools = df.to_dict('records')
     for s in schools:
+        # Normalize column name: schools_full.csv uses 'unitid', code uses 'id'
+        # This one line makes both work — no other changes needed anywhere
+        if s.get('id') is None:
+            s['id'] = s.get('unitid')
+        try: s['id'] = int(s['id']) if s.get('id') is not None else None
+        except: s['id'] = None
         for k in ['hbcu','womens','yr2']:
             s[k] = bool(s.get(k,0))
         for k in ['tin','sat25','sat75','act25','act75','grad','adm']:
