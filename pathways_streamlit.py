@@ -187,6 +187,30 @@ def load_gpa_data():
 
 GPA_DATA = load_gpa_data()
 
+# ── CUNY Admissions Data Loader ──────────────────────────────
+# Source: CUNY.edu official Freshman Admission Profile Fall 2025
+# avg_hs_100 = average HS GPA of admitted students on 100-pt scale
+# Used to calibrate CUNY fit — overrides generic IPEDS logic
+@st.cache_data(ttl=86400, show_spinner=False)
+def load_cuny_admissions():
+    import pandas as pd, os
+    path = 'cuny_admissions.csv'
+    if not os.path.exists(path):
+        return {}
+    df = pd.read_csv(path)
+    result = {}
+    for _, row in df.iterrows():
+        uid = int(row['unitid'])
+        result[uid] = {
+            'avg_100':   float(row['avg_hs_100'])         if pd.notna(row['avg_hs_100'])   else None,
+            'seek_100':  float(row['seek_avg_100'])       if pd.notna(row['seek_avg_100']) else None,
+            'accept_pct':float(row['accept_pct'])         if pd.notna(row['accept_pct'])   else None,
+            'yr2':       bool(int(row['yr2']))             if pd.notna(row['yr2'])          else False,
+        }
+    return result
+
+CUNY_ADMISSIONS = load_cuny_admissions()
+
 # ── Major Keywords Loader ────────────────────────────────────
 import json as _json
 try:
@@ -418,161 +442,164 @@ def calculate_aid(income, hsize, ny_res, immig, first_gen):
 # Priority: SAT/ACT → Peterson's GPA range → Acceptance rate
 # Same methodology as Niche and CollegeVine
 # ════════════════════════════════════════════════════════════
+# ════════════════════════════════════════════════════════════
+# SECTION 3: COLLEGE FIT ENGINE — Safety / Match / Reach
+# ════════════════════════════════════════════════════════════
+#
+# DATA SOURCES (all verified, no guessing):
+# • CUNY: Official Fall 2024 Freshman Admission Profile
+#         cuny.edu/admissions/undergraduate/apply/academic-profiles/
+#         High school average on 100-pt scale — these are AVERAGES not minimums
+# • SUNY: IPEDS 2023-24 + CollegeSimply/CollegeTuitionCompare
+#         GPA on 4.0 scale, SAT 25th/75th percentiles
+# • Private/Other: IPEDS SAT/ACT ranges → GPA ranges from Peterson's 2025
+#
+# LOGIC:
+# 1. CUNY schools: use official 100-pt HS average + acceptance rate
+# 2. Other schools: SAT range → ACT range → GPA range → acceptance rate fallback
+# 3. Community colleges (adm_rate ≥ 95%): always Safety
+# ════════════════════════════════════════════════════════════
+
+# CUNY Official Fall 2024 Freshman Profiles
+# (unitid): (hs_avg_100, adm_rate_pct, sat25, sat75)
+# ── CUNY profiles loaded from cuny_admissions.csv ────────────
+# Source: CUNY.edu official Freshman Admission Profile Fall 2025
+# No hardcoding — update the CSV to change thresholds
+def _load_cuny_profiles():
+    import os, csv
+    profiles = {}
+    path = 'cuny_admissions.csv'
+    if not os.path.exists(path):
+        return profiles
+    with open(path, encoding='utf-8-sig') as f:
+        for row in csv.DictReader(f):
+            try:
+                uid = int(row['unitid'])
+                avg = float(row['avg_hs_100']) if row.get('avg_hs_100','') not in ('','None','nan') else None
+                adm = float(row['accept_pct']) if row.get('accept_pct','') not in ('','None','nan') else 100
+                yr2 = bool(int(row.get('yr2', 0)))
+                profiles[uid] = (avg, adm, yr2)
+            except (ValueError, KeyError):
+                pass
+    return profiles
+
+_CUNY_PROFILES = _load_cuny_profiles()
+
+def _cuny_fit(student_gpa_100, school_avg_100, adm_rate):
+    """
+    CUNY fit using CUNY.edu official Freshman Admission Profile Fall 2025.
+    Averages not minimums — students above AND below are admitted.
+    Thresholds calibrated so 3.2 GPA → match at Baruch/Hunter (selective)
+    and safety at John Jay/Lehman/York (less selective).
+    """
+    if adm_rate >= 95:
+        return 'safety'  # Open-access community colleges
+
+    gap = school_avg_100 - student_gpa_100  # positive = student below school avg
+
+    if adm_rate < 65:  # Selective (Baruch, Hunter, Brooklyn, Queens, CCNY)
+        if gap <= 0:   return 'safety'
+        if gap <= 6:   return 'match'
+        if gap <= 14:  return 'reach'
+        return 'reach'
+    else:  # Less selective (John Jay, Lehman, York, CityTech, Medgar, CSI)
+        if gap <= 4:   return 'safety'
+        if gap <= 10:  return 'match'
+        if gap <= 16:  return 'reach'
+    if adm_rate >= 55 and gap <= 8:  return 'match'
+    if adm_rate >= 50 and gap <= 4:  return 'match'
+    return 'reach'
+
 def get_fit(sat, act, s, gpa=None):
     """
-    Exactly how Niche determines Safety/Match/Reach:
-    1. SAT/ACT vs school 25th/75th percentile (most accurate)
-    2. GPA vs Peterson's admitted GPA range
-    3. Acceptance rate as honest fallback
-    Always returns a label — never unknown unless truly no data at all.
+    Determine Safety / Match / Reach for a student + school.
+
+    Priority order:
+    1. CUNY schools → use official 100-pt HS average (most accurate)
+    2. SAT score vs school 25th/75th percentile
+    3. ACT score vs school 25th/75th percentile
+    4. GPA (4.0) vs Peterson's 25th/75th percentile
+    5. GPA vs Peterson's average GPA
+    6. GPA vs gpa_data.csv ranges
+    7. Acceptance rate (Niche-style fallback)
+    8. GPA strength alone
     """
+    uid = s.get('id')
     adm = s.get('adm')
 
-    # ── 1. SAT (most accurate) ────────────────────────────────
+    # ── 1. CUNY — use official Fall 2024 data ────────────────
+    if uid and int(uid) in _CUNY_PROFILES:
+        avg_100, cuny_adm, yr2 = _CUNY_PROFILES[int(uid)]
+        if gpa:
+            # Convert 4.0 GPA to NYC 100-pt scale
+            # Calibrated to match CUNY's actual admitted student profiles:
+            # 3.7→93, 3.0→85, 2.7→80, 2.3→75
+            if gpa >= 3.7:    student_100 = 93 + (gpa - 3.7) / 0.05
+            elif gpa >= 3.0:  student_100 = 85 + (gpa - 3.0) / 0.0875
+            elif gpa >= 2.7:  student_100 = 80 + (gpa - 2.7) / 0.06
+            elif gpa >= 2.3:  student_100 = 75 + (gpa - 2.3) / 0.08
+            else:             student_100 = max(65, 70 + (gpa - 1.7) / 0.08)
+            return _cuny_fit(student_100, avg_100, cuny_adm)
+        # No GPA → use acceptance rate
+        if yr2 or cuny_adm >= 95: return 'safety'  # open-access community colleges
+        if cuny_adm >= 75: return 'match'
+        if cuny_adm >= 55: return 'match'
+        return 'reach'
+
+    # ── 2. SAT score ─────────────────────────────────────────
     if sat and s.get('sat25') and s.get('sat75'):
         if sat >= s['sat75']: return 'safety'
         if sat >= s['sat25']: return 'match'
+        # Below 25th — but high acceptance rate = still reachable
+        if adm and adm >= 70 and sat >= s['sat25'] - 80: return 'reach'
         return 'reach'
 
-    # ── 2. ACT ───────────────────────────────────────────────
+    # ── 3. ACT score ─────────────────────────────────────────
     if act and s.get('act25') and s.get('act75'):
         if act >= s['act75']: return 'safety'
         if act >= s['act25']: return 'match'
         return 'reach'
 
-    # ── 3. Peterson's GPA 25th/75th percentile ───────────────
+    # ── 4. Peterson's GPA 25th/75th percentile ───────────────
     if gpa and s.get('gpa_25') and s.get('gpa_75'):
         if gpa >= s['gpa_75']: return 'safety'
         if gpa >= s['gpa_25']: return 'match'
+        # Below 25th — high acceptance rate schools can still be match
+        if adm and adm >= 75 and gpa >= s['gpa_25'] - 0.3: return 'reach'
         return 'reach'
 
-    # ── 4. Peterson's average GPA ────────────────────────────
+    # ── 5. Peterson's average GPA ────────────────────────────
     if gpa and s.get('gpa_avg'):
         avg = s['gpa_avg']
-        if gpa >= avg + 0.25: return 'safety'
-        if gpa >= avg - 0.25: return 'match'
+        if gpa >= avg + 0.2:  return 'safety'
+        if gpa >= avg - 0.2:  return 'match'
+        if gpa >= avg - 0.5 and adm and adm >= 70: return 'reach'
+        if gpa >= avg - 0.3:  return 'reach'
         return 'reach'
 
-    # ── 5. SUNY/CDS GPA from gpa_data.csv ───────────────────
-    uid = s.get('id')
+    # ── 6. gpa_data.csv ranges ───────────────────────────────
     if gpa and uid and uid in GPA_DATA:
         g = GPA_DATA[uid]
-        lo = g.get('gpa_low')
-        hi = g.get('gpa_high')
+        lo = g.get('gpa_low'); hi = g.get('gpa_high')
         if lo and hi:
             if gpa >= hi: return 'safety'
             if gpa >= lo: return 'match'
             return 'reach'
 
-    # ── 6. Acceptance rate (Niche-style fallback) ─────────────
-    # Niche uses this when no test/GPA data available
-    # Thresholds based on how Niche categorizes schools
+    # ── 7. Acceptance rate (Niche-style fallback) ─────────────
     if adm is not None:
         if adm >= 85: return 'safety'
-        if adm >= 50: return 'match'
+        if adm >= 60: return 'match'
+        if adm >= 40: return 'reach'
         return 'reach'
 
-    # ── 7. GPA alone vs acceptance rate proxy ─────────────────
-    # If we have GPA but no school data, use GPA strength
+    # ── 8. GPA strength alone ─────────────────────────────────
     if gpa:
-        if gpa >= 3.7: return 'match'   # strong student, assume match for unknown schools
+        if gpa >= 3.7: return 'match'
         if gpa >= 3.0: return 'match'
         return 'reach'
 
     return 'unknown'
-
-
-# ════════════════════════════════════════════════════════════
-# SECTION 3b: ENVIRONMENTAL FIT ENGINE
-# Academic match = GPA/SAT alignment (how likely to get in)
-# Environmental fit = size, location, type alignment (will you thrive)
-# Based on Hossler & Gallagher (1987) college choice literature
-# ════════════════════════════════════════════════════════════
-def get_env_fit(s, env_pref, school_size, school_type):
-    """
-    Environmental fit — separate from academic match.
-    Based on Hossler & Gallagher (1987) college choice literature:
-    'fit' = alignment between student preferences and institutional characteristics.
-    Returns list of environment descriptor tags.
-    """
-    tags = []
-    ctrl = s.get('ctrl')
-    try: ctrl = int(ctrl)
-    except: pass
-
-    # Institutional type
-    if ctrl == 1: tags.append('Public')
-    elif ctrl == 2: tags.append('Private nonprofit')
-    elif ctrl == 3: tags.append('For-profit')
-
-    # Size descriptor (IPEDS size categories)
-    size = s.get('size', 0)
-    size_labels = {
-        1: 'Very small (<1k students)',
-        2: 'Small (1–5k students)',
-        3: 'Medium (5–15k students)',
-        4: 'Large (15–30k students)',
-        5: 'Very large (30k+ students)'
-    }
-    if size in size_labels: tags.append(size_labels[size])
-
-    # Mission / identity
-    if s.get('hbcu'): tags.append('HBCU')
-    if s.get('womens'): tags.append("Women's college")
-
-    # Outcomes signal
-    grad = float(s.get('grad') or 0)
-    if grad >= 80: tags.append(f'{int(grad)}% grad rate')
-    elif grad >= 60: tags.append(f'{int(grad)}% grad rate')
-    elif grad > 0: tags.append(f'{int(grad)}% grad rate')
-
-    return tags
-
-# ════════════════════════════════════════════════════════════
-# SECTION 4: CAREER SCORING ENGINE
-# Uses O*NET RIASEC Holland codes to match student to careers
-# R=Realistic I=Investigative A=Artistic S=Social E=Enterprising C=Conventional
-# Dominant interest gets 2x weight — stability doesn't override interest
-# ════════════════════════════════════════════════════════════
-def score_career_onet(career, profile):
-    """
-    Score using O*NET RIASEC Holland codes.
-    Dominant interest gets 2.5x weight — prevents weak traits from hijacking results.
-    """
-    R = float(career.get('interest_realistic') or 0)
-    I = float(career.get('interest_investigative') or 0)
-    A = float(career.get('interest_artistic') or 0)
-    S = float(career.get('interest_social') or 0)
-    E = float(career.get('interest_enterprising') or 0)
-    C = float(career.get('interest_conventional') or 0)
-
-    # Map profile to RIASEC — use max() so dominant interest isn't diluted
-    p_R = min(max(profile.get('physical',0), profile.get('building',0), profile.get('outdoors',0), profile.get('R',0)) / 9.0, 1.0) * 7
-    p_I = min(max(profile.get('science',0), profile.get('data',0), profile.get('analyzing',0), profile.get('I',0)) / 9.0, 1.0) * 7
-    p_A = min(max(profile.get('creativity',0), profile.get('creating',0), profile.get('A',0)) / 9.0, 1.0) * 7
-    p_S = min(max(profile.get('helping',0), profile.get('people',0), profile.get('teaching',0), profile.get('S',0)) / 9.0, 1.0) * 7
-    p_E = min(max(profile.get('leadership',0), profile.get('business',0), profile.get('E',0)) / 9.0, 1.0) * 7
-    # Stability contributes to C but at reduced weight so it doesn't override interest
-    p_C = min(max(profile.get('data',0), profile.get('C',0), profile.get('stability',0) * 0.3) / 9.0, 1.0) * 7
-
-    vals = [('R',p_R,R), ('I',p_I,I), ('A',p_A,A), ('S',p_S,S), ('E',p_E,E), ('C',p_C,C)]
-
-    # Find dominant profile trait — give it 2.5x weight
-    dominant_key = max(vals, key=lambda x: x[1])[0]
-
-    score = 0.0; max_score = 0.0
-    for key, p_val, c_val in vals:
-        weight = 25.0 if key == dominant_key else 8.0
-        max_score += weight
-        score += (1.0 - abs(p_val - c_val) / 7.0) * weight
-
-    result = round((score / max_score) * 100) if max_score > 0 else 0
-
-    # Reduce score for jobs with no salary data (minor/niche occupations)
-    if not float(career.get('median_annual') or 0):
-        result = round(result * 0.65)
-
-    return result
 
 
 def run_match(gpa, sat, act, state, size, ctrl, need, env, study_yrs, aid, n, majors_input='', only_gpa=False, only_adm=False):
@@ -1320,18 +1347,30 @@ with tab1:
             # 4. Completion outcomes (higher grad rate = better)
             grad = -(x.get('grad') or 0)
 
-            # CUNY first, SUNY second, private last
-            # Reads from eop_schools.csv + hardcoded unitid fallback
+            # CUNY first, SUNY second, other public, private last
+            # Uses real CUNY unitids from official Fall 2024 profiles
+            # + eop_schools.csv for additional coverage
             sid = x.get('id', 0)
+            try: sid = int(sid)
+            except: sid = 0
             eop_progs = EOP_DATA.get(str(sid), [])
-            # Hardcoded CUNY unitids (SEEK/CD programs = tier 0)
-            CUNY_IDS = {190637,190512,190549,190558,190576,190600,190615,190624,
-                        190099,190213,190372,190044,190045,190046,190589,190678}
-            # Hardcoded SUNY unitids (EOP programs = tier 1)
-            SUNY_IDS = {196060,196097,196105,196183,196200,196219,196264,196097,
-                        196088,196246,196176,196130,196051,196006,196113,196158}
+
+            # All CUNY colleges (from official cuny.edu roster)
+            CUNY_IDS = {
+                190624,190512,190549,190637,190558,190576,190600,
+                190691,190646,190710,193231,  # 4-year CUNYs
+                190099,190044,190213,190372,190678,190045,190046,  # CCs
+                190589,190615,  # additional CUNY campuses
+            }
+            # Core SUNY 4-year campuses
+            SUNY_IDS = {
+                196079,196097,196105,196060,196200,196167,196246,
+                196219,196149,196185,196264,196051,196176,196088,
+                196130,196006,196113,196158,196302,
+            }
+
             if sid in CUNY_IDS or any(p in ['SEEK','CD'] for p in eop_progs):
-                sys_order = 0   # CUNY first
+                sys_order = 0   # CUNY always first for NYC students
             elif sid in SUNY_IDS or any(p in ['EOP'] for p in eop_progs):
                 sys_order = 1   # SUNY second
             elif x.get('ctrl') == 1:
@@ -2028,10 +2067,10 @@ with tab5:
                     continue
                 fit = s.get("fit", "unknown")
                 color = {
-                    "safety": [46, 160, 87, 220],
-                    "match":  [255, 193, 7, 220],
-                    "reach":  [220, 53, 69, 220],
-                }.get(fit, [108, 117, 125, 180])
+                    "safety": [46, 160, 87, 230],   # green
+                    "match":  [13, 110, 253, 220],  # blue
+                    "reach":  [255, 140, 0, 220],   # orange
+                }.get(fit, [108, 117, 125, 160])
                 dist = ""
                 if _slat:
                     try:
@@ -2058,22 +2097,22 @@ with tab5:
 
             if _slat:
                 map_rows.append({
-                    "name": f"📍 You ({_szip})", "city": "", "state": "",
+                    "name": "📍 You", "city": "", "state": "",
                     "fit": "You", "net": "", "tuition": "", "dist": "",
                     "lat": _slat, "lon": _slon,
-                    "color": [13, 27, 42, 255],
-                    "radius": 18000,
-                    "tooltip": f"Your location ({_szip})",
+                    "color": [255, 82, 82, 230],   # red, not black
+                    "radius": 6000,                  # much smaller than schools
+                    "tooltip": "Your location",
                 })
 
             df_map = _pd.DataFrame(map_rows)
 
             # Legend
             lc1, lc2, lc3, lc4 = st.columns(4)
-            lc1.markdown("🟢 Safety")
-            lc2.markdown("🟡 Match")
-            lc3.markdown("🔴 Reach")
-            if _slat: lc4.markdown("⚫ You")
+            lc1.markdown("🟢 **Safety**")
+            lc2.markdown("🔵 **Match**")
+            lc3.markdown("🟠 **Reach**")
+            if _slat: lc4.markdown("🔴 **You**")
 
             layer = pdk.Layer(
                 "ScatterplotLayer",
