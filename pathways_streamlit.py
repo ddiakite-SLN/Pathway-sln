@@ -67,15 +67,23 @@ if not st.session_state._profile_loaded and _qp:
         if 'test' in _qp:
             st.session_state['test_scores'] = _qp['test']
         if 'sat' in _qp:
-            st.session_state['sat_score'] = int(_qp['sat'])
+            st.session_state['sat_input'] = int(_qp['sat'])
         if 'act' in _qp:
-            st.session_state['act_score'] = int(_qp['act'])
+            st.session_state['act_input'] = int(_qp['act'])
         if 'ny' in _qp:
             st.session_state['ny_res'] = _qp['ny'] == '1'
         if 'immig' in _qp:
             st.session_state['immig'] = _qp['immig']
         if 'fg' in _qp:
             st.session_state['first_gen'] = _qp['fg'] == '1'
+        if 'size' in _qp:
+            st.session_state['school_size'] = _qp['size']
+        if 'type' in _qp:
+            st.session_state['school_type'] = _qp['type']
+        if 'yrs' in _qp:
+            st.session_state['study_yrs'] = _qp['yrs']
+        if 'test' in _qp:
+            st.session_state['test_scores'] = _qp['test']
     except Exception:
         pass
     st.session_state._profile_loaded = True
@@ -1041,9 +1049,9 @@ with st.sidebar:
     score_type = st.selectbox("Test scores", ["None (test-optional)","SAT","ACT"], key="test_scores")
     sat = act = None
     if score_type == "SAT":
-        sat = st.number_input("SAT Score", 400, 1600, 1100, 10)
+        sat = st.number_input("SAT Score", 400, 1600, st.session_state.get("sat_input", 1100), 10, key="sat_input")
     elif score_type == "ACT":
-        act = st.number_input("ACT Score", 1, 36, 24, 1)
+        act = st.number_input("ACT Score", 1, 36, st.session_state.get("act_input", 24), 1, key="act_input")
 
     st.markdown("### 🎯 Career Discovery")
 
@@ -1105,22 +1113,70 @@ with st.sidebar:
     n_results   = st.select_slider("Number of results",[5,10,15,20],10, key="n_results_slider")
 
     st.markdown("### 📍 Distance from You")
-    if st.button("📍 Use My Location", key="geo_btn", use_container_width=True,
-                 help="Uses your browser's location — no data is stored"):
-        st.session_state["_request_geo"] = True
     _glat = st.session_state.get("student_lat")
     if _glat:
-        st.caption(f"✅ Location set — distances show on cards & map")
-        if st.button("✕ Clear location", key="clear_geo", use_container_width=False):
+        st.caption("✅ Location set — distances show on cards & map")
+        if st.button("✕ Clear location", key="clear_geo"):
             st.session_state.pop("student_lat", None)
             st.session_state.pop("student_lon", None)
             st.rerun()
+    else:
+        # Two options: browser GPS or zip code
+        _loc_col1, _loc_col2 = st.columns([1, 1])
+        with _loc_col1:
+            if st.button("📍 Use My Location", key="geo_btn", use_container_width=True,
+                         help="Uses your browser's GPS — nothing is stored"):
+                st.session_state["_request_geo"] = True
+        with _loc_col2:
+            _zip_val = st.text_input("or ZIP code", placeholder="e.g. 10031",
+                                     max_chars=5, label_visibility="collapsed",
+                                     key="zip_input")
+        if _zip_val and len(_zip_val) == 5 and _zip_val.isdigit():
+            # Geocode zip via Nominatim (free, no key)
+            try:
+                import urllib.request as _ur, json as _jz
+                _zurl = f"https://nominatim.openstreetmap.org/search?postalcode={_zip_val}&country=US&format=json&limit=1"
+                _zreq = _ur.Request(_zurl, headers={"User-Agent":"PathwaysSLN/1.0"})
+                with _ur.urlopen(_zreq, timeout=3) as _zr:
+                    _zd = _jz.loads(_zr.read())
+                if _zd:
+                    st.session_state["student_lat"] = float(_zd[0]["lat"])
+                    st.session_state["student_lon"] = float(_zd[0]["lon"])
+                    st.rerun()
+                else:
+                    st.caption("⚠️ ZIP not found")
+            except Exception:
+                st.caption("⚠️ Could not geocode zip")
 
     run_btn = st.button("🔍 Find My Colleges", type="primary", use_container_width=True)
-    if st.session_state.ran_match:
-        _url = st.query_params.to_dict()
-        if _url:
-            st.caption("🔗 Bookmark this page to save your profile")
+    st.caption("🔗 Your profile auto-saves to the URL — bookmark to return to these settings")
+
+# ── CONTINUOUS PROFILE SAVE TO URL ──────────────────────────
+# Runs every render so URL always reflects current sidebar state
+# Student can bookmark or copy URL at any time to save their profile
+try:
+    _sp = {
+        'scale': gpa_scale,
+        'states': '|'.join(state_pref) if state_pref else 'NY',
+        'income': income_label,
+        'ny':     '1' if ny_res else '0',
+        'immig':  immig,
+        'fg':     '1' if first_gen else '0',
+        'size':   school_size,
+        'type':   school_type,
+        'yrs':    study_yrs,
+    }
+    if gpa_scale == '4.0 scale':
+        _sp['gpa'] = str(round(gpa, 1))
+    else:
+        _sp['gpa'] = str(gpa_100)
+    if score_type == 'SAT' and sat:
+        _sp['test'] = 'SAT'; _sp['sat'] = str(sat)
+    elif score_type == 'ACT' and act:
+        _sp['test'] = 'ACT'; _sp['act'] = str(act)
+    st.query_params.update(_sp)
+except Exception:
+    pass
 
 # ── PROCESS ───────────────────────────────────────────────────
 # Only score careers if all 8 questions are answered
@@ -1157,29 +1213,6 @@ if st.session_state.get("_request_geo"):
 if run_btn:
     state_val = state_pref if state_pref else ['NY']  # default to NY if nothing selected
     need_val  = "full" if income<50000 else "some"
-    # Save profile to URL so student can bookmark/share their search
-    try:
-        _save_params = {
-            'scale': gpa_scale,
-            'states': '|'.join(state_val),
-            'income': income_label,
-            'ny': '1' if ny_res else '0',
-            'immig': immig,
-            'fg': '1' if first_gen else '0',
-        }
-        if gpa_scale == '4.0 scale':
-            _save_params['gpa'] = str(round(gpa, 1))
-        else:
-            _save_params['gpa'] = str(gpa_100)
-        if score_type == 'SAT' and sat:
-            _save_params['test'] = 'SAT'
-            _save_params['sat'] = str(sat)
-        elif score_type == 'ACT' and act:
-            _save_params['test'] = 'ACT'
-            _save_params['act'] = str(act)
-        st.query_params.update(_save_params)
-    except Exception:
-        pass
     matches = run_match(gpa, sat, act, state_val,
                         SIZE_MAP[school_size], CTRL_MAP[school_type],
                         need_val, ENV_MAP[env_pref], YRS_MAP[study_yrs], aid, n_results,
