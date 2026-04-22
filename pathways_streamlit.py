@@ -126,6 +126,8 @@ def load_schools():
         except: s['yr2'] = False
         try: s['tin'] = int(s['tin']) if s.get('tin') else None
         except: s['tin'] = None
+        try: s['roomboard'] = int(float(s['roomboard'])) if s.get('roomboard') not in (None,'','nan') else None
+        except: s['roomboard'] = None
         try: s['sat25'] = int(s['sat25']) if s.get('sat25') else None
         except: s['sat25'] = None
         try: s['sat75'] = int(s['sat75']) if s.get('sat75') else None
@@ -1169,10 +1171,16 @@ with st.sidebar:
     st.markdown("### 📍 Distance from You")
     _glat = st.session_state.get("student_lat")
     if _glat:
-        st.caption("✅ Location set — distances show on cards & map")
+        _loc_name = st.session_state.get("student_location_name", "")
+        if _loc_name:
+            st.caption(f"✅ Location set: **{_loc_name}** — distances show on cards & map")
+        else:
+            st.caption("✅ Location set (GPS) — distances show on cards & map")
         if st.button("✕ Clear location", key="clear_geo"):
             st.session_state.pop("student_lat", None)
             st.session_state.pop("student_lon", None)
+            st.session_state.pop("student_zip", None)
+            st.session_state.pop("student_location_name", None)
             st.rerun()
     else:
         # Two options: browser GPS or zip code
@@ -1196,6 +1204,8 @@ with st.sidebar:
                 if _zd:
                     st.session_state["student_lat"] = float(_zd[0]["lat"])
                     st.session_state["student_lon"] = float(_zd[0]["lon"])
+                    st.session_state["student_zip"] = _zip_val
+                    st.session_state["student_location_name"] = _zd[0].get("display_name","").split(",")[0] + f" ({_zip_val})"
                     st.rerun()
                 else:
                     st.caption("⚠️ ZIP not found")
@@ -1257,8 +1267,23 @@ if st.session_state.get("_request_geo"):
         from streamlit_js_eval import get_geolocation
         _geo = get_geolocation()
         if _geo and _geo.get("coords"):
-            st.session_state["student_lat"] = _geo["coords"]["latitude"]
-            st.session_state["student_lon"] = _geo["coords"]["longitude"]
+            _glat2 = _geo["coords"]["latitude"]
+            _glon2 = _geo["coords"]["longitude"]
+            st.session_state["student_lat"] = _glat2
+            st.session_state["student_lon"] = _glon2
+            # Reverse geocode to get neighborhood/city name
+            try:
+                import urllib.request as _ur2, json as _jz2
+                _rurl = f"https://nominatim.openstreetmap.org/reverse?lat={_glat2}&lon={_glon2}&format=json"
+                _rreq = _ur2.Request(_rurl, headers={"User-Agent":"PathwaysSLN/1.0"})
+                with _ur2.urlopen(_rreq, timeout=3) as _rr:
+                    _rd = _jz2.loads(_rr.read())
+                _addr = _rd.get("address", {})
+                _city = _addr.get("neighbourhood") or _addr.get("suburb") or _addr.get("city") or _addr.get("town","")
+                _pcode = _addr.get("postcode","")
+                st.session_state["student_location_name"] = f"{_city} ({_pcode})" if _city else f"GPS ({_pcode})"
+            except Exception:
+                st.session_state["student_location_name"] = "Your location (GPS)"
             st.session_state.pop("_request_geo", None)
             st.rerun()
     except Exception:
@@ -1537,15 +1562,47 @@ with tab1:
                     with cb:
                         tuition_only = int(s.get('tuition_only') or 0)
                         rb_added = int(s.get('roomboard_added') or 0)
-                        sticker = int(s.get('sticker') or 0)  # tuition + R&B
-                        net = int(s.get('net') or 0)
+                        sticker = int(s.get('sticker') or 0)
+                        s_net = s.get('net')
+                        net = int(s_net) if s_net is not None else None
+
+                        _aid = st.session_state.get('aid', {})
+                        _pell  = int(_aid.get('pell') or 0)
+                        # TAP: student must be NY resident + income eligible
+                        #      college must be NY state (all degree-granting NY schools are TAP-approved)
+                        _school_in_ny = s.get('state') == 'NY'
+                        _tap_student  = int(_aid.get('tap') or 0)
+                        _tap          = _tap_student if _school_in_ny else 0
+                        _dream        = int(_aid.get('dream') or 0) if _school_in_ny else 0
+                        _total_aid    = _pell + _tap + _dream
+
                         if tuition_only:
-                            st.markdown(f"**Tuition:** ${tuition_only:,}")
-                            st.markdown(f"**+ R&B:** ~${rb_added:,}")
-                            st.markdown(f"**Total CoA:** ${sticker:,}")
+                            st.markdown(f"**Tuition:** ${tuition_only:,}/yr")
+                            st.markdown(f"**Room & Board:** ~${rb_added:,}/yr")
+                            st.markdown(f"**Total Cost:** ${sticker:,}/yr")
                         else:
                             st.markdown("**Cost:** N/A")
-                        st.markdown(f"**You pay:** ${net:,}/yr" if s.get('net') is not None else "**You pay:** N/A")
+
+                        if _total_aid or sticker:
+                            st.markdown("---")
+                        if _pell:
+                            st.markdown(f"✅ Pell Grant &nbsp;−&nbsp; **${_pell:,}/yr**")
+                        if _tap:
+                            st.markdown(f"✅ NY TAP &nbsp;−&nbsp; **${_tap:,}/yr** *(you & this school qualify)*")
+                        elif _tap_student and not _school_in_ny:
+                            st.markdown(f"⚠️ NY TAP &nbsp;−&nbsp; **you qualify** but this school is out-of-state *(not eligible here)*")
+                        if _dream:
+                            st.markdown(f"✅ Dream Act &nbsp;−&nbsp; **${_dream:,}/yr**")
+
+                        if net is not None and sticker:
+                            st.markdown("---")
+                            st.markdown(f"**🎓 You pay: ${net:,}/yr**")
+                            st.caption(f"${sticker:,} total cost − ${_total_aid:,} in grants")
+                        elif net is not None:
+                            st.markdown(f"**🎓 You pay: ${net:,}/yr**")
+                        else:
+                            st.markdown("**You pay:** N/A")
+
                         grad = s.get('grad')
                         st.markdown(f"**Grad rate:** {int(grad)}%" if grad else "**Grad rate:** N/A")
                         rd = s.get('rd','Check website')
