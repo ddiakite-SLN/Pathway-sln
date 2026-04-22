@@ -130,10 +130,15 @@ def load_schools():
         except: s['grad'] = None
         try: s['adm'] = float(s['adm']) if s.get('adm') else None
         except: s['adm'] = None
-        # Load lat/lon for distance calculations (IPEDS provides these)
+        # Load lat/lon for distance calculations
+        # IPEDS uses LATITUDE and LONGITUD (no final E) — support both variants
+        if s.get('latitude') is None and s.get('LATITUDE') is not None:
+            s['latitude'] = s.get('LATITUDE')
+        if s.get('longitude') is None:
+            s['longitude'] = s.get('LONGITUD') or s.get('LONGITUDE')
         for coord in ['latitude','longitude']:
             v = s.get(coord)
-            try: s[coord] = float(v) if v is not None else None
+            try: s[coord] = float(v) if v is not None and str(v).strip() not in ('','nan','None') else None
             except: s[coord] = None
         def safe_gpa(v):
             try:
@@ -302,6 +307,60 @@ DEADLINES = {
     198419:{"rd":"Jan 5","ed":"Nov 3"},
 }
 
+
+# ── SCHOOL COORDINATES FALLBACK ──────────────────────────────
+# Used when schools_full.csv doesn't include lat/lon columns
+# Covers major NYC-area and common NY destination schools
+# Source: known geographic coordinates
+SCHOOL_COORDS_FALLBACK = {
+    # CUNY
+    190637: (40.8196, -73.9499),  # City College
+    190512: (40.7678, -73.9645),  # Hunter College
+    190549: (40.6954, -73.9874),  # Brooklyn College
+    190558: (40.7484, -74.0014),  # John Jay
+    190576: (40.8732, -73.8945),  # Lehman College
+    190600: (40.7362, -73.8200),  # Queens College
+    190615: (40.6297, -73.9547),  # Brooklyn College
+    190624: (40.7405, -73.9836),  # Baruch College
+    190099: (40.8521, -73.9166),  # Bronx CC
+    # SUNY
+    196097: (40.9257, -73.1409),  # Stony Brook
+    196060: (42.6862, -73.8227),  # SUNY Albany
+    196105: (42.8962, -78.8767),  # UB Buffalo
+    196183: (42.8962, -78.8767),  # Stony Brook (duplicate fix)
+    196200: (42.7954, -77.8245),  # Geneseo
+    # Private NY
+    193900: (40.7295, -73.9965),  # NYU
+    190150: (40.8075, -73.9626),  # Columbia
+    194824: (40.8617, -73.8855),  # Fordham
+    189097: (40.8076, -73.9641),  # Barnard
+    192703: (41.7701, -73.9021),  # Marist
+    193016: (41.0093, -73.8585),  # Mercy
+    195173: (40.6962, -73.9929),  # St. Francis Brooklyn
+    # Out of state common
+    212674: (39.8309, -77.2311),  # Gettysburg
+    166027: (42.3770, -71.1167),  # Harvard
+    130794: (41.3163, -72.9223),  # Yale
+    186131: (40.3431, -74.6551),  # Princeton
+    217156: (41.8268, -71.4025),  # Brown
+    215062: (39.9522, -75.1932),  # UPenn
+    198419: (35.9940, -78.8986),  # Duke
+    221999: (36.1447, -86.8027),  # Vanderbilt
+    139658: (33.7940, -84.3241),  # Emory
+}
+
+def get_school_coords(s):
+    """Get lat/lon for a school, using CSV data or fallback dict."""
+    lat = s.get('latitude')
+    lon = s.get('longitude')
+    if lat and lon:
+        try: return float(lat), float(lon)
+        except: pass
+    uid = s.get('id')
+    if uid and int(uid) in SCHOOL_COORDS_FALLBACK:
+        return SCHOOL_COORDS_FALLBACK[int(uid)]
+    return None, None
+
 # ── DISTANCE ENGINE ──────────────────────────────────────────
 import math as _math
 
@@ -312,20 +371,6 @@ def haversine_miles(lat1, lon1, lat2, lon2):
     dlam = _math.radians(lon2 - lon1)
     a = _math.sin(dphi/2)**2 + _math.cos(phi1)*_math.cos(phi2)*_math.sin(dlam/2)**2
     return round(R * 2 * _math.atan2(_math.sqrt(a), _math.sqrt(1-a)), 1)
-
-@st.cache_data(ttl=86400, show_spinner=False)
-def geocode_zip(zipcode):
-    try:
-        import urllib.request, json as _json
-        url = f"https://nominatim.openstreetmap.org/search?postalcode={zipcode}&country=US&format=json&limit=1"
-        req = urllib.request.Request(url, headers={"User-Agent": "PathwaysSLN/1.0"})
-        with urllib.request.urlopen(req, timeout=3) as r:
-            data = _json.loads(r.read())
-        if data:
-            return float(data[0]["lat"]), float(data[0]["lon"])
-    except Exception:
-        pass
-    return None, None
 
 # ── ENGINES ───────────────────────────────────────────────────
 # ════════════════════════════════════════════════════════════
@@ -1060,15 +1105,16 @@ with st.sidebar:
     n_results   = st.select_slider("Number of results",[5,10,15,20],10, key="n_results_slider")
 
     st.markdown("### 📍 Distance from You")
-    zip_code = st.text_input(
-        "Your zip code",
-        placeholder="e.g. 10031",
-        max_chars=5,
-        help="Enter your zip code to see how far each college is from you",
-        key="zip_code"
-    )
-    if zip_code and len(zip_code) == 5 and zip_code.isdigit():
-        st.caption("📍 Distance will show on each college card and map")
+    if st.button("📍 Use My Location", key="geo_btn", use_container_width=True,
+                 help="Uses your browser's location — no data is stored"):
+        st.session_state["_request_geo"] = True
+    _glat = st.session_state.get("student_lat")
+    if _glat:
+        st.caption(f"✅ Location set — distances show on cards & map")
+        if st.button("✕ Clear location", key="clear_geo", use_container_width=False):
+            st.session_state.pop("student_lat", None)
+            st.session_state.pop("student_lon", None)
+            st.rerun()
 
     run_btn = st.button("🔍 Find My Colleges", type="primary", use_container_width=True)
     if st.session_state.ran_match:
@@ -1095,19 +1141,18 @@ top = career_results[0] if career_results else None
 aid = calculate_aid(income, hsize, ny_res, IMMIG_MAP[immig], first_gen)
 st.session_state.aid = aid
 
-# Geocode student zip if provided
-_student_lat, _student_lon = None, None
-_zip_input = st.session_state.get("zip_code", "").strip()
-if _zip_input and len(_zip_input) == 5 and _zip_input.isdigit():
-    _student_lat, _student_lon = geocode_zip(_zip_input)
-    if _student_lat:
-        st.session_state["student_lat"] = _student_lat
-        st.session_state["student_lon"] = _student_lon
-        st.session_state["student_zip"] = _zip_input
-elif not _zip_input:
-    # Clear stored location if zip cleared
-    st.session_state.pop("student_lat", None)
-    st.session_state.pop("student_lon", None)
+# Browser geolocation via streamlit-js-eval
+if st.session_state.get("_request_geo"):
+    try:
+        from streamlit_js_eval import get_geolocation
+        _geo = get_geolocation()
+        if _geo and _geo.get("coords"):
+            st.session_state["student_lat"] = _geo["coords"]["latitude"]
+            st.session_state["student_lon"] = _geo["coords"]["longitude"]
+            st.session_state.pop("_request_geo", None)
+            st.rerun()
+    except Exception:
+        st.session_state.pop("_request_geo", None)
 
 if run_btn:
     state_val = state_pref if state_pref else ['NY']  # default to NY if nothing selected
@@ -1275,9 +1320,10 @@ with tab1:
                     elif sm == "Closest to Me":
                         _slat2 = st.session_state.get("student_lat")
                         _slon2 = st.session_state.get("student_lon")
-                        if _slat2 and x.get("latitude") and x.get("longitude"):
+                        if _slat2:
                             try:
-                                keys.append(haversine_miles(_slat2, _slon2, float(x["latitude"]), float(x["longitude"])))
+                                _cx, _cy = get_school_coords(x)
+                                keys.append(haversine_miles(_slat2, _slon2, _cx, _cy) if _cx else 9999)
                             except Exception:
                                 keys.append(9999)
                         else:
@@ -1334,10 +1380,12 @@ with tab1:
                         _slat = st.session_state.get("student_lat")
                         _slon = st.session_state.get("student_lon")
                         _dist_str = ""
-                        if _slat and s.get("latitude") and s.get("longitude"):
+                        if _slat:
                             try:
-                                _dm = haversine_miles(_slat, _slon, float(s["latitude"]), float(s["longitude"]))
-                                _dist_str = f" · 📍 {_dm:.0f} mi"
+                                _clat, _clon = get_school_coords(s)
+                                if _clat:
+                                    _dm = haversine_miles(_slat, _slon, _clat, _clon)
+                                    _dist_str = f"  📍 {_dm:.0f} mi"
                             except Exception:
                                 pass
                         st.markdown(f"**{fit_icons.get(fit,'⚪')} [{s['name']}]({s.get('web','#')})**{_dist_str}")
@@ -1934,7 +1982,7 @@ with tab5:
         st.info("👈 Run a college search first — your results will appear on the map.")
     else:
         if not _slat:
-            st.info("💡 Enter your zip code in the sidebar to see distances and your location on the map.")
+            st.info("💡 Click **📍 Use My Location** in the sidebar — your browser will ask permission once, then distances and your pin appear on the map.")
 
         try:
             import pydeck as pdk
@@ -1942,13 +1990,8 @@ with tab5:
 
             map_rows = []
             for s in _map_matches:
-                lat = s.get("latitude")
-                lon = s.get("longitude")
+                lat, lon = get_school_coords(s)
                 if not lat or not lon:
-                    continue
-                try:
-                    lat, lon = float(lat), float(lon)
-                except (TypeError, ValueError):
                     continue
                 fit = s.get("fit", "unknown")
                 color = {
@@ -2009,30 +2052,36 @@ with tab5:
                 auto_highlight=True,
             )
 
-            # Center map on student or on results
+            # Center map - guard against empty df_map
             if _slat:
                 view_lat, view_lon, zoom = _slat, _slon, 5
-            else:
-                view_lat = df_map["lat"].mean()
-                view_lon = df_map["lon"].mean()
+            elif len(df_map) > 0 and df_map["lat"].notna().any():
+                view_lat = df_map["lat"].dropna().mean()
+                view_lon = df_map["lon"].dropna().mean()
                 zoom = 5
+            else:
+                # Default to NYC if no coordinates at all
+                view_lat, view_lon, zoom = 40.7128, -74.0060, 6
 
             view = pdk.ViewState(latitude=view_lat, longitude=view_lon, zoom=zoom, pitch=0)
             tooltip = {"html": "<b>{name}</b><br/>{fit} · {net}<br/>{city}, {state}{dist}",
                        "style": {"background": "#0D1B2A", "color": "white", "fontSize": "13px", "padding": "8px"}}
 
-            st.pydeck_chart(pdk.Deck(layers=[layer], initial_view_state=view, tooltip=tooltip,
-                map_style="mapbox://styles/mapbox/light-v9"))
+            if len(df_map) == 0:
+                st.warning("⚠️ No coordinate data found for these schools. Make sure schools_full.csv includes latitude/longitude columns from IPEDS.")
+            else:
+                st.pydeck_chart(pdk.Deck(layers=[layer], initial_view_state=view, tooltip=tooltip,
+                    map_style="road"))
 
             # Distance table if zip entered
             if _slat:
                 st.markdown("#### 📏 Distance from your zip code")
                 dist_rows = []
                 for s in _map_matches:
-                    lat = s.get("latitude"); lon = s.get("longitude")
+                    lat, lon = get_school_coords(s)
                     if not lat or not lon: continue
                     try:
-                        dm = haversine_miles(_slat, _slon, float(lat), float(lon))
+                        dm = haversine_miles(_slat, _slon, lat, lon)
                         dist_rows.append({
                             "College": s.get("name",""),
                             "Miles": dm,
