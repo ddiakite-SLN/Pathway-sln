@@ -510,6 +510,33 @@ def _cuny_fit(student_gpa_100, school_avg_100, adm_rate):
     if adm_rate >= 50 and gap <= 4:  return 'match'
     return 'reach'
 
+def get_env_fit(s, env_pref, school_size, school_type):
+    """Returns environment descriptor tags for a school card."""
+    tags = []
+    # Size
+    size = s.get('size', 0)
+    try: size = int(size)
+    except: size = 0
+    size_label = {1:'Very small', 2:'Small', 3:'Medium', 4:'Large', 5:'Very large'}.get(size, '')
+    if size_label:
+        tags.append(size_label)
+    # Control type
+    ctrl = s.get('ctrl')
+    try: ctrl = int(ctrl)
+    except: ctrl = None
+    if ctrl == 1: tags.append('Public')
+    elif ctrl in (2, 3): tags.append('Private')
+    # Special missions
+    if s.get('hbcu'): tags.append('HBCU')
+    if s.get('womens'): tags.append("Women's")
+    # Grad rate
+    grad = s.get('grad') or 0
+    try: grad = float(grad)
+    except: grad = 0
+    if grad >= 80: tags.append('High grad rate')
+    elif grad >= 60: tags.append('Mod grad rate')
+    return tags
+
 def get_fit(sat, act, s, gpa=None):
     """
     Determine Safety / Match / Reach for a student + school.
