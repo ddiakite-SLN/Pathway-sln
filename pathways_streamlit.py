@@ -43,6 +43,42 @@ if 'ran_match' not in st.session_state:
     st.session_state.ran_match = False
 if 'career_selected_soc' not in st.session_state:
     st.session_state.career_selected_soc = ''
+if '_profile_loaded' not in st.session_state:
+    st.session_state._profile_loaded = False
+
+# ── RESTORE PROFILE FROM URL PARAMS ──────────────────────────
+# Lets students bookmark their profile — URL encodes key inputs
+# Same approach used by Niche and CollegeVine
+_qp = st.query_params
+if not st.session_state._profile_loaded and _qp:
+    try:
+        if 'scale' in _qp:
+            st.session_state['gpa_scale_radio'] = _qp['scale']
+        if 'gpa' in _qp:
+            v = float(_qp['gpa'])
+            if st.session_state.get('gpa_scale_radio') == '4.0 scale':
+                st.session_state['gpa_slider'] = min(4.0, max(0.0, v))
+            else:
+                st.session_state['gpa_slider_100'] = int(min(100, max(0, v)))
+        if 'states' in _qp:
+            st.session_state['states_multi'] = _qp['states'].split('|')
+        if 'income' in _qp:
+            st.session_state['income_bracket'] = _qp['income']
+        if 'test' in _qp:
+            st.session_state['test_scores'] = _qp['test']
+        if 'sat' in _qp:
+            st.session_state['sat_score'] = int(_qp['sat'])
+        if 'act' in _qp:
+            st.session_state['act_score'] = int(_qp['act'])
+        if 'ny' in _qp:
+            st.session_state['ny_res'] = _qp['ny'] == '1'
+        if 'immig' in _qp:
+            st.session_state['immig'] = _qp['immig']
+        if 'fg' in _qp:
+            st.session_state['first_gen'] = _qp['fg'] == '1'
+    except Exception:
+        pass
+    st.session_state._profile_loaded = True
 
 # ── DATA ──────────────────────────────────────────────────────
 # ════════════════════════════════════════════════════════════
@@ -94,6 +130,11 @@ def load_schools():
         except: s['grad'] = None
         try: s['adm'] = float(s['adm']) if s.get('adm') else None
         except: s['adm'] = None
+        # Load lat/lon for distance calculations (IPEDS provides these)
+        for coord in ['latitude','longitude']:
+            v = s.get(coord)
+            try: s[coord] = float(v) if v is not None else None
+            except: s[coord] = None
         def safe_gpa(v):
             try:
                 f = float(v)
@@ -260,6 +301,31 @@ DEADLINES = {
     131520:{"rd":"Feb 15","ed":"Nov 1"},
     198419:{"rd":"Jan 5","ed":"Nov 3"},
 }
+
+# ── DISTANCE ENGINE ──────────────────────────────────────────
+import math as _math
+
+def haversine_miles(lat1, lon1, lat2, lon2):
+    R = 3958.8
+    phi1, phi2 = _math.radians(lat1), _math.radians(lat2)
+    dphi = _math.radians(lat2 - lat1)
+    dlam = _math.radians(lon2 - lon1)
+    a = _math.sin(dphi/2)**2 + _math.cos(phi1)*_math.cos(phi2)*_math.sin(dlam/2)**2
+    return round(R * 2 * _math.atan2(_math.sqrt(a), _math.sqrt(1-a)), 1)
+
+@st.cache_data(ttl=86400, show_spinner=False)
+def geocode_zip(zipcode):
+    try:
+        import urllib.request, json as _json
+        url = f"https://nominatim.openstreetmap.org/search?postalcode={zipcode}&country=US&format=json&limit=1"
+        req = urllib.request.Request(url, headers={"User-Agent": "PathwaysSLN/1.0"})
+        with urllib.request.urlopen(req, timeout=3) as r:
+            data = _json.loads(r.read())
+        if data:
+            return float(data[0]["lat"]), float(data[0]["lon"])
+    except Exception:
+        pass
+    return None, None
 
 # ── ENGINES ───────────────────────────────────────────────────
 # ════════════════════════════════════════════════════════════
@@ -993,7 +1059,22 @@ with st.sidebar:
     study_yrs   = st.selectbox("Degree level",["Any","Associate's (2 yr)","Bachelor's or higher (4 yr+)"], key="study_yrs")
     n_results   = st.select_slider("Number of results",[5,10,15,20],10, key="n_results_slider")
 
+    st.markdown("### 📍 Distance from You")
+    zip_code = st.text_input(
+        "Your zip code",
+        placeholder="e.g. 10031",
+        max_chars=5,
+        help="Enter your zip code to see how far each college is from you",
+        key="zip_code"
+    )
+    if zip_code and len(zip_code) == 5 and zip_code.isdigit():
+        st.caption("📍 Distance will show on each college card and map")
+
     run_btn = st.button("🔍 Find My Colleges", type="primary", use_container_width=True)
+    if st.session_state.ran_match:
+        _url = st.query_params.to_dict()
+        if _url:
+            st.caption("🔗 Bookmark this page to save your profile")
 
 # ── PROCESS ───────────────────────────────────────────────────
 # Only score careers if all 8 questions are answered
@@ -1014,9 +1095,46 @@ top = career_results[0] if career_results else None
 aid = calculate_aid(income, hsize, ny_res, IMMIG_MAP[immig], first_gen)
 st.session_state.aid = aid
 
+# Geocode student zip if provided
+_student_lat, _student_lon = None, None
+_zip_input = st.session_state.get("zip_code", "").strip()
+if _zip_input and len(_zip_input) == 5 and _zip_input.isdigit():
+    _student_lat, _student_lon = geocode_zip(_zip_input)
+    if _student_lat:
+        st.session_state["student_lat"] = _student_lat
+        st.session_state["student_lon"] = _student_lon
+        st.session_state["student_zip"] = _zip_input
+elif not _zip_input:
+    # Clear stored location if zip cleared
+    st.session_state.pop("student_lat", None)
+    st.session_state.pop("student_lon", None)
+
 if run_btn:
     state_val = state_pref if state_pref else ['NY']  # default to NY if nothing selected
     need_val  = "full" if income<50000 else "some"
+    # Save profile to URL so student can bookmark/share their search
+    try:
+        _save_params = {
+            'scale': gpa_scale,
+            'states': '|'.join(state_val),
+            'income': income_label,
+            'ny': '1' if ny_res else '0',
+            'immig': immig,
+            'fg': '1' if first_gen else '0',
+        }
+        if gpa_scale == '4.0 scale':
+            _save_params['gpa'] = str(round(gpa, 1))
+        else:
+            _save_params['gpa'] = str(gpa_100)
+        if score_type == 'SAT' and sat:
+            _save_params['test'] = 'SAT'
+            _save_params['sat'] = str(sat)
+        elif score_type == 'ACT' and act:
+            _save_params['test'] = 'ACT'
+            _save_params['act'] = str(act)
+        st.query_params.update(_save_params)
+    except Exception:
+        pass
     matches = run_match(gpa, sat, act, state_val,
                         SIZE_MAP[school_size], CTRL_MAP[school_type],
                         need_val, ENV_MAP[env_pref], YRS_MAP[study_yrs], aid, n_results,
@@ -1031,11 +1149,12 @@ if run_btn:
 matches = st.session_state.matches
 
 # ── TABS ──────────────────────────────────────────────────────
-tab1, tab2, tab3, tab4 = st.tabs([
+tab1, tab2, tab3, tab4, tab5 = st.tabs([
     "🏫 College Matches",
     "🎯 Career Results",
     "💰 Aid Eligibility",
-    "📋 My College List"
+    "📋 My College List",
+    "🗺️ Map"
 ])
 
 # ── TAB 1: COLLEGE MATCHES ────────────────────────────────────
@@ -1071,9 +1190,13 @@ with tab1:
         # Sort buttons
 
         # ── Sort & View ──────────────────────────────────────────
+        _has_zip = bool(st.session_state.get("student_lat"))
+        _sort_choices = ["Best Fit", "Lowest Cost", "Safety First", "Grad Rate"]
+        if _has_zip:
+            _sort_choices.append("Closest to Me")
         sort_opts = st.multiselect(
             "Sort by (first = primary sort):",
-            ["Best Fit", "Lowest Cost", "Safety First", "Grad Rate"],
+            _sort_choices,
             default=["Best Fit"],
             key="sort_multi",
             help="Pick up to 2 — combine Safety First + Lowest Cost to find affordable safeties"
@@ -1149,6 +1272,16 @@ with tab1:
                     elif sm == "Lowest Cost": keys.extend([x.get('net') is None, x.get('net') or 999999])
                     elif sm == "Safety First": keys.append(fit_order.get(x['fit'],3))
                     elif sm == "Grad Rate": keys.append(-(x.get('grad') or 0))
+                    elif sm == "Closest to Me":
+                        _slat2 = st.session_state.get("student_lat")
+                        _slon2 = st.session_state.get("student_lon")
+                        if _slat2 and x.get("latitude") and x.get("longitude"):
+                            try:
+                                keys.append(haversine_miles(_slat2, _slon2, float(x["latitude"]), float(x["longitude"])))
+                            except Exception:
+                                keys.append(9999)
+                        else:
+                            keys.append(9999)
                 return keys
             else:
                 return aaron_default_sort(x)
@@ -1197,7 +1330,17 @@ with tab1:
                 with st.container():
                     ca,cb,cc = st.columns([3,1.5,1])
                     with ca:
-                        st.markdown(f"**{fit_icons.get(fit,'⚪')} [{s['name']}]({s.get('web','#')})**")
+                        # Distance from student zip
+                        _slat = st.session_state.get("student_lat")
+                        _slon = st.session_state.get("student_lon")
+                        _dist_str = ""
+                        if _slat and s.get("latitude") and s.get("longitude"):
+                            try:
+                                _dm = haversine_miles(_slat, _slon, float(s["latitude"]), float(s["longitude"]))
+                                _dist_str = f" · 📍 {_dm:.0f} mi"
+                            except Exception:
+                                pass
+                        st.markdown(f"**{fit_icons.get(fit,'⚪')} [{s['name']}]({s.get('web','#')})**{_dist_str}")
                         env_tags = get_env_fit(s, env_pref, school_size, school_type)
                         env_tag_str = ' · '.join(env_tags[:3]) if env_tags else ''
                         adm_val = s.get('adm'); adm_display = f"{float(adm_val):.1f}% acceptance" if adm_val and adm_val == adm_val else "Acceptance rate N/A"
@@ -1223,20 +1366,27 @@ with tab1:
                             acad_chips += "  `⚠️ Limited data`"
                         st.markdown(f"**Academic match:** {acad_chips}")
                         # Aid & fit chips
-                        aid_chips = ""
-                        if aid['tap']>0 and s['state']=='NY': aid_chips += "  `TAP eligible`"
-                        if aid['heop'] and s['state']=='NY': aid_chips += "  `HEOP`"
                         school_uid = str(s.get('id',''))
+                        # ── Row 1: Aid eligibility (student-specific) ────────
+                        aid_chips = ""
+                        if aid.get('pell', 0) > 0: aid_chips += "  `💰 Pell eligible`"
+                        if aid.get('tap', 0) > 0 and s['state'] == 'NY': aid_chips += "  `💰 TAP eligible`"
+                        if aid.get('dream', 0) > 0 and s['state'] == 'NY': aid_chips += "  `💰 Dream Act`"
+                        if aid.get('heop') and s['state'] == 'NY': aid_chips += "  `🎓 HEOP eligible`"
+                        if aid_chips: st.markdown(f"**Your aid here:** {aid_chips.strip()}")
+                        # ── Row 2: Program & identity badges ─────────────────
+                        prog_chips = ""
                         if school_uid in EOP_DATA:
                             for prog in EOP_DATA[school_uid]:
-                                aid_chips += f"  `{prog}`"
-                        if s.get('hbcu'): aid_chips += "  `HBCU`"
-                        if s.get('womens'): aid_chips += "  `Women's college`"
-                        # Partner badges from partner_schools.csv — no hardcoding
-                        # Aaron/Kieran can update CSV without touching code
-                        for badge in PARTNER_DATA.get(str(s.get('id',0)), []):
-                            aid_chips += f"  `{badge}`"
-                        if aid_chips: st.markdown(f"**Aid & fit:** {aid_chips.strip()}")
+                                prog_chips += f"  `{prog}`"
+                        if s.get('hbcu'): prog_chips += "  `🏛️ HBCU`"
+                        if s.get('womens'): prog_chips += "  `👩 Women's college`"
+                        for badge in PARTNER_DATA.get(str(s.get('id', 0)), []):
+                            if badge == 'QuestBridge': prog_chips += "  `🔷 QuestBridge`"
+                            elif badge == 'Posse': prog_chips += "  `🔶 Posse`"
+                            elif badge == 'SLN Partner': prog_chips += "  `⭐ SLN Partner`"
+                            else: prog_chips += f"  `{badge}`"
+                        if prog_chips: st.markdown(f"**Programs:** {prog_chips.strip()}")
                     with cb:
                         tuition_only = int(s.get('tuition_only') or 0)
                         rb_added = int(s.get('roomboard_added') or 0)
@@ -1772,6 +1922,141 @@ with tab4:
                 except ImportError:
                     st.warning("PDF export requires reportlab.")
             st.caption("⚠️ Always verify deadlines on each college's official website before applying.")
+
+with tab5:
+    st.markdown("### 🗺️ Colleges on the Map")
+    _map_matches = st.session_state.get("matches", [])
+    _slat = st.session_state.get("student_lat")
+    _slon = st.session_state.get("student_lon")
+    _szip = st.session_state.get("student_zip", "")
+
+    if not _map_matches:
+        st.info("👈 Run a college search first — your results will appear on the map.")
+    else:
+        if not _slat:
+            st.info("💡 Enter your zip code in the sidebar to see distances and your location on the map.")
+
+        try:
+            import pydeck as pdk
+            import pandas as _pd
+
+            map_rows = []
+            for s in _map_matches:
+                lat = s.get("latitude")
+                lon = s.get("longitude")
+                if not lat or not lon:
+                    continue
+                try:
+                    lat, lon = float(lat), float(lon)
+                except (TypeError, ValueError):
+                    continue
+                fit = s.get("fit", "unknown")
+                color = {
+                    "safety": [46, 160, 87, 220],
+                    "match":  [255, 193, 7, 220],
+                    "reach":  [220, 53, 69, 220],
+                }.get(fit, [108, 117, 125, 180])
+                dist = ""
+                if _slat:
+                    try:
+                        dm = haversine_miles(_slat, _slon, lat, lon)
+                        dist = f" · {dm:.0f} mi"
+                    except Exception:
+                        pass
+                net = s.get("net")
+                tuition = s.get("tuition_only", 0) or 0
+                map_rows.append({
+                    "name": s.get("name", ""),
+                    "city": s.get("city", ""),
+                    "state": s.get("state", ""),
+                    "fit": fit.capitalize(),
+                    "net": f"${int(net):,}/yr" if net is not None else "N/A",
+                    "tuition": f"${int(tuition):,}" if tuition else "N/A",
+                    "dist": dist,
+                    "lat": lat,
+                    "lon": lon,
+                    "color": color,
+                    "radius": 12000,
+                    "tooltip": f"{s.get('name','')} · {fit.capitalize()}{dist}",
+                })
+
+            if _slat:
+                map_rows.append({
+                    "name": f"📍 You ({_szip})", "city": "", "state": "",
+                    "fit": "You", "net": "", "tuition": "", "dist": "",
+                    "lat": _slat, "lon": _slon,
+                    "color": [13, 27, 42, 255],
+                    "radius": 18000,
+                    "tooltip": f"Your location ({_szip})",
+                })
+
+            df_map = _pd.DataFrame(map_rows)
+
+            # Legend
+            lc1, lc2, lc3, lc4 = st.columns(4)
+            lc1.markdown("🟢 Safety")
+            lc2.markdown("🟡 Match")
+            lc3.markdown("🔴 Reach")
+            if _slat: lc4.markdown("⚫ You")
+
+            layer = pdk.Layer(
+                "ScatterplotLayer",
+                data=df_map,
+                get_position=["lon", "lat"],
+                get_fill_color="color",
+                get_radius="radius",
+                pickable=True,
+                auto_highlight=True,
+            )
+
+            # Center map on student or on results
+            if _slat:
+                view_lat, view_lon, zoom = _slat, _slon, 5
+            else:
+                view_lat = df_map["lat"].mean()
+                view_lon = df_map["lon"].mean()
+                zoom = 5
+
+            view = pdk.ViewState(latitude=view_lat, longitude=view_lon, zoom=zoom, pitch=0)
+            tooltip = {"html": "<b>{name}</b><br/>{fit} · {net}<br/>{city}, {state}{dist}",
+                       "style": {"background": "#0D1B2A", "color": "white", "fontSize": "13px", "padding": "8px"}}
+
+            st.pydeck_chart(pdk.Deck(layers=[layer], initial_view_state=view, tooltip=tooltip,
+                map_style="mapbox://styles/mapbox/light-v9"))
+
+            # Distance table if zip entered
+            if _slat:
+                st.markdown("#### 📏 Distance from your zip code")
+                dist_rows = []
+                for s in _map_matches:
+                    lat = s.get("latitude"); lon = s.get("longitude")
+                    if not lat or not lon: continue
+                    try:
+                        dm = haversine_miles(_slat, _slon, float(lat), float(lon))
+                        dist_rows.append({
+                            "College": s.get("name",""),
+                            "Miles": dm,
+                            "Fit": s.get("fit","").capitalize(),
+                            "You Pay/yr": f"${int(s.get('net') or 0):,}" if s.get("net") is not None else "N/A",
+                            "State": s.get("state",""),
+                        })
+                    except Exception:
+                        pass
+                dist_rows.sort(key=lambda x: x["Miles"])
+                df_dist = _pd.DataFrame(dist_rows)
+                df_dist["Miles"] = df_dist["Miles"].apply(lambda x: f"{x:.0f} mi")
+                st.dataframe(df_dist, use_container_width=True, hide_index=True,
+                    column_config={"College": st.column_config.TextColumn(width="large")})
+
+        except ImportError:
+            # pydeck not available — show simple table fallback
+            st.warning("Map requires pydeck. Add `pydeck` to requirements.txt.")
+            if _map_matches:
+                import pandas as _pd
+                rows = [{"College": s.get("name",""), "City": s.get("city",""),
+                         "State": s.get("state",""), "Fit": s.get("fit","").capitalize()}
+                        for s in _map_matches]
+                st.dataframe(_pd.DataFrame(rows), use_container_width=True, hide_index=True)
 
 st.divider()
 st.caption("Pathways by SLN · IPEDS 2023-24 · Peterson's 2025 · O*NET 30.2 · Aid thresholds 2025-26 · Verify all deadlines on official college websites")
