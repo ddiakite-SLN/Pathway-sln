@@ -103,6 +103,13 @@ def load_schools():
         return SAMPLE_SCHOOLS
     df = pd.read_csv(csv_path)
     df = df.where(pd.notnull(df), None)
+    # Log column names once so we can verify roomboard/lat/lon field names
+    _rb_cols = [c for c in df.columns if any(x in c.lower() for x in ['room','board','rb','chg4'])]
+    _coord_cols = [c for c in df.columns if any(x in c.lower() for x in ['lat','lon','longit'])]
+    if _rb_cols or _coord_cols:
+        import streamlit as _st2
+        _st2.session_state['_csv_rb_cols'] = _rb_cols
+        _st2.session_state['_csv_coord_cols'] = _coord_cols
     schools = df.to_dict('records')
     for s in schools:
         # Normalize column name: schools_full.csv uses 'unitid', code uses 'id'
@@ -126,7 +133,11 @@ def load_schools():
         except: s['yr2'] = False
         try: s['tin'] = int(s['tin']) if s.get('tin') else None
         except: s['tin'] = None
-        try: s['roomboard'] = int(float(s['roomboard'])) if s.get('roomboard') not in (None,'','nan') else None
+        # IPEDS room & board column has several possible names across datasets
+        _rb_val = (s.get('roomboard') or s.get('ROOMBOARD') or
+                   s.get('CHG4AY3') or s.get('room_board') or
+                   s.get('room_and_board') or s.get('rb'))
+        try: s['roomboard'] = int(float(_rb_val)) if _rb_val not in (None,'','nan') else None
         except: s['roomboard'] = None
         try: s['sat25'] = int(s['sat25']) if s.get('sat25') else None
         except: s['sat25'] = None
@@ -1214,6 +1225,11 @@ with st.sidebar:
 
     run_btn = st.button("🔍 Find My Colleges", type="primary", use_container_width=True)
     st.caption("🔗 Your profile auto-saves to the URL — bookmark to return to these settings")
+    # Dev debug: show what R&B and coord columns exist in the CSV
+    _rb_cols = st.session_state.get('_csv_rb_cols')
+    _coord_cols = st.session_state.get('_csv_coord_cols')
+    if _rb_cols is not None:
+        st.caption(f"🔧 CSV R&B cols: {_rb_cols or 'none found'} | Coord cols: {_coord_cols or 'none found'}")
 
 # ── CONTINUOUS PROFILE SAVE TO URL ──────────────────────────
 # Runs every render so URL always reflects current sidebar state
@@ -1507,6 +1523,24 @@ with tab1:
                         if _slat:
                             try:
                                 _clat, _clon = get_school_coords(s)
+                                # Fallback: use city/state centroid from session cache
+                                if not _clat:
+                                    _city_key = f"_coord_{s.get('city','')}_{s.get('state','')}"
+                                    _cached = st.session_state.get(_city_key)
+                                    if _cached:
+                                        _clat, _clon = _cached
+                                    elif s.get('city') and s.get('state'):
+                                        try:
+                                            import urllib.request as _ur3, json as _jz3
+                                            _curl = f"https://nominatim.openstreetmap.org/search?city={s['city']}&state={s['state']}&country=US&format=json&limit=1"
+                                            _creq = _ur3.Request(_curl, headers={"User-Agent":"PathwaysSLN/1.0"})
+                                            with _ur3.urlopen(_creq, timeout=2) as _cr:
+                                                _cd = _jz3.loads(_cr.read())
+                                            if _cd:
+                                                _clat = float(_cd[0]["lat"]); _clon = float(_cd[0]["lon"])
+                                                st.session_state[_city_key] = (_clat, _clon)
+                                        except Exception:
+                                            pass
                                 if _clat:
                                     _dm = haversine_miles(_slat, _slon, _clat, _clon)
                                     _dist_str = f"  📍 {_dm:.0f} mi"
