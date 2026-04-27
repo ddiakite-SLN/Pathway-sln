@@ -1544,7 +1544,7 @@ with tab1:
         )
 
         # View toggle
-        view_mode = st.radio("View as", ["📋 Cards", "📊 Table"], horizontal=True, key="view_mode")
+        view_mode = st.radio("View as", ["📋 Cards", "📊 Table", "🏛️ CUNY · SUNY · Private"], horizontal=True, key="view_mode")
         st.caption("📊 Data: IPEDS 2023-24 · Peterson's 2025 · Aid: Federal & NY HESC 2026-27")
         st.markdown("---")
 
@@ -1697,6 +1697,67 @@ with tab1:
             csv_data = df.to_csv(index=False)
             st.download_button("⬇️ Download as spreadsheet", csv_data,
                 file_name="my_college_list.csv", mime="text/csv", key="dl_csv")
+
+        elif view_mode == "🏛️ CUNY · SUNY · Private":
+            # ── 3-COLUMN SIDE-BY-SIDE VIEW ───────────────────────
+            fit_icons = {'safety':'🟢','match':'🎯','reach':'⚠️','unknown':'⚪'}
+
+            def _school_mini_card(s):
+                fit = s.get('fit','unknown')
+                icon = fit_icons.get(fit,'⚪')
+                net = s.get('net')
+                adm = s.get('adm')
+                web = s.get('web','#')
+                name = s.get('name','')
+                in_list = any(x['id']==s['id'] for x in st.session_state.my_list)
+                st.markdown(f"{icon} **[{name}]({web})**")
+                cols = st.columns(2)
+                cols[0].caption(f"{'✅ Safety' if fit=='safety' else '🎯 Match' if fit=='match' else '⚠️ Reach' if fit=='reach' else '⚪'}")
+                cols[1].caption(f"${int(net):,}/yr" if net is not None else "Aid N/A")
+                if adm and adm == adm:
+                    st.caption(f"{adm:.0f}% acceptance")
+                if not in_list:
+                    if st.button("+ Add", key=f"3col_add_{s['id']}", use_container_width=True):
+                        st.session_state.my_list.append(s)
+                        st.rerun()
+                else:
+                    st.caption("✅ On your list")
+                st.markdown("---")
+
+            # Split matches into 3 buckets
+            _cuny  = [s for s in matches if 'CUNY' in s.get('name','') or s.get('ctrl')==5]
+            _suny  = [s for s in matches if s not in _cuny and s.get('state')=='NY' and
+                      ('SUNY' in s.get('name','') or 'State University' in s.get('name',''))]
+            _priv  = [s for s in matches if s not in _cuny and s not in _suny]
+
+            col_c, col_s, col_p = st.columns(3)
+
+            with col_c:
+                st.markdown(f"### 🏙️ CUNY ({len(_cuny)})")
+                st.caption("City University of New York")
+                st.markdown("---")
+                if _cuny:
+                    for s in _cuny: _school_mini_card(s)
+                else:
+                    st.caption("No CUNY matches for this profile")
+
+            with col_s:
+                st.markdown(f"### 🌿 SUNY ({len(_suny)})")
+                st.caption("State University of New York")
+                st.markdown("---")
+                if _suny:
+                    for s in _suny: _school_mini_card(s)
+                else:
+                    st.caption("No SUNY matches for this profile")
+
+            with col_p:
+                st.markdown(f"### 🎓 Other ({len(_priv)})")
+                st.caption("Private & out-of-state schools")
+                st.markdown("---")
+                if _priv:
+                    for s in _priv[:15]: _school_mini_card(s)
+                else:
+                    st.caption("No other matches")
 
         else:
             # ── CARD VIEW ────────────────────────────────────────
