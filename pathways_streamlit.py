@@ -1264,14 +1264,20 @@ with st.sidebar:
     , key="majors_input")
 
     st.caption("Or answer these questions to discover careers:")
-    q1 = st.selectbox("What excites you most?",["— Select an answer —"] + list(CAREER_MAPS['i1'].keys()), key="q1")
-    q2 = st.selectbox("What matters most in a career?",["— Select an answer —"] + list(CAREER_MAPS['i2'].keys()), key="q2")
-    q3 = st.selectbox("Where do you want to work?",["— Select an answer —"] + list(CAREER_MAPS['i3'].keys()), key="q3")
-    q4 = st.selectbox("Best subject in school?",["— Select an answer —"] + list(CAREER_MAPS['i4'].keys()), key="q4")
-    q5 = st.selectbox("How long willing to study?",["— Select an answer —"] + list(CAREER_MAPS['i5'].keys()), key="q5")
-    q6 = st.selectbox("Which describes you best?",["— Select an answer —"] + list(CAREER_MAPS['i6'].keys()), key="q6")
-    q7 = st.selectbox("In 10 years I see myself...",["— Select an answer —"] + list(CAREER_MAPS['i7'].keys()), key="q7")
-    q8 = st.selectbox("Best work environment?",["— Select an answer —"] + list(CAREER_MAPS['i8'].keys()), key="q8")
+    # Hide career questions when a major is typed — major mode takes over
+    if majors_input and majors_input.strip():
+        st.caption("✅ Using your major to explore careers — questions hidden")
+        q1=q2=q3=q4=q5=q6=q7=q8 = "— Select an answer —"
+    else:
+        st.caption("Or answer these questions to discover careers:")
+        q1 = st.selectbox("What excites you most?",["— Select an answer —"] + list(CAREER_MAPS['i1'].keys()), key="q1")
+        q2 = st.selectbox("What matters most in a career?",["— Select an answer —"] + list(CAREER_MAPS['i2'].keys()), key="q2")
+        q3 = st.selectbox("Where do you want to work?",["— Select an answer —"] + list(CAREER_MAPS['i3'].keys()), key="q3")
+        q4 = st.selectbox("Best subject in school?",["— Select an answer —"] + list(CAREER_MAPS['i4'].keys()), key="q4")
+        q5 = st.selectbox("How long willing to study?",["— Select an answer —"] + list(CAREER_MAPS['i5'].keys()), key="q5")
+        q6 = st.selectbox("Which describes you best?",["— Select an answer —"] + list(CAREER_MAPS['i6'].keys()), key="q6")
+        q7 = st.selectbox("In 10 years I see myself...",["— Select an answer —"] + list(CAREER_MAPS['i7'].keys()), key="q7")
+        q8 = st.selectbox("Best work environment?",["— Select an answer —"] + list(CAREER_MAPS['i8'].keys()), key="q8")
 
     st.markdown("### 💰 Financial Aid")
     INCOME_BRACKETS = {
@@ -1318,9 +1324,11 @@ with st.sidebar:
     if _glat:
         _loc_name = st.session_state.get("student_location_name", "")
         if _loc_name:
-            st.caption(f"✅ Location set: **{_loc_name}** — distances show on cards & map")
+            st.caption(f"✅ **{_loc_name}** — distances on cards & map")
         else:
-            st.caption("✅ Location set (GPS) — distances show on cards & map")
+            _raw_lat = st.session_state.get("student_lat","")
+            _raw_lon = st.session_state.get("student_lon","")
+            st.caption(f"✅ Location set ({round(float(_raw_lat),3)}, {round(float(_raw_lon),3)}) — distances on cards & map")
         if st.button("✕ Clear location", key="clear_geo"):
             st.session_state.pop("student_lat", None)
             st.session_state.pop("student_lon", None)
@@ -1328,13 +1336,14 @@ with st.sidebar:
             st.session_state.pop("student_location_name", None)
             st.rerun()
     else:
-        # ZIP code is default — GPS as secondary option
+        # GPS button at top, ZIP input as primary field
+        if st.button("📍 Use My Location", key="geo_btn", use_container_width=True,
+                     help="Uses your browser's GPS"):
+            st.session_state["_request_geo"] = True
+        st.caption("or enter your ZIP code:")
         _zip_val = st.text_input("ZIP code", placeholder="e.g. 10031",
                                  max_chars=5, key="zip_input",
-                                 help="Enter your zip code to see distances to each school")
-        if st.button("📍 Use My Location instead", key="geo_btn",
-                     help="Uses your browser's GPS — useful if outside NYC"):
-            st.session_state["_request_geo"] = True
+                                 label_visibility="collapsed")
         if _zip_val and len(_zip_val) == 5 and _zip_val.isdigit():
             # Only geocode if zip changed (avoid re-running every render)
             if st.session_state.get("student_zip") != _zip_val:
@@ -2201,8 +2210,11 @@ with tab2:
                     for fi, fn in enumerate(fields_list[:12]):
                         with f_cols[fi % 4]: st.markdown(f"• {fn}")
                 elif not st.session_state.get('career_selected_soc',''):
-                    # Show list first — student picks which one before seeing detail
+                    # Auto-select if only 1 result
                     top_careers = matches_c[:10]
+                    if len(matches_c) == 1:
+                        st.session_state['career_selected_soc'] = matches_c[0].get('soc','') or '__single__'
+                        st.rerun()
                     st.markdown(f"**Found {len(top_careers)} {'roles' if len(top_careers)>1 else 'role'} matching '{search_career}'** — pick one to explore:")
                     for idx_c, mc in enumerate(top_careers):
                         mc_sal = int(float(mc.get('median_annual', 0) or 0))
@@ -2335,6 +2347,8 @@ with tab2:
                     with p_cols[pi % 5]:
                         if st.button(p, key=f"pop_{pi}", use_container_width=True):
                             st.session_state['pop_career'] = p
+                            st.session_state['career_selected_soc'] = ''
+                            st.session_state['career_sub_radio'] = "🔍 Explore any career"
                             st.rerun()
 with tab3:
         # ── AID ELIGIBILITY TAB ──────────────────────────────────
