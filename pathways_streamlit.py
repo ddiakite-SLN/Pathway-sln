@@ -1425,6 +1425,11 @@ with st.sidebar:
                         st.caption(f"⚠️ ZIP {_zip_val} not in NYC lookup — distances unavailable")
 
     run_btn = st.button("🔍 Find My Colleges", type="primary", use_container_width=True)
+    # Auto-run if major changed since last search
+    if majors_input != st.session_state.get('_last_majors_run', '__NONE__'):
+        if st.session_state.get('ran_match'):  # only auto-run if already ran once
+            st.session_state['_last_majors_run'] = majors_input
+            run_btn = True
     st.caption("🔗 Your profile auto-saves to the URL — bookmark to return to these settings")
 
 
@@ -1533,6 +1538,7 @@ if st.session_state.get("_request_geo"):
         st.session_state.pop("_request_geo", None)
 
 if run_btn:
+    st.session_state['_last_majors_run'] = majors_input
     state_val = state_pref if state_pref else ['NY']  # default to NY if nothing selected
     need_val  = "full" if income<50000 else "some"
     matches = run_match(gpa, sat, act, state_val,
@@ -2132,9 +2138,13 @@ with tab2:
             # ── EXPLORE ANY CAREER ───────────────────────────────
             st.markdown("### Explore any career")
             _pop = st.session_state.pop('pop_career', '')
-            default_search = majors_input.strip() if majors_input and majors_input.strip() else _pop
+            # If major typed or popular button clicked, force the search box to that value
+            _forced = majors_input.strip() if majors_input and majors_input.strip() else _pop
+            if _forced and st.session_state.get('_last_forced_search') != _forced:
+                st.session_state['career_search'] = _forced
+                st.session_state['career_selected_soc'] = ''
+                st.session_state['_last_forced_search'] = _forced
             search_career = st.text_input("Search any career or job title",
-                value=default_search,
                 placeholder="e.g. Nurse, Software Engineer, Lawyer, Chef, Cybersecurity...",
                 key="career_search")
             # Clear selected career when search term changes
