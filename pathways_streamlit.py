@@ -1328,16 +1328,13 @@ with st.sidebar:
             st.session_state.pop("student_location_name", None)
             st.rerun()
     else:
-        # Two options: browser GPS or zip code
-        _loc_col1, _loc_col2 = st.columns([1, 1])
-        with _loc_col1:
-            if st.button("📍 Use My Location", key="geo_btn", use_container_width=True,
-                         help="Uses your browser's GPS — nothing is stored"):
-                st.session_state["_request_geo"] = True
-        with _loc_col2:
-            _zip_val = st.text_input("or ZIP code", placeholder="e.g. 10031",
-                                     max_chars=5, label_visibility="collapsed",
-                                     key="zip_input")
+        # ZIP code is default — GPS as secondary option
+        _zip_val = st.text_input("ZIP code", placeholder="e.g. 10031",
+                                 max_chars=5, key="zip_input",
+                                 help="Enter your zip code to see distances to each school")
+        if st.button("📍 Use My Location instead", key="geo_btn",
+                     help="Uses your browser's GPS — useful if outside NYC"):
+            st.session_state["_request_geo"] = True
         if _zip_val and len(_zip_val) == 5 and _zip_val.isdigit():
             # Only geocode if zip changed (avoid re-running every render)
             if st.session_state.get("student_zip") != _zip_val:
