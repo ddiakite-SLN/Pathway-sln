@@ -1100,18 +1100,135 @@ with col_h1:
     if _maj: _filt.append(f"offering {_maj}")
     if _filt:
         st.markdown(f"*Your college list, built around your life. Filtered: **{' · '.join(_filt)}** · from IPEDS 2023-24.*")
+        if st.session_state.my_list:
+            _bl = st.session_state.my_list
+            _ns = sum(1 for x in _bl if x.get('fit')=='safety')
+            _nm = sum(1 for x in _bl if x.get('fit')=='match')
+            _nr = sum(1 for x in _bl if x.get('fit')=='reach')
+            _tot = len(_bl)
+            _cuny_n = sum(1 for x in _bl if 'CUNY' in x.get('name',''))
+            _suny_n = sum(1 for x in _bl if 'SUNY' in x.get('name','') or ('State University' in x.get('name','') and x.get('state')=='NY'))
+            if _nr > _nm + _ns:
+                _bal_msg = "⚠️ **Heavy on reaches** — add more safeties and matches"
+            elif _ns == 0 and _tot >= 3:
+                _bal_msg = "⚠️ **No safeties** — add at least 1–2 schools you're very likely to get into"
+            elif _nm == 0 and _tot >= 3:
+                _bal_msg = "⚠️ **No matches** — add schools where your GPA/SAT fits their middle 50%"
+            elif _tot < 3:
+                _bal_msg = "📋 Keep going — aim for 6–10 schools total"
+            elif _ns >= 1 and _nm >= 1 and _tot >= 5:
+                _bal_msg = "✅ **Well-balanced list!**"
+            else:
+                _bal_msg = "👍 Looking good — consider adding one more safety"
+            _bc1, _bc2, _bc3, _bc4 = st.columns(4)
+            _bc1.metric("✅ Safety", _ns)
+            _bc2.metric("🎯 Match", _nm)
+            _bc3.metric("⚠️ Reach", _nr)
+            _bc4.metric("📋 Total", _tot)
+            st.info(_bal_msg)
+            if _cuny_n or _suny_n:
+                st.caption(f"🏙️ {_cuny_n} CUNY · {_suny_n} SUNY on your list")
+            st.markdown("---")
     else:
         st.markdown(f"*Your college list, built around your life. Browsing **{len(SCHOOLS):,} US colleges** from IPEDS 2023-24.*")
 with col_h2:
     st.caption("Built by SLN RITA Tech & Data Intern\nIPEDS 2023-24 · Aid thresholds 2025-26\n`v APR15-FINAL`")
 st.divider()
 
+# ── NYC ZIP CODE LOOKUP (bundled — no API needed) ──────────────────────────
+# Covers all ~165 NYC zip codes with neighborhood name and coords
+_NYC_ZIPS = {
+    "10001":(40.7484,-74.0026,"Chelsea"),"10002":(40.7157,-73.9863,"Lower East Side"),
+    "10003":(40.7317,-73.9892,"East Village"),"10004":(40.7004,-74.0398,"Financial District"),
+    "10005":(40.7074,-74.0113,"Financial District"),"10006":(40.7082,-74.0133,"Financial District"),
+    "10007":(40.7135,-74.0088,"Tribeca"),"10009":(40.7263,-73.9792,"East Village"),
+    "10010":(40.7393,-73.9828,"Gramercy"),"10011":(40.7422,-74.0002,"Chelsea"),
+    "10012":(40.7257,-74.0019,"SoHo"),"10013":(40.7194,-74.0052,"Tribeca"),
+    "10014":(40.7337,-74.0043,"West Village"),"10016":(40.7459,-73.9779,"Murray Hill"),
+    "10017":(40.7527,-73.9716,"Midtown East"),"10018":(40.7556,-73.9937,"Hell's Kitchen"),
+    "10019":(40.7651,-73.9864,"Midtown West"),"10020":(40.7587,-73.9808,"Midtown"),
+    "10021":(40.7722,-73.9561,"Upper East Side"),"10022":(40.7589,-73.9680,"Midtown East"),
+    "10023":(40.7766,-73.9818,"Upper West Side"),"10024":(40.7859,-73.9761,"Upper West Side"),
+    "10025":(40.7984,-73.9674,"Morningside Heights"),"10026":(40.8027,-73.9539,"Harlem"),
+    "10027":(40.8116,-73.9537,"Harlem"),"10028":(40.7775,-73.9519,"Upper East Side"),
+    "10029":(40.7921,-73.9450,"East Harlem"),"10030":(40.8185,-73.9433,"Harlem"),
+    "10031":(40.8262,-73.9498,"Hamilton Heights"),"10032":(40.8381,-73.9415,"Washington Heights"),
+    "10033":(40.8510,-73.9360,"Washington Heights"),"10034":(40.8672,-73.9252,"Inwood"),
+    "10035":(40.7980,-73.9345,"East Harlem"),"10036":(40.7590,-73.9927,"Hell's Kitchen"),
+    "10037":(40.8142,-73.9366,"Harlem"),"10038":(40.7093,-74.0028,"Financial District"),
+    "10039":(40.8232,-73.9376,"Harlem"),"10040":(40.8582,-73.9310,"Washington Heights"),
+    "10044":(40.7616,-73.9507,"Roosevelt Island"),"10065":(40.7650,-73.9627,"Upper East Side"),
+    "10069":(40.7794,-73.9910,"Upper West Side"),"10075":(40.7731,-73.9543,"Upper East Side"),
+    "10128":(40.7812,-73.9490,"Upper East Side"),"10280":(40.7080,-74.0165,"Battery Park City"),
+    "10301":(40.6280,-74.0944,"St. George"),"10302":(40.6287,-74.1350,"Port Richmond"),
+    "10303":(40.6321,-74.1649,"Mariners Harbor"),"10304":(40.6083,-74.0875,"Staten Island"),
+    "10305":(40.5974,-74.0812,"Staten Island"),"10306":(40.5680,-74.1206,"Staten Island"),
+    "10307":(40.5068,-74.2269,"Staten Island"),"10308":(40.5528,-74.1509,"Staten Island"),
+    "10309":(40.5250,-74.2028,"Staten Island"),"10310":(40.6344,-74.1134,"Staten Island"),
+    "10312":(40.5444,-74.1697,"Staten Island"),"10314":(40.6101,-74.1545,"Staten Island"),
+    "11201":(40.6924,-73.9901,"Brooklyn Heights"),"11203":(40.6466,-73.9389,"Flatbush"),
+    "11204":(40.6207,-73.9869,"Bensonhurst"),"11205":(40.6954,-73.9682,"Clinton Hill"),
+    "11206":(40.7041,-73.9371,"Bushwick"),"11207":(40.6791,-73.8908,"East New York"),
+    "11208":(40.6694,-73.8684,"East New York"),"11209":(40.6213,-74.0305,"Bay Ridge"),
+    "11210":(40.6276,-73.9479,"Flatbush"),"11211":(40.7143,-73.9527,"Williamsburg"),
+    "11212":(40.6608,-73.9163,"Brownsville"),"11213":(40.6698,-73.9380,"Crown Heights"),
+    "11214":(40.6002,-73.9993,"Bensonhurst"),"11215":(40.6601,-73.9854,"Park Slope"),
+    "11216":(40.6797,-73.9489,"Crown Heights"),"11217":(40.6830,-73.9831,"Boerum Hill"),
+    "11218":(40.6450,-73.9784,"Kensington"),"11219":(40.6318,-73.9970,"Borough Park"),
+    "11220":(40.6361,-74.0167,"Sunset Park"),"11221":(40.6941,-73.9249,"Bushwick"),
+    "11222":(40.7276,-73.9487,"Greenpoint"),"11223":(40.5985,-73.9746,"Gravesend"),
+    "11224":(40.5763,-73.9973,"Coney Island"),"11225":(40.6621,-73.9559,"Crown Heights"),
+    "11226":(40.6449,-73.9567,"Flatbush"),"11228":(40.6176,-74.0133,"Dyker Heights"),
+    "11229":(40.6049,-73.9456,"Marine Park"),"11230":(40.6219,-73.9629,"Midwood"),
+    "11231":(40.6784,-74.0002,"Red Hook"),"11232":(40.6551,-74.0027,"Sunset Park"),
+    "11233":(40.6770,-73.9163,"Brownsville"),"11234":(40.6233,-73.9127,"Flatlands"),
+    "11235":(40.5893,-73.9408,"Sheepshead Bay"),"11236":(40.6400,-73.9127,"Canarsie"),
+    "11237":(40.7019,-73.9176,"Bushwick"),"11238":(40.6788,-73.9668,"Prospect Heights"),
+    "11239":(40.6465,-73.8736,"East New York"),
+    "11354":(40.7674,-73.8330,"Flushing"),"11355":(40.7504,-73.8204,"Flushing"),
+    "11356":(40.7870,-73.8452,"College Point"),"11357":(40.7878,-73.8029,"Whitestone"),
+    "11358":(40.7635,-73.7961,"Fresh Meadows"),"11360":(40.7803,-73.7753,"Bayside"),
+    "11361":(40.7635,-73.7710,"Bayside"),"11362":(40.7578,-73.7385,"Little Neck"),
+    "11363":(40.7735,-73.7469,"Douglaston"),"11364":(40.7436,-73.7494,"Oakland Gardens"),
+    "11365":(40.7392,-73.7941,"Fresh Meadows"),"11366":(40.7280,-73.7925,"Fresh Meadows"),
+    "11367":(40.7265,-73.8309,"Kew Gardens Hills"),"11368":(40.7467,-73.8638,"Corona"),
+    "11369":(40.7625,-73.8820,"East Elmhurst"),"11370":(40.7671,-73.8905,"East Elmhurst"),
+    "11372":(40.7558,-73.8851,"Jackson Heights"),"11373":(40.7362,-73.8820,"Elmhurst"),
+    "11374":(40.7196,-73.8448,"Rego Park"),"11375":(40.7196,-73.8448,"Forest Hills"),
+    "11377":(40.7430,-73.9221,"Woodside"),"11378":(40.7251,-73.9070,"Maspeth"),
+    "11379":(40.7154,-73.8701,"Middle Village"),"11385":(40.7019,-73.9054,"Ridgewood"),
+    "11411":(40.6953,-73.7469,"Cambria Heights"),"11412":(40.6918,-73.7599,"St. Albans"),
+    "11413":(40.6703,-73.7554,"Springfield Gardens"),"11414":(40.6579,-73.8402,"Howard Beach"),
+    "11415":(40.7143,-73.8306,"Kew Gardens"),"11416":(40.6869,-73.8488,"Ozone Park"),
+    "11417":(40.6753,-73.8459,"Ozone Park"),"11418":(40.6940,-73.8295,"Richmond Hill"),
+    "11419":(40.6870,-73.8175,"South Richmond Hill"),"11420":(40.6703,-73.8175,"South Ozone Park"),
+    "11421":(40.6919,-73.8590,"Woodhaven"),"11422":(40.6600,-73.7351,"Rosedale"),
+    "11423":(40.7143,-73.7659,"Hollis"),"11426":(40.7392,-73.7175,"Bellerose"),
+    "11427":(40.7282,-73.7494,"Queens Village"),"11428":(40.7220,-73.7404,"Queens Village"),
+    "11429":(40.7097,-73.7380,"Queens Village"),"11432":(40.7097,-73.7875,"Jamaica"),
+    "11433":(40.6919,-73.7875,"Jamaica"),"11434":(40.6703,-73.7749,"Jamaica"),
+    "11435":(40.6919,-73.8059,"Jamaica"),"11436":(40.6703,-73.8059,"Jamaica"),
+    "10451":(40.8181,-73.9227,"South Bronx"),"10452":(40.8363,-73.9217,"Highbridge"),
+    "10453":(40.8523,-73.9116,"Morris Heights"),"10454":(40.8034,-73.9177,"Mott Haven"),
+    "10455":(40.8118,-73.9093,"Mott Haven"),"10456":(40.8296,-73.9071,"Morrisania"),
+    "10457":(40.8459,-73.9033,"East Tremont"),"10458":(40.8617,-73.8855,"Fordham"),
+    "10459":(40.8196,-73.8972,"Longwood"),"10460":(40.8427,-73.8869,"West Farms"),
+    "10461":(40.8459,-73.8444,"Pelham Bay"),"10462":(40.8382,-73.8592,"Parkchester"),
+    "10463":(40.8809,-73.9094,"Kingsbridge"),"10464":(40.8727,-73.7952,"City Island"),
+    "10465":(40.8247,-73.8218,"Throggs Neck"),"10466":(40.8896,-73.8444,"Williamsbridge"),
+    "10467":(40.8787,-73.8727,"Norwood"),"10468":(40.8617,-73.9022,"University Heights"),
+    "10469":(40.8727,-73.8444,"Baychester"),"10470":(40.9000,-73.8592,"Wakefield"),
+    "10471":(40.9000,-73.9094,"Riverdale"),"10472":(40.8296,-73.8727,"Soundview"),
+    "10473":(40.8181,-73.8592,"Soundview"),"10474":(40.8034,-73.8869,"Hunts Point"),
+    "10475":(40.8787,-73.8218,"Co-op City"),
+}
+
 # ── SIDEBAR ───────────────────────────────────────────────────
 with st.sidebar:
     st.markdown("## 📝 Your Profile")
 
     st.markdown("### 📚 Academics")
-    gpa_scale = st.radio("GPA scale", ["100 scale","4.0 scale"], horizontal=True, key="gpa_scale_radio")
+    gpa_scale = st.radio("GPA scale", ["100 scale","4.0 scale"], index=0, horizontal=True, key="gpa_scale_radio")
     if gpa_scale == "4.0 scale":
         gpa = st.slider("Unweighted GPA (4.0 scale)", 0.0, 4.0, 3.0, 0.1, key="gpa_slider")
         gpa_display = f"{gpa:.1f} / 4.0"
@@ -1212,31 +1329,39 @@ with st.sidebar:
                                      max_chars=5, label_visibility="collapsed",
                                      key="zip_input")
         if _zip_val and len(_zip_val) == 5 and _zip_val.isdigit():
-            # Geocode zip via Nominatim (free, no key)
-            try:
-                import urllib.request as _ur, json as _jz
-                _zurl = f"https://nominatim.openstreetmap.org/search?postalcode={_zip_val}&country=US&format=json&limit=1"
-                _zreq = _ur.Request(_zurl, headers={"User-Agent":"PathwaysSLN/1.0"})
-                with _ur.urlopen(_zreq, timeout=3) as _zr:
-                    _zd = _jz.loads(_zr.read())
-                if _zd:
-                    st.session_state["student_lat"] = float(_zd[0]["lat"])
-                    st.session_state["student_lon"] = float(_zd[0]["lon"])
+            # Only geocode if zip changed (avoid re-running every render)
+            if st.session_state.get("student_zip") != _zip_val:
+                if _zip_val in _NYC_ZIPS:
+                    _zlat, _zlon, _zname = _NYC_ZIPS[_zip_val]
+                    st.session_state["student_lat"] = _zlat
+                    st.session_state["student_lon"] = _zlon
                     st.session_state["student_zip"] = _zip_val
-                    st.session_state["student_location_name"] = _zd[0].get("display_name","").split(",")[0] + f" ({_zip_val})"
+                    st.session_state["student_location_name"] = f"{_zname} ({_zip_val})"
                     st.rerun()
                 else:
-                    st.caption("⚠️ ZIP not found")
-            except Exception:
-                st.caption("⚠️ Could not geocode zip")
+                    # Non-NYC zip: try Nominatim, fall back gracefully
+                    try:
+                        import urllib.request as _ur, json as _jz
+                        _zurl = f"https://nominatim.openstreetmap.org/search?postalcode={_zip_val}&country=US&format=json&limit=1"
+                        _zreq = _ur.Request(_zurl, headers={"User-Agent":"PathwaysSLN/1.0"})
+                        with _ur.urlopen(_zreq, timeout=4) as _zr:
+                            _zd = _jz.loads(_zr.read())
+                        if _zd:
+                            st.session_state["student_lat"] = float(_zd[0]["lat"])
+                            st.session_state["student_lon"] = float(_zd[0]["lon"])
+                            st.session_state["student_zip"] = _zip_val
+                            _dname = _zd[0].get("display_name","").split(",")[0]
+                            st.session_state["student_location_name"] = f"{_dname} ({_zip_val})"
+                            st.rerun()
+                        else:
+                            st.caption("⚠️ ZIP not found")
+                    except Exception:
+                        st.caption(f"⚠️ ZIP {_zip_val} not in NYC lookup — distances unavailable")
 
     run_btn = st.button("🔍 Find My Colleges", type="primary", use_container_width=True)
     st.caption("🔗 Your profile auto-saves to the URL — bookmark to return to these settings")
     # Dev debug: show what R&B and coord columns exist in the CSV
-    _rb_cols = st.session_state.get('_csv_rb_cols')
-    _coord_cols = st.session_state.get('_csv_coord_cols')
-    if _rb_cols is not None:
-        st.caption(f"🔧 CSV R&B cols: {_rb_cols or 'none found'} | Coord cols: {_coord_cols or 'none found'}")
+
 
 # ── CONTINUOUS PROFILE SAVE TO URL ──────────────────────────
 # Runs every render so URL always reflects current sidebar state
@@ -1371,13 +1496,13 @@ with tab1:
 
         # ── Sort & View ──────────────────────────────────────────
         _has_zip = bool(st.session_state.get("student_lat"))
-        _sort_choices = ["Best Fit", "Lowest Cost", "Safety First", "Grad Rate"]
+        _sort_choices = ["CUNY / SUNY First", "Best Fit", "Lowest Cost", "Safety First", "Grad Rate"]
         if _has_zip:
             _sort_choices.append("Closest to Me")
         sort_opts = st.multiselect(
             "Sort by (first = primary sort):",
             _sort_choices,
-            default=["Best Fit"],
+            default=["CUNY / SUNY First"],
             key="sort_multi",
             help="Pick up to 2 — combine Safety First + Lowest Cost to find affordable safeties"
         )
@@ -1460,7 +1585,17 @@ with tab1:
             if sort_opts and sort_opts != ["Best Fit"]:
                 keys = []
                 for sm in sort_opts:
-                    if sm == "Best Fit": keys.extend([fit_order.get(x['fit'],3), x.get('net') or 999999])
+                    if sm == "CUNY / SUNY First":
+                        # CUNY (ctrl==5) → SUNY (ctrl==1, state==NY, 'SUNY' in name) → other NY → out-of-state
+                        _nm = x.get('name','')
+                        _st = x.get('state','')
+                        _ctrl = x.get('ctrl')
+                        if _ctrl == 5 or 'CUNY' in _nm: tier = 0
+                        elif _st == 'NY' and ('SUNY' in _nm or 'State University' in _nm): tier = 1
+                        elif _st == 'NY': tier = 2
+                        else: tier = 3
+                        keys.extend([tier, fit_order.get(x['fit'],3)])
+                    elif sm == "Best Fit": keys.extend([fit_order.get(x['fit'],3), x.get('net') or 999999])
                     elif sm == "Lowest Cost": keys.extend([x.get('net') is None, x.get('net') or 999999])
                     elif sm == "Safety First": keys.append(fit_order.get(x['fit'],3))
                     elif sm == "Grad Rate": keys.append(-(x.get('grad') or 0))
