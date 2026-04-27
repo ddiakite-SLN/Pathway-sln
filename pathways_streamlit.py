@@ -699,8 +699,15 @@ def run_match(gpa, sat, act, state, size, ctrl, need, env, study_yrs, aid, n, ma
         tuition_only = tin  # save raw tuition before adding R&B
         # Add room & board to total cost of attendance (Alex feedback Apr 15)
         # Community colleges are mostly commuter (~$3k), 4-yr schools avg ~$14k
-        rb = s.get('roomboard') or (3000 if s.get('yr2') else 14000)
-        tin = tin + rb  # tin is now full cost of attendance
+        # roomboard: 0=confirmed commuter, None=unknown, >0=real IPEDS figure
+        _rb_raw = s.get('roomboard')
+        if _rb_raw is None:
+            rb = None   # genuinely unknown — don't fake it
+        else:
+            rb = int(_rb_raw)  # includes 0 for commuter schools
+        if rb is not None:
+            tin = tin + rb   # tin = tuition + real R&B
+        # if rb is None, tin stays as tuition only (we'll note this on card)
         # Data quality filters
         if only_gpa and not (s.get('gpa_25') or s.get('gpa_avg')): continue
         if only_adm and (not s.get('adm') or s.get('adm') != s.get('adm')): continue
@@ -723,7 +730,7 @@ def run_match(gpa, sat, act, state, size, ctrl, need, env, study_yrs, aid, n, ma
             'adm_display': adm_display,
             'sticker': sticker,
             'tuition_only': int(tuition_only) if tuition_only else 0,
-            'roomboard_added': int(rb) if rb else 0,
+            'roomboard_added': rb,  # None=unknown, 0=commuter, >0=real
             'rd': dl.get('rd','Check website'),
             'ea': dl.get('ea',''),
             'ed': dl.get('ed',''),
@@ -1612,8 +1619,16 @@ with tab1:
 
                         if tuition_only:
                             st.markdown(f"**Tuition:** ${tuition_only:,}/yr")
-                            st.markdown(f"**Room & Board:** ~${rb_added:,}/yr")
-                            st.markdown(f"**Total Cost:** ${sticker:,}/yr")
+                            _rb_val = s.get('roomboard_added')
+                            if _rb_val is None:
+                                st.markdown("**Room & Board:** N/A")
+                                st.markdown(f"**Total Cost:** ${tuition_only:,}/yr + R&B")
+                            elif _rb_val == 0:
+                                st.markdown("**Room & Board:** Commuter school")
+                                st.markdown(f"**Total Cost:** ${tuition_only:,}/yr")
+                            else:
+                                st.markdown(f"**Room & Board:** ${_rb_val:,}/yr")
+                                st.markdown(f"**Total Cost:** ${sticker:,}/yr")
                         else:
                             st.markdown("**Cost:** N/A")
 
