@@ -1,6 +1,5 @@
 # ═══════════════════════════════════════════════════════════════
 #  PATHWAYS BY SLN — Streamlit App v2
-#  Version: APR15-FINAL — CUNY sort + career list + income dropdown
 # ═══════════════════════════════════════════════════════════════
 
 import streamlit as st
@@ -50,6 +49,17 @@ if '_profile_loaded' not in st.session_state:
 # Lets students bookmark their profile — URL encodes key inputs
 # Same approach used by Niche and CollegeVine
 _qp = st.query_params
+# Restore saved location from URL if not already in session
+if 'lat' in _qp and 'lon' in _qp and not st.session_state.get("student_lat"):
+    try:
+        st.session_state["student_lat"] = float(_qp["lat"])
+        st.session_state["student_lon"] = float(_qp["lon"])
+        if "zip" in _qp:
+            st.session_state["student_zip"] = _qp["zip"]
+        if "locname" in _qp:
+            st.session_state["student_location_name"] = _qp["locname"]
+    except Exception:
+        pass
 if not st.session_state._profile_loaded and _qp:
     try:
         if 'scale' in _qp:
@@ -1132,7 +1142,7 @@ with col_h1:
     else:
         st.markdown(f"*Your college list, built around your life. Browsing **{len(SCHOOLS):,} US colleges** from IPEDS 2023-24.*")
 with col_h2:
-    st.caption("Built by SLN RITA Tech & Data Intern\nIPEDS 2023-24 · Aid thresholds 2025-26\n`v APR15-FINAL`")
+    st.caption("Built by SLN RITA Tech & Data Intern  ·  IPEDS 2023-24 · Aid 2025-26")
 st.divider()
 
 # ── NYC ZIP CODE LOOKUP (bundled — no API needed) ──────────────────────────
@@ -1360,7 +1370,6 @@ with st.sidebar:
 
     run_btn = st.button("🔍 Find My Colleges", type="primary", use_container_width=True)
     st.caption("🔗 Your profile auto-saves to the URL — bookmark to return to these settings")
-    # Dev debug: show what R&B and coord columns exist in the CSV
 
 
 # ── CONTINUOUS PROFILE SAVE TO URL ──────────────────────────
@@ -1378,6 +1387,17 @@ try:
         'type':   school_type,
         'yrs':    study_yrs,
     }
+    # Persist location to URL so it survives page refresh
+    _slat_save = st.session_state.get("student_lat")
+    _szip_save = st.session_state.get("student_zip","")
+    _sloc_save = st.session_state.get("student_location_name","")
+    if _slat_save:
+        _sp['lat'] = str(round(_slat_save, 4))
+        _sp['lon'] = str(round(st.session_state.get("student_lon", 0), 4))
+    if _szip_save:
+        _sp['zip'] = _szip_save
+    if _sloc_save:
+        _sp['locname'] = _sloc_save
     if gpa_scale == '4.0 scale':
         _sp['gpa'] = str(round(gpa, 1))
     else:
@@ -1419,8 +1439,26 @@ if st.session_state.get("_request_geo"):
             _glon2 = _geo["coords"]["longitude"]
             st.session_state["student_lat"] = _glat2
             st.session_state["student_lon"] = _glon2
-            # Reverse geocode to get neighborhood/city name
+            # Try bundled NYC zip lookup first (works even with VPN, no API needed)
+            _found_zip = False
             try:
+                _best_zip = None; _best_dist = 999
+                for _z, (_zlat, _zlon, _zname) in _NYC_ZIPS.items():
+                    _d = abs(_glat2 - _zlat) + abs(_glon2 - _zlon)
+                    if _d < _best_dist:
+                        _best_dist = _d; _best_zip = (_z, _zname, _zlat, _zlon)
+                if _best_zip and _best_dist < 0.03:  # within ~2 miles
+                    _z, _zname, _zlat, _zlon = _best_zip
+                    st.session_state["student_lat"] = _zlat
+                    st.session_state["student_lon"] = _zlon
+                    st.session_state["student_zip"] = _z
+                    st.session_state["student_location_name"] = f"{_zname} ({_z})"
+                    _found_zip = True
+            except Exception:
+                pass
+            # Reverse geocode to get neighborhood/city name
+            if not _found_zip:
+              try:
                 import urllib.request as _ur2, json as _jz2
                 _rurl = f"https://nominatim.openstreetmap.org/reverse?lat={_glat2}&lon={_glon2}&format=json"
                 _rreq = _ur2.Request(_rurl, headers={"User-Agent":"PathwaysSLN/1.0"})
@@ -1430,8 +1468,9 @@ if st.session_state.get("_request_geo"):
                 _city = _addr.get("neighbourhood") or _addr.get("suburb") or _addr.get("city") or _addr.get("town","")
                 _pcode = _addr.get("postcode","")
                 st.session_state["student_location_name"] = f"{_city} ({_pcode})" if _city else f"GPS ({_pcode})"
-            except Exception:
-                st.session_state["student_location_name"] = "Your location (GPS)"
+              except Exception:
+                # Nominatim blocked — show coords so user knows what was detected
+                st.session_state["student_location_name"] = f"GPS ({round(_glat2,3)}, {round(_glon2,3)})"
             st.session_state.pop("_request_geo", None)
             st.rerun()
     except Exception:
@@ -1618,6 +1657,17 @@ with tab1:
 
         # ── TABLE VIEW ───────────────────────────────────────────
         if view_mode == "📊 Table":
+            # Column visibility controls
+            _all_cols = ['School', 'State', 'Fit', 'You Pay/yr', 'Sticker', 'Acceptance %', 'SAT Range', 'GPA Range', 'Grad Rate', 'Type', 'RD Deadline', 'Website']
+            _default_cols = ['School', 'Fit', 'You Pay/yr', 'Acceptance %', 'GPA Range', 'Grad Rate', 'Website']
+            _shown_cols = st.multiselect(
+                "Columns to show:",
+                _all_cols,
+                default=_default_cols,
+                key="table_cols"
+            )
+            if not _shown_cols:
+                _shown_cols = _default_cols
             import pandas as _pd
             table_rows = []
             for s in matches:
@@ -1625,6 +1675,7 @@ with tab1:
                 fit_label = {'safety':'✅ Safety','match':'🎯 Match','reach':'⚠️ Reach','unknown':'⚪ No data'}.get(fit,fit)
                 table_rows.append({
                     'School': s.get('name',''),
+                    'Website': s.get('web',''),
                     'State': s.get('state',''),
                     'Fit': fit_label,
                     'You Pay/yr': f"${int(s.get('net') or 0):,}" if s.get('net') is not None else 'N/A',
@@ -1637,10 +1688,14 @@ with tab1:
                     'RD Deadline': s.get('rd','Check website'),
                 })
             df = _pd.DataFrame(table_rows)
+            # Filter to selected columns only (keep cols that exist in df)
+            _cols_to_show = [c for c in _shown_cols if c in df.columns]
+            df = df[_cols_to_show]
             st.dataframe(df, use_container_width=True, hide_index=True,
                 column_config={
                     "School": st.column_config.TextColumn(width="large"),
                     "You Pay/yr": st.column_config.TextColumn(help="After your estimated aid"),
+                    "Website": st.column_config.LinkColumn("🌐 Website", display_text="Visit"),
                 })
             csv_data = df.to_csv(index=False)
             st.download_button("⬇️ Download as spreadsheet", csv_data,
@@ -1688,7 +1743,11 @@ with tab1:
                                     _dist_str = f"  📍 {_dm:.0f} mi"
                             except Exception:
                                 pass
-                        st.markdown(f"**{fit_icons.get(fit,'⚪')} [{s['name']}]({s.get('web','#')})**{_dist_str}")
+                        _web = s.get('web','')
+                        _adm_url = (_web.rstrip('/') + '/admissions') if _web else '#'
+                        st.markdown(f"**{fit_icons.get(fit,'⚪')} [{s['name']}]({_web or '#'})**{_dist_str}")
+                        if _web:
+                            st.caption(f"[🎓 Apply / Admissions]({_adm_url})  ·  [🌐 Website]({_web})")
                         env_tags = get_env_fit(s, env_pref, school_size, school_type)
                         env_tag_str = ' · '.join(env_tags[:3]) if env_tags else ''
                         adm_val = s.get('adm'); adm_display = f"{float(adm_val):.1f}% acceptance" if adm_val and adm_val == adm_val else "Acceptance rate N/A"
