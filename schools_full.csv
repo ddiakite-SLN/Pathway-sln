@@ -163,12 +163,12 @@ id,name,city,state,ctrl,size,hbcu,womens,yr2,web,tin,adm,sat25,sat75,act25,act75
 110592,California State University-Los Angeles,Los Angeles,CA,1,5,0,0,0,https://www.calstatela.edu/,5742.0,91.9,,,,,53.0,,,,,,
 110608,California State University-Northridge,Northridge,CA,1,5,0,0,0,https://www.csun.edu/,5742.0,93.1,,,,,56.0,,,,,,
 110617,California State University-Sacramento,Sacramento,CA,1,5,0,0,0,https://www.csus.edu/,5742.0,93.6,,,,,56.0,,,,,,
-110635,University of California-Berkeley,Berkeley,CA,1,5,0,0,0,https://www.berkeley.edu/,11834.0,11.7,,,,,93.0,,,,,,
+110635,University of California-Berkeley,Berkeley,CA,1,5,0,0,0,https://www.berkeley.edu/,11834.0,11.7,,,,,93.0,,,,37.8716,-122.2727,20000.0
 110644,University of California-Davis,Davis,CA,1,5,0,0,0,https://ucdavis.edu/,11834.0,41.6,,,,,85.0,,,,,,
 110653,University of California-Irvine,Irvine,CA,1,5,0,0,0,https://www.uci.edu/,11834.0,25.6,,,,,86.0,,,,,,
-110662,University of California-Los Angeles,Los Angeles,CA,1,5,0,0,0,https://www.ucla.edu/,11834.0,8.7,,,,,93.0,,,,,,
-110671,University of California-Riverside,Riverside,CA,1,5,0,0,0,https://www.ucr.edu/,11834.0,63.3,,,,,77.0,,,,,,
-110680,University of California-San Diego,La Jolla,CA,1,5,0,0,0,https://www.ucsd.edu/,11834.0,24.5,,,,,88.0,,,,,,
+110662,University of California-Los Angeles,Los Angeles,CA,1,5,0,0,0,https://www.ucla.edu/,11834.0,8.7,,,,,93.0,,,,34.0689,-118.4452,19548.0
+110671,University of California-Riverside,Riverside,CA,1,5,0,0,0,https://www.ucr.edu/,11834.0,63.3,,,,,77.0,,,,32.8801,-117.234,19580.0
+110680,University of California-San Diego,La Jolla,CA,1,5,0,0,0,https://www.ucsd.edu/,11834.0,24.5,,,,,88.0,,,,37.3861,-122.0839,19548.0
 110705,University of California-Santa Barbara,Santa Barbara,CA,1,5,0,0,0,https://www.ucsb.edu/,11834.0,27.8,,,,,85.0,,,,,,
 110714,University of California-Santa Cruz,Santa Cruz,CA,1,4,0,0,0,https://www.ucsc.edu/,11834.0,62.5,,,,,74.0,,,,,,
 110778,Sofia University,Palo Alto,CA,3,2,0,0,0,https://www.sofia.edu/,18000.0,,,,,,,,,,,,
@@ -362,7 +362,7 @@ id,name,city,state,ctrl,size,hbcu,womens,yr2,web,tin,adm,sat25,sat75,act25,act75
 126562,University of Colorado Denver/Anschutz Medical Campus,Denver,CO,1,5,0,0,0,https://www.ucdenver.edu/,9096.0,77.8,980.0,1220.0,21.0,27.0,47.0,,,,,,
 126580,University of Colorado Colorado Springs,Colorado Springs,CO,1,4,0,0,0,https://www.uccs.edu/,8738.0,96.6,1020.0,1240.0,21.0,28.0,45.0,,,,,,
 126605,Spartan College of Aeronautics and Technology,Broomfield,CO,3,1,0,0,1,https://www.spartan.edu/,17406.0,,,,,,,,,,,,
-126614,University of Colorado Boulder,Boulder,CO,1,5,0,0,0,https://www.colorado.edu/,13910.0,83.3,1230.0,1420.0,28.0,33.0,75.0,,,,,,
+126614,University of Colorado Boulder,Boulder,CO,1,5,0,0,0,https://www.colorado.edu/,13910.0,83.3,1230.0,1420.0,28.0,33.0,75.0,,,,40.0024,-105.2669,14584.0
 126669,Colorado Christian University,Lakewood,CO,2,3,0,0,0,https://www.ccu.edu/,26668.0,,,,,,55.0,,,,,,
 126678,Colorado College,Colorado Springs,CO,2,2,0,0,0,https://www.coloradocollege.edu/,67458.0,20.0,1365.0,1520.0,31.0,34.0,86.0,,,,,,
 126687,Concorde Career College-Aurora,Aurora,CO,3,1,0,0,0,https://www.concorde.edu/campus/aurora-colorado,,100.0,,,,,69.0,,,,,,
@@ -398,10 +398,10 @@ id,name,city,state,ctrl,size,hbcu,womens,yr2,web,tin,adm,sat25,sat75,act25,act75
 128328,United States Air Force Academy,USAF Academy,CO,1,2,0,0,0,https://www.usafa.edu/,,13.9,1250.0,1450.0,26.0,33.0,88.0,,,,,,
 128391,Western Colorado University,Gunnison,CO,1,2,0,0,0,https://www.western.edu/,7128.0,97.5,1000.0,1240.0,21.0,28.0,51.0,,,,,,
 128498,Albertus Magnus College,New Haven,CT,2,2,0,0,0,https://www.albertus.edu/,38424.0,64.4,,,,,46.0,,,,,,
-128586,Bais Binyomin Academy,Monsey,NY,2,1,0,0,0,https://baisbinyominacademy.com/,9200.0,78.8,,,,,,,,,,,
+128586,Bais Binyomin Academy,Monsey,NY,2,1,0,0,0,https://baisbinyominacademy.com/,9200.0,78.8,,,,,,,,,41.1112,-74.0687,
 128744,University of Bridgeport,Bridgeport,CT,2,2,0,0,0,https://www.bridgeport.edu/,32860.0,64.3,880.0,1115.0,,,48.0,,,,,,
 128771,Central Connecticut State University,New Britain,CT,1,3,0,0,0,https://www.ccsu.edu/,6664.0,75.5,960.0,1180.0,19.0,29.0,49.0,,,,,,
-128780,Charter Oak State College,New Britain,CT,1,2,0,0,0,https://www.charteroak.edu/,7896.0,,,,,,,,,,,,
+128780,Charter Oak State College,New Britain,CT,1,2,0,0,0,https://www.charteroak.edu/,7896.0,,,,,,,,,,38.0326,-78.508,13040.0
 128902,Connecticut College,New London,CT,2,2,0,0,0,https://www.conncoll.edu/,64412.0,38.3,1340.0,1470.0,31.0,33.0,84.0,,,,,,
 129002,Porter & Chester Institute of Hamden,Hamden,CT,3,1,0,0,0,https://www.porterchester.edu/,14576.0,,,,,,,,,,,,
 129020,University of Connecticut,Storrs,CT,1,5,0,0,0,https://uconn.edu/,16332.0,53.9,1210.0,1420.0,29.0,33.0,84.0,,,,,,
@@ -424,7 +424,7 @@ id,name,city,state,ctrl,size,hbcu,womens,yr2,web,tin,adm,sat25,sat75,act25,act75
 130624,United States Coast Guard Academy,New London,CT,1,2,0,0,0,https://www.uscga.edu/,,24.3,1210.0,1380.0,25.0,30.0,88.0,,,,,,
 130697,Wesleyan University,Middletown,CT,2,2,0,0,0,https://www.wesleyan.edu/,66716.0,17.1,1450.0,1540.0,33.0,35.0,91.0,,,,,,
 130776,Western Connecticut State University,Danbury,CT,1,2,0,0,0,https://www.wcsu.edu/,6664.0,81.4,840.0,1150.0,20.0,27.0,50.0,,,,,,
-130794,Yale University,New Haven,CT,2,4,0,0,0,https://www.yale.edu/,64700.0,4.5,1500.0,1580.0,33.0,35.0,96.0,,,,41.3163,-72.9223,
+130794,Yale University,New Haven,CT,2,4,0,0,0,https://www.yale.edu/,64700.0,4.5,1500.0,1580.0,33.0,35.0,96.0,,,,41.3163,-72.9223,17800.0
 130837,Margaret H Rollins School of Nursing at Beebe Medical Center,Lewes,DE,2,1,0,0,0,https://www.beebehealthcare.org/school-nursing,6400.0,,,,,,,,,,,,
 130907,Delaware Technical Community College-Terry,Dover,DE,1,4,0,0,0,https://www.dtcc.edu/,4575.0,,,,,,19.0,,,,,,
 130934,Delaware State University,Dover,DE,1,3,1,0,0,https://www.desu.edu/,8544.0,61.7,860.0,1070.0,22.0,26.0,39.0,,,,,,
@@ -550,11 +550,11 @@ id,name,city,state,ctrl,size,hbcu,womens,yr2,web,tin,adm,sat25,sat75,act25,act75
 139579,South University-Savannah,Savannah,GA,3,1,0,0,0,"https://www.southuniversity.edu/savannah#location=Savannah, GA",15732.0,,,,,,23.0,,,,,,
 139621,East Georgia State College,Swainsboro,GA,1,2,0,0,0,https://www.ega.edu/,2280.0,,,,,,14.0,,,,,,
 139630,Emmanuel University,Franklin Springs,GA,2,1,0,0,0,https://www.ec.edu/,22914.0,53.4,,,,,35.0,,,,,,
-139658,Emory University,Atlanta,GA,2,4,0,0,0,https://www.emory.edu/,59920.0,11.1,1460.0,1550.0,32.0,34.0,91.0,,,,,,
+139658,Emory University,Atlanta,GA,2,4,0,0,0,https://www.emory.edu/,59920.0,11.1,1460.0,1550.0,32.0,34.0,91.0,,,,33.794,-84.3241,16024.0
 139700,Georgia Highlands College,Rome,GA,1,2,0,0,0,https://www.highlands.edu/,2280.0,,,,,,21.0,,,,,,
 139719,Fort Valley State University,Fort Valley,GA,1,2,1,0,0,https://www.fvsu.edu/,4064.0,62.8,795.0,920.0,16.0,19.0,45.0,,,,,,
 139746,Grady Health System Professional Schools,Atlanta,GA,1,1,0,0,1,https://www.gradyhealth.org/,6705.0,,,,,,,,,,,,
-139755,Georgia Institute of Technology-Main Campus,Atlanta,GA,1,5,0,0,0,https://www.gatech.edu/,10258.0,16.5,1330.0,1530.0,28.0,34.0,92.0,,,,,,
+139755,Georgia Institute of Technology-Main Campus,Atlanta,GA,1,5,0,0,0,https://www.gatech.edu/,10258.0,16.5,1330.0,1530.0,28.0,34.0,92.0,,,,33.9519,-83.3576,12688.0
 139764,Georgia Southwestern State University,Americus,GA,1,2,0,0,0,https://gsw.edu/,4064.0,77.2,900.0,1130.0,16.0,21.0,32.0,,,,,,
 139861,Georgia College & State University,Milledgeville,GA,1,3,0,0,0,https://www.gcsu.edu/,7508.0,87.8,1060.0,1240.0,21.0,26.0,62.0,,,,,,
 139931,Georgia Southern University,Statesboro,GA,1,5,0,0,0,https://www.georgiasouthern.edu/,4371.0,89.6,980.0,1160.0,18.0,23.0,52.0,,,,,,
@@ -628,7 +628,7 @@ id,name,city,state,ctrl,size,hbcu,womens,yr2,web,tin,adm,sat25,sat75,act25,act75
 143613,Carl Sandburg College,Galesburg,IL,1,2,0,0,1,https://www.sandburg.edu/,7860.0,,,,,,,,,,,,
 143978,The Chicago School at Chicago,Chicago,IL,2,2,0,0,0,https://www.thechicagoschool.edu/in-the-community/locations/,18576.0,33.3,,,,,,,,,,,
 144005,Chicago State University,Chicago,IL,1,2,0,0,0,https://www.csu.edu/,8040.0,40.5,,,,,17.0,,,,,,
-144050,University of Chicago,Chicago,IL,2,4,0,0,0,https://www.uchicago.edu/,63801.0,4.8,1510.0,1570.0,34.0,35.0,95.0,,,,,,
+144050,University of Chicago,Chicago,IL,2,4,0,0,0,https://www.uchicago.edu/,63801.0,4.8,1510.0,1570.0,34.0,35.0,95.0,,,,41.7943,-87.5907,16524.0
 144157,City Colleges of Chicago-Kennedy-King College,Chicago,IL,1,2,0,0,1,https://www.ccc.edu/colleges/kennedy/pages/default.aspx,11520.0,,,,,,,,,,,,
 144166,City Colleges of Chicago-Malcolm X College,Chicago,IL,1,3,0,0,1,https://www.ccc.edu/colleges/malcolm-x/pages/default.aspx,11520.0,,,,,,,,,,,,
 144175,City Colleges of Chicago-Olive-Harvey College,Chicago,IL,1,2,0,0,1,https://www.ccc.edu/colleges/olive-harvey/Pages/default.aspx,11520.0,,,,,,,,,,,,
@@ -642,7 +642,7 @@ id,name,city,state,ctrl,size,hbcu,womens,yr2,web,tin,adm,sat25,sat75,act25,act75
 144740,DePaul University,Chicago,IL,2,5,0,0,0,https://www.depaul.edu/,43379.0,73.5,1130.0,1340.0,26.0,31.0,70.0,,,,,,
 144865,College of DuPage,Glen Ellyn,IL,1,5,0,0,1,https://www.cod.edu/,9510.0,,,,,,,,,,,,
 144883,East-West University,Chicago,IL,2,1,0,0,0,https://www.eastwest.edu/,24750.0,,,,,,23.0,,,,,,
-144892,Eastern Illinois University,Charleston,IL,1,3,0,0,0,https://www.eiu.edu/,9624.0,67.8,890.0,1110.0,,,45.0,,,,,,
+144892,Eastern Illinois University,Charleston,IL,1,3,0,0,0,https://www.eiu.edu/,9624.0,67.8,890.0,1110.0,,,45.0,,,,41.8827,-87.6233,20040.0
 144944,Elgin Community College,Elgin,IL,1,3,0,0,1,https://www.elgin.edu/,7128.0,,,,,,,,,,,,
 144962,Elmhurst University,Elmhurst,IL,2,2,0,0,0,https://www.elmhurst.edu/,41258.0,75.7,960.0,1210.0,23.0,28.0,65.0,,,,,,
 144971,Eureka College,Eureka,IL,2,1,0,0,0,https://www.eureka.edu/,27450.0,88.5,,,,,41.0,,,,,,
@@ -654,7 +654,7 @@ id,name,city,state,ctrl,size,hbcu,womens,yr2,web,tin,adm,sat25,sat75,act25,act75
 145521,Highland Community College,Freeport,IL,1,2,0,0,1,https://www.highland.edu/,5904.0,,,,,,,,,,,,
 145600,University of Illinois Chicago,Chicago,IL,1,5,0,0,0,https://www.uic.edu/,12656.0,78.5,1120.0,1340.0,25.0,32.0,60.0,,,,,,
 145619,Benedictine University,Lisle,IL,2,2,0,0,0,https://ben.edu/,31028.0,77.2,,,,,51.0,,,,,,
-145637,University of Illinois Urbana-Champaign,Champaign,IL,1,5,0,0,0,https://www.illinois.edu/,14768.0,43.7,1270.0,1510.0,29.0,34.0,85.0,,,,,,
+145637,University of Illinois Urbana-Champaign,Champaign,IL,1,5,0,0,0,https://www.illinois.edu/,14768.0,43.7,1270.0,1510.0,29.0,34.0,85.0,,,,40.102,-88.2272,13046.0
 145646,Illinois Wesleyan University,Bloomington,IL,2,2,0,0,0,https://www.iwu.edu/,55500.0,45.2,1140.0,1330.0,24.0,29.0,83.0,,,,,,
 145682,Illinois Central College,East Peoria,IL,1,3,0,0,1,https://icc.edu/,9348.0,,,,,,,,,,,,
 145691,Illinois College,Jacksonville,IL,2,1,0,0,0,https://www.ic.edu/,36870.0,74.7,978.0,1183.0,19.0,25.0,61.0,,,,,,
@@ -684,7 +684,7 @@ id,name,city,state,ctrl,size,hbcu,womens,yr2,web,tin,adm,sat25,sat75,act25,act75
 147004,McHenry County College,Crystal Lake,IL,1,3,0,0,1,https://www.mchenry.edu/,10012.0,,,,,,,,,,,,
 147013,McKendree University,Lebanon,IL,2,2,0,0,0,https://www.mckendree.edu/,32660.0,63.9,,,,,57.0,,,,,,
 147129,Methodist College,Peoria,IL,2,1,0,0,0,https://www.methodistcol.edu/,16248.0,31.1,,,,,,,,,,,
-147244,Millikin University,Decatur,IL,2,2,0,0,0,https://millikin.edu/,42778.0,54.1,860.0,1170.0,14.0,24.0,59.0,,,,,,
+147244,Millikin University,Decatur,IL,2,2,0,0,0,https://millikin.edu/,42778.0,54.1,860.0,1170.0,14.0,24.0,59.0,,,,42.0566,-87.6753,17100.0
 147341,Monmouth College,Monmouth,IL,2,1,0,0,0,https://www.monmouthcollege.edu/,43320.0,86.6,1010.0,1230.0,20.0,27.0,60.0,,,,,,
 147369,Moody Bible Institute,Chicago,IL,2,2,0,0,0,https://www.moody.edu/,12768.0,97.5,,,,,62.0,,,,,,
 147378,Moraine Valley Community College,Palos Hills,IL,1,4,0,0,1,https://www.morainevalley.edu/,7968.0,,,,,,,,,,,,
@@ -695,7 +695,7 @@ id,name,city,state,ctrl,size,hbcu,womens,yr2,web,tin,adm,sat25,sat75,act25,act75
 147660,North Central College,Naperville,IL,2,2,0,0,0,https://northcentralcollege.edu/,44114.0,58.3,1065.0,1280.0,23.0,27.0,71.0,,,,,,
 147679,North Park University,Chicago,IL,2,2,0,0,0,https://www.northpark.edu/,34685.0,72.8,,,,,56.0,,,,,,
 147703,Northern Illinois University,Dekalb,IL,1,4,0,0,0,https://www.niu.edu/,9792.0,70.5,,,,,50.0,,,,,,
-147767,Northwestern University,Evanston,IL,2,5,0,0,0,https://www.northwestern.edu/,64887.0,7.2,1490.0,1560.0,33.0,35.0,96.0,,,,,,
+147767,Northwestern University,Evanston,IL,2,5,0,0,0,https://www.northwestern.edu/,64887.0,7.2,1490.0,1560.0,33.0,35.0,96.0,,,,41.4765,-81.6794,13746.0
 147776,Northeastern Illinois University,Chicago,IL,1,3,0,0,0,https://www.neiu.edu/,10343.0,70.4,,,,,17.0,,,,,,
 147800,Oakton College,Des Plaines,IL,1,3,0,0,1,https://www.oakton.edu/,10276.0,,,,,,,,,,,,
 147828,Olivet Nazarene University,Bourbonnais,IL,2,2,0,0,0,https://www.olivet.edu/,36950.0,66.9,960.0,1190.0,18.0,28.0,60.0,,,,,,
@@ -759,7 +759,7 @@ id,name,city,state,ctrl,size,hbcu,womens,yr2,web,tin,adm,sat25,sat75,act25,act75
 151324,Indiana State University,Terre Haute,IN,1,3,0,0,0,https://www.indstate.edu/,9712.0,91.5,,,,,41.0,,,,,,
 151333,Indiana University-Kokomo,Kokomo,IN,1,2,0,0,0,https://www.iuk.edu/,7492.0,84.7,970.0,1180.0,18.0,26.0,45.0,,,,,,
 151342,Indiana University-South Bend,South Bend,IN,1,2,0,0,0,https://iusb.edu/,7492.0,86.0,970.0,1170.0,21.0,25.0,36.0,,,,,,
-151351,Indiana University-Bloomington,Bloomington,IN,1,5,0,0,0,https://www.indiana.edu/,10312.0,80.4,1170.0,1400.0,27.0,32.0,81.0,,,,,,
+151351,Indiana University-Bloomington,Bloomington,IN,1,5,0,0,0,https://www.indiana.edu/,10312.0,80.4,1170.0,1400.0,27.0,32.0,81.0,,,,39.1755,-86.513,12498.0
 151360,Indiana University-Northwest,Gary,IN,1,2,0,0,0,https://www.iun.edu/,7492.0,76.7,940.0,1170.0,21.0,27.0,37.0,,,,,,
 151379,Indiana University-Southeast,New Albany,IN,1,2,0,0,0,https://ius.edu/,7492.0,83.1,1010.0,1190.0,20.0,26.0,33.0,,,,,,
 151388,Indiana University-East,Richmond,IN,1,2,0,0,0,https://www.iue.edu/,7492.0,71.2,1010.0,1220.0,20.0,25.0,45.0,,,,,,
@@ -808,7 +808,7 @@ id,name,city,state,ctrl,size,hbcu,womens,yr2,web,tin,adm,sat25,sat75,act25,act75
 153542,UnityPoint Health-Des Moines School of Radiologic Technology,Des Moines,IA,2,1,0,0,1,https://www.unitypoint.org/join-our-team/medical-education-and-career-growth/school-of-radiologic-technology---des-moines-area-hospitals,3600.0,,,,,,,,,,,,
 153603,Iowa State University,Ames,IA,1,5,0,0,0,https://www.iastate.edu/,8982.0,89.1,1110.0,1350.0,21.0,28.0,75.0,,,,,,
 153630,Iowa Western Community College,Council Bluffs,IA,1,3,0,0,1,https://www.iwcc.edu/,6270.0,,,,,,,,,,,,
-153658,University of Iowa,Iowa City,IA,1,5,0,0,0,https://uiowa.edu/,9016.0,84.7,1130.0,1320.0,22.0,28.0,73.0,,,,,,
+153658,University of Iowa,Iowa City,IA,1,5,0,0,0,https://uiowa.edu/,9016.0,84.7,1130.0,1320.0,22.0,28.0,73.0,,,,42.7282,-84.4822,13600.0
 153737,Kirkwood Community College,Cedar Rapids,IA,1,4,0,0,1,https://www.kirkwood.edu/,5880.0,,,,,,,,,,,,
 153825,Loras College,Dubuque,IA,2,2,0,0,0,https://www.loras.edu/,36454.0,91.8,,,,,70.0,,,,,,
 153834,Luther College,Decorah,IA,2,2,0,0,0,https://www.luther.edu/,49650.0,73.3,1098.0,1318.0,22.0,29.0,75.0,,,,,,
@@ -864,7 +864,7 @@ id,name,city,state,ctrl,size,hbcu,womens,yr2,web,tin,adm,sat25,sat75,act25,act75
 155283,Concorde Career College-Kansas City,Kansas City,MO,3,1,0,0,0,https://www.concorde.edu/campus/kansas-city-missouri,,98.8,,,,,57.0,,,,,,
 155292,Kansas City Kansas Community College,Kansas City,KS,1,2,0,0,1,https://www.kckcc.edu/,2548.0,,,,,,,,,,,,
 155308,Kansas Christian College,Overland Park,KS,2,1,0,0,0,https://www.kansaschristian.edu/,9600.0,,,,,,29.0,,,,,,
-155317,University of Kansas,Lawrence,KS,1,5,0,0,0,https://ku.edu/,10596.0,88.2,1050.0,1290.0,21.0,27.0,69.0,,,,,,
+155317,University of Kansas,Lawrence,KS,1,5,0,0,0,https://ku.edu/,10596.0,88.2,1050.0,1290.0,21.0,27.0,69.0,,,,38.9714,-95.235,11726.0
 155335,Newman University,Wichita,KS,2,2,0,0,0,https://www.newmanu.edu/,35500.0,47.6,,,,,54.0,,,,,,
 155399,Kansas State University,Manhattan,KS,1,4,0,0,0,https://www.k-state.edu/,9964.0,79.4,1040.0,1260.0,20.0,27.0,70.0,,,,,,
 155414,Kansas Wesleyan University,Salina,KS,2,1,0,0,0,https://www.kwu.edu/,32750.0,85.0,,,,,38.0,,,,,,
@@ -913,7 +913,7 @@ id,name,city,state,ctrl,size,hbcu,womens,yr2,web,tin,adm,sat25,sat75,act25,act75
 157030,Kentucky Mountain Bible College,Jackson,KY,2,1,0,0,0,https://www.kmbc.edu/,9150.0,35.7,,,13.0,22.0,36.0,,,,,,
 157058,Kentucky State University,Frankfort,KY,1,2,1,0,0,https://www.kysu.edu/,8088.0,92.6,820.0,1010.0,14.0,20.0,27.0,,,,,,
 157076,Kentucky Wesleyan College,Owensboro,KY,2,1,0,0,0,https://kwc.edu/,31900.0,67.0,750.0,1130.0,12.0,24.0,53.0,,,,,,
-157085,University of Kentucky,Lexington,KY,1,5,0,0,0,https://www.uky.edu/,11849.0,92.4,1080.0,1290.0,21.0,28.0,70.0,,,,,,
+157085,University of Kentucky,Lexington,KY,1,5,0,0,0,https://www.uky.edu/,11849.0,92.4,1080.0,1290.0,21.0,28.0,70.0,,,,38.0311,-84.5037,13356.0
 157100,Kentucky Christian University,Grayson,KY,2,1,0,0,0,https://www.kcu.edu/,24400.0,62.4,900.0,1040.0,18.0,23.0,34.0,,,,,,
 157216,Lindsey Wilson College,Columbia,KY,2,2,0,0,0,https://www.lindsey.edu/,26976.0,,,,,,38.0,,,,,,
 157289,University of Louisville,Louisville,KY,1,5,0,0,0,https://www.louisville.edu/,12632.0,80.5,1020.0,1250.0,19.0,27.0,60.0,,,,,,
@@ -947,7 +947,7 @@ id,name,city,state,ctrl,size,hbcu,womens,yr2,web,tin,adm,sat25,sat75,act25,act75
 159197,ITI Technical College,Baton Rouge,LA,3,1,0,0,1,https://www.iticollege.edu/,11561.0,,,,,,,,,,,,
 159373,Louisiana State University Health Sciences Center-New Orleans,New Orleans,LA,1,2,0,0,0,https://www.lsuhsc.edu/,7020.0,,,,,,,,,,,,
 159382,Louisiana State University-Alexandria,Alexandria,LA,1,3,0,0,0,https://www.lsua.edu/,4950.0,92.6,880.0,1140.0,17.0,22.0,36.0,,,,,,
-159391,Louisiana State University and Agricultural & Mechanical College,Baton Rouge,LA,1,5,0,0,0,https://www.lsu.edu/,8038.0,74.0,1150.0,1330.0,24.0,29.0,71.0,,,,,,
+159391,Louisiana State University and Agricultural & Mechanical College,Baton Rouge,LA,1,5,0,0,0,https://www.lsu.edu/,8038.0,74.0,1150.0,1330.0,24.0,29.0,71.0,,,,30.4133,-91.18,11490.0
 159407,Louisiana State University-Eunice,Eunice,LA,1,2,0,0,1,https://www.lsue.edu/,2868.0,,,,,,,,,,,,
 159416,Louisiana State University-Shreveport,Shreveport,LA,1,3,0,0,0,https://www.lsus.edu/,5656.0,82.7,1000.0,1150.0,19.0,24.0,33.0,,,,,,
 159568,Louisiana Christian University,Pineville,LA,2,1,0,0,0,https://www.lcuniversity.edu/,19590.0,83.8,,,,,41.0,,,,,,
@@ -972,7 +972,7 @@ id,name,city,state,ctrl,size,hbcu,womens,yr2,web,tin,adm,sat25,sat75,act25,act75
 160649,Southern University at Shreveport,Shreveport,LA,1,2,1,0,1,https://www.susla.edu/,2618.0,,,,,,,,,,,,
 160658,University of Louisiana at Lafayette,Lafayette,LA,1,4,0,0,0,https://www.louisiana.edu/,5407.0,88.8,1120.0,1255.0,23.0,27.0,52.0,,,,,,
 160667,Northshore Technical Community College,Lacombe,LA,1,3,0,0,1,https://northshorecollege.edu/,3214.0,,,,,,,,,,,,
-160755,Tulane University of Louisiana,New Orleans,LA,2,4,0,0,0,https://tulane.edu/,61306.0,14.6,1390.0,1510.0,31.0,33.0,89.0,,,,,,
+160755,Tulane University of Louisiana,New Orleans,LA,2,4,0,0,0,https://tulane.edu/,61306.0,14.6,1390.0,1510.0,31.0,33.0,89.0,,,,44.899,-68.6678,12038.0
 160904,Xavier University of Louisiana,New Orleans,LA,2,2,1,0,0,https://www.xula.edu/,24836.0,74.5,953.0,1138.0,19.0,25.0,50.0,,,,,,
 160959,College of the Atlantic,Bar Harbor,ME,2,1,0,0,0,https://www.coa.edu/,45630.0,65.0,,,,,69.0,,,,,,
 160977,Bates College,Lewiston,ME,2,2,0,0,0,https://www.bates.edu/,63478.0,13.0,1400.0,1510.0,31.0,33.0,91.0,,,,,,
@@ -1018,12 +1018,12 @@ id,name,city,state,ctrl,size,hbcu,womens,yr2,web,tin,adm,sat25,sat75,act25,act75
 162706,Harford Community College,Bel Air,MD,1,3,0,0,1,https://www.harford.edu/,5640.0,,,,,,,,,,,,
 162760,Hood College,Frederick,MD,2,2,0,0,0,https://www.hood.edu/,45120.0,78.1,,,,,55.0,,,,,,
 162779,Howard Community College,Columbia,MD,1,3,0,0,1,https://www.howardcc.edu/,7155.0,,,,,,,,,,,,
-162928,Johns Hopkins University,Baltimore,MD,2,5,0,0,0,https://www.jhu.edu/,62840.0,7.6,1530.0,1580.0,34.0,35.0,94.0,,,,,,
+162928,Johns Hopkins University,Baltimore,MD,2,5,0,0,0,https://www.jhu.edu/,62840.0,7.6,1530.0,1580.0,34.0,35.0,94.0,,,,39.9979,-76.6214,13120.0
 163046,Loyola University Maryland,Baltimore,MD,2,3,0,0,0,https://www.loyola.edu/,55480.0,76.3,1180.0,1350.0,27.0,32.0,80.0,,,,,,
-163204,University of Maryland Global Campus,Adelphi,MD,1,5,0,0,0,https://www.umgc.edu/,7632.0,,,,,,30.0,,,,,,
+163204,University of Maryland Global Campus,Adelphi,MD,1,5,0,0,0,https://www.umgc.edu/,7632.0,,,,,,30.0,,,,39.9079,-76.6007,13120.0
 163259,"University of Maryland, Baltimore",Baltimore,MD,1,3,0,0,0,https://www.umaryland.edu/,9827.0,,,,,,,,,,,,
 163268,University of Maryland-Baltimore County,Baltimore,MD,1,4,0,0,0,https://umbc.edu/,9238.0,74.2,1220.0,1410.0,23.0,30.0,71.0,,,,,,
-163286,University of Maryland-College Park,College Park,MD,1,5,0,0,0,https://www.umd.edu/,9889.0,44.8,1370.0,1520.0,32.0,35.0,89.0,,,,,,
+163286,University of Maryland-College Park,College Park,MD,1,5,0,0,0,https://www.umd.edu/,9889.0,44.8,1370.0,1520.0,32.0,35.0,89.0,,,,39.9391,-75.1975,14640.0
 163295,Maryland Institute College of Art,Baltimore,MD,2,2,0,0,0,https://www.mica.edu/,53160.0,77.3,915.0,1220.0,26.0,30.0,71.0,,,,,,
 163338,University of Maryland Eastern Shore,Princess Anne,MD,1,2,1,0,0,https://wwwcp.umes.edu/,5637.0,90.4,,,,,35.0,,,,,,
 163426,Montgomery College,Rockville,MD,1,4,0,0,1,https://www.montgomerycollege.edu/,8190.0,,,,,,,,,,,,
@@ -1079,7 +1079,7 @@ id,name,city,state,ctrl,size,hbcu,womens,yr2,web,tin,adm,sat25,sat75,act25,act75
 165936,Gordon College,Wenham,MA,2,2,0,0,0,https://www.gordon.edu/,27000.0,58.8,1168.0,1370.0,26.0,32.0,67.0,,,,,,
 165981,Greenfield Community College,Greenfield,MA,1,2,0,0,1,https://www.gcc.mass.edu/,624.0,,,,,,,,,,,,
 166018,Hampshire College,Amherst,MA,2,1,0,0,0,https://www.hampshire.edu/,54892.0,70.4,,,,,57.0,,,,,,
-166027,Harvard University,Cambridge,MA,2,5,0,0,0,https://www.harvard.edu/,54269.0,3.5,1500.0,1580.0,34.0,36.0,97.0,,,,42.377,-71.1167,
+166027,Harvard University,Cambridge,MA,2,5,0,0,0,https://www.harvard.edu/,54269.0,3.5,1500.0,1580.0,34.0,36.0,97.0,,,,42.377,-71.1167,18188.0
 166054,Hellenic College-Holy Cross Greek Orthodox School of Theology,Brookline,MA,2,1,0,0,0,https://www.hchc.edu/,21940.0,90.5,,,,,,,,,,,
 166124,College of the Holy Cross,Worcester,MA,2,2,0,0,0,https://www.holycross.edu/,60050.0,21.1,1250.0,1420.0,28.0,32.0,90.0,,,,,,
 166133,Holyoke Community College,Holyoke,MA,1,2,0,0,1,https://www.hcc.edu/,5520.0,,,,,,,,,,,,
@@ -1087,8 +1087,8 @@ id,name,city,state,ctrl,size,hbcu,womens,yr2,web,tin,adm,sat25,sat75,act25,act75
 166407,Lawrence Memorial Hospital School of Nursing,Medford,MA,2,1,0,0,1,https://www.lmregis.org/,26852.0,,,,,,,,,,,,
 166452,Lesley University,Cambridge,MA,2,2,0,0,0,https://www.lesley.edu/,31890.0,94.4,,,,,62.0,,,,,,
 166489,Longy School of Music of Bard College,Cambridge,MA,2,1,0,0,0,https://longy.edu/,51725.0,84.4,,,,,44.0,,,,,,
-166513,University of Massachusetts-Lowell,Lowell,MA,1,4,0,0,0,https://www.uml.edu/,15850.0,85.2,1180.0,1350.0,26.0,30.0,70.0,,,,,,
-166629,University of Massachusetts-Amherst,Amherst,MA,1,5,0,0,0,https://www.umass.edu/,16591.0,57.8,1300.0,1480.0,29.0,33.0,83.0,,,,,,
+166513,University of Massachusetts-Lowell,Lowell,MA,1,4,0,0,0,https://www.uml.edu/,15850.0,85.2,1180.0,1350.0,26.0,30.0,70.0,,,,42.3601,-71.1158,14500.0
+166629,University of Massachusetts-Amherst,Amherst,MA,1,5,0,0,0,https://www.umass.edu/,16591.0,57.8,1300.0,1480.0,29.0,33.0,83.0,,,,42.3656,-71.1045,14888.0
 166638,University of Massachusetts-Boston,Boston,MA,1,4,0,0,0,https://www.umb.edu/,14905.0,83.0,1080.0,1290.0,24.0,30.0,51.0,,,,,,
 166647,Massachusetts Bay Community College,Wellesley Hills,MA,1,2,0,0,1,https://www.massbay.edu/,576.0,,,,,,,,,,,,
 166656,MCPHS University,Boston,MA,2,3,0,0,0,https://www.mcphs.edu/,37620.0,85.2,1080.0,1340.0,23.0,33.0,63.0,,,,,,
@@ -1125,7 +1125,7 @@ id,name,city,state,ctrl,size,hbcu,womens,yr2,web,tin,adm,sat25,sat75,act25,act75
 167987,University of Massachusetts-Dartmouth,North Dartmouth,MA,1,3,0,0,0,https://www.umassd.edu/,14533.0,92.2,1040.0,1260.0,22.0,27.0,49.0,,,,,,
 167996,Stonehill College,Easton,MA,2,2,0,0,0,https://www.stonehill.edu/,52800.0,72.6,,,,,81.0,,,,,,
 168005,Suffolk University,Boston,MA,2,3,0,0,0,https://www.suffolk.edu/,44812.0,84.7,1090.0,1280.0,24.0,32.0,60.0,,,,,,
-168148,Tufts University,Medford,MA,2,4,0,0,0,https://www.tufts.edu/,66358.0,10.1,1460.0,1550.0,33.0,35.0,93.0,,,,,,
+168148,Tufts University,Medford,MA,2,4,0,0,0,https://www.tufts.edu/,66358.0,10.1,1460.0,1550.0,33.0,35.0,93.0,,,,42.3601,-71.0942,16690.0
 168218,Wellesley College,Wellesley,MA,2,2,0,0,0,https://www.wellesley.edu/,64000.0,13.9,1440.0,1550.0,33.0,35.0,91.0,,,,,,
 168227,Wentworth Institute of Technology,Boston,MA,2,2,0,0,0,https://wit.edu/,40410.0,85.4,1140.0,1320.0,25.0,31.0,68.0,,,,,,
 168254,Western New England University,Springfield,MA,2,2,0,0,0,https://wne.edu/,43380.0,83.3,1130.0,1310.0,25.0,27.0,64.0,,,,,,
@@ -1180,7 +1180,7 @@ id,name,city,state,ctrl,size,hbcu,womens,yr2,web,tin,adm,sat25,sat75,act25,act75
 170790,Macomb Community College,Warren,MI,1,4,0,0,1,https://www.macomb.edu/,6240.0,,,,,,,,,,,,
 170806,Madonna University,Livonia,MI,2,2,0,0,0,https://www.madonna.edu/,27360.0,92.9,890.0,1120.0,,,58.0,,,,,,
 170967,Rochester University,Rochester Hills,MI,2,2,0,0,0,https://rochesteru.edu/,27938.0,65.3,,,,,41.0,,,,,,
-170976,University of Michigan-Ann Arbor,Ann Arbor,MI,1,5,0,0,0,https://umich.edu/,17977.0,17.9,1350.0,1530.0,31.0,34.0,93.0,,,,,,
+170976,University of Michigan-Ann Arbor,Ann Arbor,MI,1,5,0,0,0,https://umich.edu/,17977.0,17.9,1350.0,1530.0,31.0,34.0,93.0,,,,42.2776,-83.7409,16736.0
 171100,Michigan State University,East Lansing,MI,1,5,0,0,0,https://www.msu.edu/,16930.0,83.9,1150.0,1350.0,26.0,31.0,82.0,,,,,,
 171128,Michigan Technological University,Houghton,MI,1,3,0,0,0,https://www.mtu.edu/,19429.0,87.9,1120.0,1330.0,25.0,31.0,69.0,,,,,,
 171137,University of Michigan-Dearborn,Dearborn,MI,1,3,0,0,0,https://umdearborn.edu/,14544.0,58.6,990.0,1260.0,23.0,30.0,57.0,,,,,,
@@ -1240,7 +1240,7 @@ id,name,city,state,ctrl,size,hbcu,womens,yr2,web,tin,adm,sat25,sat75,act25,act75
 173920,Minnesota State University-Mankato,Mankato,MN,1,4,0,0,0,https://mnsu.edu/,8356.0,91.3,,,22.0,25.0,54.0,,,,,,
 173957,Mayo Clinic College of Medicine and Science,Rochester,MN,2,2,0,0,0,https://college.mayo.edu/,9908.0,38.7,,,,,,,,,,,
 174020,Metropolitan State University,Saint Paul,MN,1,3,0,0,0,https://www.metrostate.edu/,8571.0,96.5,,,16.0,23.0,38.0,,,,,,
-174066,University of Minnesota-Twin Cities,Minneapolis,MN,1,5,0,0,0,https://twin-cities.umn.edu/,14496.0,77.0,1310.0,1480.0,27.0,31.0,85.0,,,,,,
+174066,University of Minnesota-Twin Cities,Minneapolis,MN,1,5,0,0,0,https://twin-cities.umn.edu/,14496.0,77.0,1310.0,1480.0,27.0,31.0,85.0,,,,44.9741,-93.2277,13668.0
 174075,University of Minnesota-Crookston,Crookston,MN,1,2,0,0,0,https://crk.umn.edu/,11478.0,58.4,,,,,50.0,,,,,,
 174127,Minneapolis College of Art and Design,Minneapolis,MN,2,1,0,0,0,https://mcad.edu/,43374.0,48.4,1110.0,1430.0,20.0,24.0,69.0,,,,,,
 174136,Minneapolis Community and Technical College,Minneapolis,MN,1,3,0,0,1,https://www.minneapolis.edu/,5264.0,,,,,,,,,,,,
@@ -1346,7 +1346,7 @@ id,name,city,state,ctrl,size,hbcu,womens,yr2,web,tin,adm,sat25,sat75,act25,act75
 178341,Missouri Southern State University,Joplin,MO,1,2,0,0,0,https://www.mssu.edu/,8400.0,97.4,1000.0,1170.0,18.0,24.0,38.0,,,,,,
 178369,Missouri Valley College,Marshall,MO,2,2,0,0,0,https://www.moval.edu/,21300.0,52.7,920.0,1140.0,16.0,22.0,24.0,,,,,,
 178387,Missouri Western State University,Saint Joseph,MO,1,2,0,0,0,https://www.missouriwestern.edu/,7740.0,,,,,,39.0,,,,,,
-178396,University of Missouri-Columbia,Columbia,MO,1,5,0,0,0,https://missouri.edu/,13008.0,77.0,1150.0,1330.0,23.0,29.0,76.0,,,,,,
+178396,University of Missouri-Columbia,Columbia,MO,1,5,0,0,0,https://missouri.edu/,13008.0,77.0,1150.0,1330.0,23.0,29.0,76.0,,,,38.9404,-92.3274,11908.0
 178402,University of Missouri-Kansas City,Kansas City,MO,1,4,0,0,0,https://www.umkc.edu/,11190.0,75.0,1150.0,1540.0,21.0,29.0,56.0,,,,,,
 178411,Missouri University of Science and Technology,Rolla,MO,1,3,0,0,0,https://www.mst.edu/,13008.0,73.1,1150.0,1378.0,25.0,31.0,64.0,,,,,,
 178420,University of Missouri-St Louis,Saint Louis,MO,1,4,0,0,0,https://www.umsl.edu/,14400.0,57.2,1030.0,1220.0,20.0,27.0,57.0,,,,,,
@@ -1416,7 +1416,7 @@ id,name,city,state,ctrl,size,hbcu,womens,yr2,web,tin,adm,sat25,sat75,act25,act75
 181419,Nebraska Indian Community College,Macy,NE,1,1,0,0,0,https://www.thenicc.edu/,4080.0,,,,,,17.0,,,,,,
 181428,University of Nebraska Medical Center,Omaha,NE,1,2,0,0,0,https://www.unmc.edu/,11340.0,,,,,,,,,,,,
 181446,Nebraska Wesleyan University,Lincoln,NE,2,2,0,0,0,https://www.nebrwesleyan.edu/,40648.0,83.7,1020.0,1210.0,22.0,27.0,69.0,,,,,,
-181464,University of Nebraska-Lincoln,Lincoln,NE,1,5,0,0,0,https://www.unl.edu/,8010.0,77.1,1090.0,1330.0,22.0,28.0,66.0,,,,,,
+181464,University of Nebraska-Lincoln,Lincoln,NE,1,5,0,0,0,https://www.unl.edu/,8010.0,77.1,1090.0,1330.0,22.0,28.0,66.0,,,,40.8201,-96.7005,12658.0
 181491,Northeast Community College,Norfolk,NE,1,3,0,0,1,https://northeast.edu/,3240.0,,,,,,,,,,,,
 181534,Peru State College,Peru,NE,1,2,0,0,0,https://www.peru.edu/,5760.0,,,,,,38.0,,,,,,
 181543,Summit Christian College,Gering,NE,2,1,0,0,0,https://www.summitcc.edu/,7360.0,14.3,,,,,,,,,,,
@@ -1492,7 +1492,7 @@ id,name,city,state,ctrl,size,hbcu,womens,yr2,web,tin,adm,sat25,sat75,act25,act75
 185828,New Jersey Institute of Technology,Newark,NJ,1,4,0,0,0,https://www.njit.edu/,15616.0,66.9,1210.0,1470.0,25.0,32.0,72.0,,,,,,
 185873,Ocean County College,Toms River,NJ,1,3,0,0,1,https://www.ocean.edu/,4752.0,,,,,,,,,,,,
 186034,Passaic County Community College,Paterson,NJ,1,3,0,0,1,https://web.pccc.edu/,7500.0,,,,,,,,,,,,
-186131,Princeton University,Princeton,NJ,2,3,0,0,0,https://www.princeton.edu/,59710.0,4.5,1500.0,1580.0,34.0,35.0,97.0,,,,40.3431,-74.6551,
+186131,Princeton University,Princeton,NJ,2,3,0,0,0,https://www.princeton.edu/,59710.0,4.5,1500.0,1580.0,34.0,35.0,97.0,,,,40.3431,-74.6551,18180.0
 186186,Rabbinical College of America,Morristown,NJ,2,1,0,0,0,https://www.rca.edu/,13000.0,87.1,,,,,18.0,,,,,,
 186201,Ramapo College of New Jersey,Mahwah,NJ,1,3,0,0,0,https://www.ramapo.edu/,15978.0,73.2,1120.0,1270.0,21.0,26.0,72.0,,,,,,
 186283,Rider University,Lawrenceville,NJ,2,2,0,0,0,https://www.rider.edu/,37700.0,79.4,1100.0,1310.0,22.0,29.0,63.0,,,,,,
@@ -1540,232 +1540,232 @@ id,name,city,state,ctrl,size,hbcu,womens,yr2,web,tin,adm,sat25,sat75,act25,act75
 188225,University of New Mexico-Taos Campus,Ranchos de Taos,NM,1,1,0,0,1,https://taos.unm.edu/,1872.0,,,,,,,,,,,,
 188261,Mesalands Community College,Tucumcari,NM,1,1,0,0,1,https://www.mesalands.edu/,1512.0,,,,,,,,,,,,
 188304,Western New Mexico University,Silver City,NM,1,2,0,0,0,https://www.wnmu.edu/,4914.0,,,,,,35.0,,,,,,
-188340,Vaughn College of Aeronautics and Technology,Flushing,NY,2,2,0,0,0,https://www.vaughn.edu/,28000.0,,,,,,40.0,,,,,,
-188429,Adelphi University,Garden City,NY,2,3,0,0,0,https://www.adelphi.edu/,45450.0,77.5,1140.0,1310.0,24.0,30.0,69.0,,,,,,
-188438,SUNY Adirondack,Queensbury,NY,1,2,0,0,1,https://www.sunyacc.edu/,5328.0,,,,,,,,,,,,
-188517,Bryant & Stratton College-Albany,Albany,NY,2,1,0,0,0,https://www.bryantstratton.edu/,18610.0,,,,,,22.0,,,,,,
-188526,Albany College of Pharmacy and Health Sciences,Albany,NY,2,1,0,0,0,https://www.acphs.edu/,39100.0,59.1,1120.0,1380.0,28.0,33.0,69.0,,,,,,
-188641,Alfred University,Alfred,NY,2,2,0,0,0,https://www.alfred.edu/,38270.0,48.3,1100.0,1280.0,24.0,31.0,56.0,,,,,,
-188669,The Ailey School,New York,NY,2,1,0,0,1,https://www.theaileyschool.edu/,13925.0,49.2,,,,,,,,,,,
-188678,American Academy of Dramatic Arts-New York,New York,NY,2,1,0,0,1,https://www.aada.edu/,38725.0,81.3,,,,,,,,,,,
-188687,American Academy McAllister Institute of Funeral Service,New York,NY,2,1,0,0,1,https://www.funeraleducation.org/,19838.0,,,,,,,,,,,,
-188854,American Musical and Dramatic Academy,New York,NY,2,2,0,0,0,https://www.amda.edu/,45260.0,24.7,,,,,72.0,,,,,,
-188915,Arnot Ogden Medical Center,Elmira,NY,2,1,0,0,1,https://www.arnothealth.org/,,100.0,,,,,,,,,,,
-188942,Associated Beth Rivkah Schools,Brooklyn,NY,2,1,0,0,0,https://www.bethrivkah.edu/dhl,9700.0,100.0,,,,,74.0,,,,,,
-189088,Bard College,Annandale-On-Hudson,NY,2,2,0,0,0,https://www.bard.edu/,62790.0,52.3,1290.0,1440.0,30.0,32.0,73.0,,,,,,
-189097,Barnard College,New York,NY,2,2,0,0,0,https://www.barnard.edu/,64078.0,8.0,1453.0,1550.0,32.0,34.0,93.0,,,,40.8076,-73.9641,
-189228,Berkeley College-New York,New York,NY,3,2,0,0,0,https://berkeleycollege.edu/,25781.0,,,,,,40.0,,,,,,
-189273,Beth Hamedrash Shaarei Yosher Institute,Brooklyn,NY,2,1,0,0,0,https://bhsy.edu/,12000.0,90.3,,,,,35.0,,,,,,
-189282,Mount Sinai Phillips School of Nursing,New York,NY,2,1,0,0,0,https://www.pson.edu/,39900.0,,,,,,,,,,,,
-189413,Boricua College,New York,NY,2,1,0,0,0,https://www.boricuacollege.edu/,12500.0,,,,,,71.0,,,,,,
-189547,SUNY Broome Community College,Binghamton,NY,1,3,0,0,1,https://www.sunybroome.edu/,5472.0,,,,,,,,,,,,
-189565,Bryant & Stratton College-Syracuse North,Liverpool,NY,2,1,0,0,0,https://www.bryantstratton.edu/,19459.0,,,,,,25.0,,,,,,
-189583,Bryant & Stratton College-Buffalo,Buffalo,NY,2,2,0,0,0,https://www.bryantstratton.edu/,17768.0,,,,,,28.0,,,,,,
-189592,Bryant & Stratton College-Greece,Rochester,NY,2,1,0,0,0,https://www.bryantstratton.edu/,18573.0,,,,,,30.0,,,,,,
-189705,Canisius University,Buffalo,NY,2,2,0,0,0,https://www.canisius.edu/,31100.0,81.8,,,,,71.0,,,,,,
-189811,St Paul's School of Nursing-Queens,Rego Park,NY,3,1,0,0,1,https://www.stpaulsschoolofnursing.edu/,16897.0,,,,,,,,,,,,
-189839,Cayuga County Community College,Auburn,NY,1,2,0,0,1,https://www.cayuga-cc.edu/,5136.0,,,,,,,,,,,,
-189857,Central Yeshiva Tomchei Tmimim Lubavitz,Brooklyn,NY,2,1,0,0,0,https://cyttl.edu/,8400.0,88.5,,,,,3.0,,,,,,
-190008,Circle in the Square Theatre School,New York,NY,2,1,0,0,1,https://www.circlesquare.org/,24000.0,3.8,,,,,,,,,,,
-190044,Clarkson University,Potsdam,NY,2,2,0,0,0,https://www.clarkson.edu/,56642.0,77.2,1198.0,1390.0,26.0,31.0,74.0,,,,,,
-190053,Clinton Community College,Plattsburgh,NY,1,2,0,0,1,https://www.clinton.edu/,5518.0,,,,,,,,,,,,
-190071,Cochran School of Nursing,Yonkers,NY,2,1,0,0,1,https://www.cochranschoolofnursing.us/,8120.0,,,,,,,,,,,,
-190099,Colgate University,Hamilton,NY,2,2,0,0,0,https://www.colgate.edu/,66622.0,12.0,1430.0,1530.0,33.0,34.0,91.0,,,,,,
-190114,Metropolitan College of New York,New York,NY,2,1,0,0,0,https://www.mcny.edu/,19338.0,76.5,,,,,25.0,,,,,,
-190150,Columbia University in the City of New York,New York,NY,2,5,0,0,0,https://www.columbia.edu/,64526.0,4.2,1490.0,1570.0,34.0,35.0,94.0,,,,40.8075,-73.9626,
-190169,Columbia-Greene Community College,Hudson,NY,1,2,0,0,1,https://www.sunycgcc.edu/,5256.0,,,,,,,,,,,,
-190372,The Cooper Union for the Advancement of Science and Art,New York,NY,2,1,0,0,0,https://www.cooper.edu/,44550.0,19.1,1400.0,1520.0,33.0,34.0,80.0,,,,,,
-190415,Cornell University,Ithaca,NY,2,5,0,0,0,https://www.cornell.edu/,65204.0,8.2,1480.0,1560.0,33.0,35.0,95.0,,,,,,
-190442,SUNY Corning Community College,Corning,NY,1,2,0,0,1,https://www.corning-cc.edu/,5170.0,,,,,,,,,,,,
-190451,Pomeroy College of Nursing at Crouse Hospital,East Syracuse,NY,2,1,0,0,1,https://www.crouse.org/nursing,16328.0,40.0,,,,,,,,,,,
-190503,Culinary Institute of America,Hyde Park,NY,2,2,0,0,0,https://www.ciachef.edu/,35520.0,91.8,970.0,1195.0,17.0,25.0,65.0,,,,,,
-190512,CUNY Bernard M Baruch College,New York,NY,1,4,0,0,0,https://www.baruch.cuny.edu/,6930.0,51.0,1210.0,1410.0,,,72.0,3.25,3.8,3.69,40.7405,-73.9836,
-190521,CUNY Borough of Manhattan Community College,New York,NY,1,4,0,0,1,https://www.bmcc.cuny.edu/,4800.0,100.0,,,,,,,,,40.7195,-74.002,
-190530,CUNY Bronx Community College,Bronx,NY,1,3,0,0,1,https://www.bcc.cuny.edu/,4800.0,100.0,,,,,,,,,40.8521,-73.9076,
-190549,CUNY Brooklyn College,Brooklyn,NY,1,4,0,0,0,https://www.brooklyn.cuny.edu/,6930.0,54.0,1140.0,1420.0,,,57.0,3.02,3.63,3.46,40.6297,-73.9547,
-190558,College of Staten Island CUNY,Staten Island,NY,1,4,0,0,0,https://www.csi.cuny.edu/,6930.0,98.0,,,,,33.0,2.87,3.43,3.25,40.6024,-74.1502,
-190567,CUNY City College,New York,NY,1,4,0,0,0,https://www.ccny.cuny.edu/,6930.0,60.0,1220.0,1460.0,,,55.0,3.03,3.64,3.46,40.8196,-73.9499,
-190576,CUNY Graduate School and University Center,New York,NY,1,3,0,0,0,https://www.gc.cuny.edu/,6930.0,38.6,,,,,,,,,,,
-190585,CUNY Hostos Community College,Bronx,NY,1,3,0,0,1,https://www.hostos.cuny.edu/,4800.0,100.0,,,,,,,,,40.8182,-73.9281,
-190594,CUNY Hunter College,New York,NY,1,5,0,0,0,https://www.hunter.cuny.edu/,6930.0,53.0,1210.0,1470.0,,,61.0,3.12,3.72,3.56,40.7678,-73.9645,
-190600,CUNY John Jay College of Criminal Justice,New York,NY,1,4,0,0,0,https://www.jjay.cuny.edu/,6930.0,56.0,1000.0,1250.0,,,55.0,2.94,3.52,3.35,40.7484,-74.0014,
-190619,CUNY Kingsborough Community College,Brooklyn,NY,1,4,0,0,1,https://www.kbcc.cuny.edu/,4800.0,100.0,,,,,,,,,40.5781,-73.9553,
-190628,CUNY LaGuardia Community College,Long Island City,NY,1,4,0,0,1,https://www.lagcc.cuny.edu/,4800.0,100.0,,,,,,,,,40.7428,-73.9442,
-190637,CUNY Lehman College,Bronx,NY,1,4,0,0,0,https://www.lehman.edu/,6930.0,68.0,860.0,1220.0,,,49.0,2.96,3.56,3.39,40.8732,-73.8945,
-190646,CUNY Medgar Evers College,Brooklyn,NY,1,2,0,0,0,https://www.mec.cuny.edu/,6930.0,80.0,780.0,1000.0,,,22.0,2.44,2.92,2.8,40.6631,-73.9414,
-190655,CUNY New York City College of Technology,Brooklyn,NY,1,4,0,0,0,https://www.citytech.cuny.edu/,6930.0,73.0,880.0,1200.0,,,19.0,2.58,3.04,2.91,40.693,-73.9852,
-190664,CUNY Queens College,Queens,NY,1,4,0,0,0,https://www.qc.cuny.edu/,6930.0,55.0,1100.0,1320.0,,,60.0,3.13,3.73,3.57,40.7362,-73.82,
-190673,CUNY Queensborough Community College,Bayside,NY,1,4,0,0,1,https://www.qcc.cuny.edu/,4800.0,100.0,,,,,,,,,40.7553,-73.7575,
-190691,CUNY York College,Jamaica,NY,1,3,0,0,0,https://www.york.cuny.edu/,6930.0,64.0,990.0,1210.0,,,30.0,2.54,3.0,2.88,40.6673,-73.7942,
-190707,CVPH Medical Center School of Radiologic Technology,Plattsburgh,NY,2,1,0,0,1,https://www.cvph.org/Residency-and-Education/School-of-Radiology/,,41.2,,,,,,,,,,,
-190716,D'Youville  University,Buffalo,NY,2,2,0,0,0,https://www.dyu.edu/,32400.0,82.4,885.0,1190.0,,,57.0,,,,,,
-190725,Daemen University,Amherst,NY,2,2,0,0,0,https://www.daemen.edu/,33054.0,76.2,,,,,58.0,,,,,,
-190752,Yeshiva of Far Rockaway Derech Ayson Rabbinical Seminary,Far Rockaway,NY,2,1,0,0,0,https://www.yofr.org/,10400.0,88.0,,,,,53.0,,,,,,
-190761,Dominican University New York,Orangeburg,NY,2,2,0,0,0,https://www.duny.edu/,32160.0,78.8,1095.0,1235.0,,,57.0,,,,,,
-190840,Dutchess Community College,Poughkeepsie,NY,1,3,0,0,1,https://www.sunydutchess.edu/,4800.0,,,,,,,,,,,,
-190956,Belanger School of Nursing,Schenectady,NY,2,1,0,0,1,https://www.ellismedicine.org/school-of-nursing/,10114.0,82.8,,,,,,,,,,,
-190983,Elmira College,Elmira,NY,2,1,0,0,0,https://www.elmira.edu/,36152.0,90.8,1116.0,1332.0,,,64.0,,,,,,
-191083,Erie Community College,Buffalo,NY,1,3,0,0,1,https://www.ecc.edu/,10400.0,,,,,,,,,,,,
-191126,Fashion Institute of Technology,New York,NY,1,3,0,0,0,https://www.fitnyc.edu/,7170.0,57.6,,,,,83.0,,,,,,
-191199,Finger Lakes Community College,Canandaigua,NY,1,3,0,0,1,https://www.flcc.edu/,5280.0,,,,,,,,,,,,
-191205,Five Towns College,Dix Hills,NY,3,1,0,0,0,https://www.ftc.edu/,28450.0,72.0,,,,,49.0,,,,,,
-191241,Fordham University,Bronx,NY,2,4,0,0,0,https://www.fordham.edu/,60335.0,56.3,1330.0,1490.0,30.0,33.0,80.0,,,,,,
-191302,Fulton-Montgomery Community College,Johnstown,NY,1,2,0,0,1,https://www.fmcc.edu/,5376.0,,,,,,,,,,,,
-191339,Genesee Community College,Batavia,NY,1,2,0,0,1,https://www.genesee.edu/,5150.0,,,,,,,,,,,,
-191515,Hamilton College,Clinton,NY,2,2,0,0,0,https://www.hamilton.edu/,62090.0,11.8,1410.0,1550.0,32.0,35.0,91.0,,,,,,
-191533,Hartwick College,Oneonta,NY,2,2,0,0,0,https://www.hartwick.edu/,51762.0,68.7,1090.0,1280.0,,,46.0,,,,,,
-191597,Helene Fuld College of Nursing,New York,NY,2,1,0,0,0,https://www.helenefuld.edu/,22267.0,23.8,,,,,,,,,,,
-191612,Herkimer County Community College,Herkimer,NY,1,2,0,0,1,https://www.herkimer.edu/,5116.0,,,,,,,,,,,,
-191621,Hilbert College,Hamburg,NY,2,1,0,0,0,https://www.hilbert.edu/,29300.0,98.0,980.0,1180.0,,,47.0,,,,,,
-191630,Hobart William Smith Colleges,Geneva,NY,2,2,0,0,0,https://www.hws.edu/,61858.0,57.3,1220.0,1360.0,26.0,32.0,73.0,,,,,,
-191649,Hofstra University,Hempstead,NY,2,4,0,0,0,https://www.hofstra.edu/,54335.0,70.6,1210.0,1380.0,27.0,31.0,67.0,,,,,,
-191676,Houghton University,Houghton,NY,2,2,0,0,0,https://www.houghton.edu/,16690.0,92.7,1180.0,1390.0,23.0,28.0,64.0,,,,,,
-191719,Hudson Valley Community College,Troy,NY,1,3,0,0,1,https://www.hvcc.edu/,5056.0,,,,,,,,,,,,
-191931,Iona University,New Rochelle,NY,2,2,0,0,0,https://www.iona.edu/,43680.0,91.1,1055.0,1265.0,20.0,28.0,57.0,,,,,,
-191940,Isabella Graham Hart School of Practical Nursing,Rochester,NY,2,1,0,0,0,https://www.rochesterregional.org/for-healthcare-professionals/residency-training-programs/igh-school-of-practical-nursing/,,96.2,,,,,,,,,,,
-191959,Island Drafting and Technical Institute,Amityville,NY,3,1,0,0,1,https://www.idti.edu/,18750.0,,,,,,,,,,,,
-191968,Ithaca College,Ithaca,NY,2,2,0,0,0,https://www.ithaca.edu/,50070.0,69.9,1190.0,1370.0,27.0,31.0,74.0,,,,,,
-191986,Jamestown Community College,Jamestown,NY,1,2,0,0,1,https://www.sunyjcc.edu/,5440.0,,,,,,,,,,,,
-192004,Jamestown Business College,Jamestown,NY,3,1,0,0,0,https://www.jbc.edu/,12000.0,85.8,,,,,61.0,,,,,,
-192022,Jefferson Community College,Watertown,NY,1,2,0,0,1,https://www.sunyjefferson.edu/,5304.0,,,,,,,,,,,,
-192040,Jewish Theological Seminary of America,New York,NY,2,1,0,0,0,https://www.jtsa.edu/,62676.0,45.1,1440.0,1559.0,33.0,35.0,87.0,,,,,,
-192110,The Juilliard School,New York,NY,2,2,0,0,0,https://www.juilliard.edu/,53300.0,9.0,,,,,90.0,,,,,,
-192165,Kehilath Yakov Rabbinical Seminary,Ossining,NY,2,1,0,0,0,https://kehilathyakov.com/,12800.0,,,,,,47.0,,,,,,
-192192,Keuka College,Keuka Park,NY,2,2,0,0,0,https://www.keuka.edu/,36500.0,93.9,1008.0,1183.0,,,49.0,,,,,,
-192271,LIM College,New York,NY,3,2,0,0,0,https://www.limcollege.edu/,31090.0,98.7,990.0,1200.0,15.0,25.0,53.0,,,,,,
-192323,Le Moyne College,Syracuse,NY,2,2,0,0,0,https://www.lemoyne.edu/,37770.0,75.3,1160.0,1340.0,25.0,31.0,71.0,,,,,,
-192448,Long Island University,Brookville,NY,2,4,0,0,0,https://www.liu.edu/,39458.0,89.8,1140.0,1350.0,25.0,30.0,55.0,,,,,,
-192509,Long Island Business Institute,Flushing,NY,3,1,0,0,1,https://www.libi.edu/,9800.0,73.2,,,,,,,,,,,
-192624,Machzikei Hadath Rabbinical College,Brooklyn,NY,2,1,0,0,0,https://mhrc.edu/,13500.0,95.0,,,,,28.0,,,,,,
-192688,Mandl School-The College of Allied Health,New York,NY,3,1,0,0,1,https://www.mandl.edu/,19980.0,,,,,,,,,,,,
-192703,Manhattan College,Riverdale,NY,2,2,0,0,0,https://www.manhattan.edu/,46100.0,78.5,1150.0,1340.0,22.0,31.0,66.0,,,,41.7701,-73.9021,
-192712,Manhattan School of Music,New York,NY,2,2,0,0,0,https://www.msmnyc.edu/,53500.0,39.9,,,,,78.0,,,,,,
-192749,Manhattanville College,Purchase,NY,2,2,0,0,0,https://www.mville.edu/,40850.0,84.7,,,,,54.0,,,,,,
-192785,Maria College of Albany,Albany,NY,2,1,0,0,0,https://www.mariacollege.edu/,16980.0,60.9,965.0,1095.0,,,43.0,,,,,,
-192800,Marion S Whelan School of Nursing of Geneva General Hospital,Geneva,NY,2,1,0,0,0,https://www.mswspn.com/,8925.0,100.0,,,,,,,,,,,
-192819,Marist College,Poughkeepsie,NY,2,3,0,0,0,https://www.marist.edu/,45330.0,64.7,1220.0,1360.0,27.0,30.0,80.0,,,,,,
-192864,Marymount Manhattan College,New York,NY,2,2,0,0,0,https://www.mmm.edu/,38400.0,78.9,1100.0,1300.0,25.0,29.0,50.0,,,,,,
-192961,St. Peter's Hospital College of Nursing,Albany,NY,2,1,0,0,1,https://www.sphp.com/careers/schools-of-nursing/,11456.0,100.0,,,,,,,,,,,
-192970,Memorial Hospital School of Radiation Therapy Technology,New York,NY,2,1,0,0,1,https://www.mskcc.org/mskcc/html/13431.cfm,5000.0,,,,,,,,,,,,
-193016,Mercy University,Dobbs Ferry,NY,2,3,0,0,0,https://www.mercy.edu/,21236.0,85.5,,,,,48.0,,,,41.0093,-73.8585,
-193052,Mesivta Torah Vodaath Rabbinical Seminary,Brooklyn,NY,2,1,0,0,0,https://independentrabbinicalcolleges.org/index.html,12500.0,89.7,,,,,,,,,,,
-193061,Mesivta of Eastern Parkway-Yeshiva Zichron Meilech,Brooklyn,NY,2,1,0,0,0,https://mesivtaofeasternparkway.com/,10100.0,62.5,,,,,,,,,,,
-193070,Mesivtha Tifereth Jerusalem of America,New York,NY,2,1,0,0,0,https://mtj.edu/,13560.0,60.9,,,,,17.0,,,,,,
-193201,Mildred Elley School-Albany Campus,Albany,NY,3,1,0,0,1,https://www.mildred-elley.edu/,13275.0,,,,,,,,,,,,
-193247,Mirrer Yeshiva Cent Institute,Brooklyn,NY,2,1,0,0,0,https://www.mirreryeshiva.com/,12500.0,77.8,,,,,64.0,,,,,,
-193283,Mohawk Valley Community College,Utica,NY,1,3,0,0,1,https://www.mvcc.edu/,5162.0,,,,,,,,,,,,
-193292,Molloy College,Rockville Centre,NY,2,2,0,0,0,https://www.molloy.edu/,36280.0,75.6,1080.0,1310.0,24.0,29.0,72.0,,,,,,
-193308,Monroe College,Bronx,NY,3,3,0,0,0,https://www.monroecollege.edu/,15912.0,65.9,,,,,57.0,,,,,,
-193326,Monroe Community College,Rochester,NY,1,3,0,0,1,https://www.monroecc.edu/,4900.0,,,,,,,,,,,,
-193353,Mount Saint Mary College,Newburgh,NY,2,2,0,0,0,https://www.msmc.edu/,39820.0,82.5,1090.0,1255.0,,,66.0,,,,,,
-193380,Montefiore School of Nursing,Mount Vernon,NY,2,1,0,0,1,https://montefiorenewrochelle.org/school-of-nursing,22620.0,,,,,,,,,,,,
-193399,University of Mount Saint Vincent,Bronx,NY,2,2,0,0,0,https://www.mountsaintvincent.edu/,41200.0,84.6,920.0,1200.0,,,57.0,,,,,,
-193478,Nassau Community College,Garden City,NY,1,4,0,0,1,https://www.ncc.edu/,5800.0,,,,,,,,,,,,
-193584,Nazareth University,Rochester,NY,2,2,0,0,0,https://www2.naz.edu/,38790.0,79.5,1170.0,1330.0,25.0,30.0,73.0,,,,,,
-193609,Neighborhood Playhouse School of the Theater,New York City,NY,2,1,0,0,1,https://www.neighborhoodplayhouse.org/,17900.0,70.6,,,,,,,,,,,
-193654,The New School,New York,NY,2,3,0,0,0,https://www.newschool.edu/,54995.0,62.5,,,,,71.0,,,,,,
-193900,New York University,New York,NY,2,5,0,0,0,https://www.nyu.edu/,60438.0,9.4,1480.0,1570.0,33.0,35.0,88.0,,,,40.7295,-73.9965,
-193946,Niagara County Community College,Sanborn,NY,1,2,0,0,1,https://www.niagaracc.suny.edu/,5136.0,,,,,,,,,,,,
-193973,Niagara University,Niagara University,NY,2,2,0,0,0,https://www.niagara.edu/,36100.0,85.3,1030.0,1240.0,23.0,27.0,70.0,,,,,,
-194028,North Country Community College,Saranac Lake,NY,1,2,0,0,1,https://www.nccc.edu/,5280.0,,,,,,,,,,,,
-194091,New York Institute of Technology,Old Westbury,NY,2,3,0,0,0,https://www.nyit.edu/,41960.0,78.1,1180.0,1390.0,25.0,33.0,56.0,,,,,,
-194116,New York School of Interior Design,New York,NY,2,1,0,0,0,https://www.nysid.edu/,36600.0,60.3,,,,,54.0,,,,,,
-194189,Ohr Hameir Theological Seminary,Peekskill,NY,2,1,0,0,0,https://ohrhameir.com/,10050.0,,,,,,,,,,,,
-194222,Onondaga Community College,Syracuse,NY,1,3,0,0,1,https://www.sunyocc.edu/,5290.0,,,,,,,,,,,,
-194240,Orange County Community College,Middletown,NY,1,3,0,0,1,https://sunyorange.edu/,5664.0,,,,,,,,,,,,
-194310,Pace University,New York,NY,2,4,0,0,0,https://www.pace.edu/,49550.0,77.1,1130.0,1328.0,24.0,29.0,61.0,,,,,,
-194392,Paul Smiths College of Arts and Science,Paul Smiths,NY,2,1,0,0,0,https://www.paulsmiths.edu/,32012.0,90.7,,,,,53.0,,,,,,
-194499,Plaza College,Forest Hills,NY,3,1,0,0,0,https://www.plazacollege.edu/,14000.0,30.0,,,,,62.0,,,,,,
-194569,Davis College,Pottersville,NY,2,1,0,0,0,https://davisny.edu/,16800.0,33.3,,,,,39.0,,,,,,
-194578,Pratt Institute-Main,Brooklyn,NY,2,3,0,0,0,https://www.pratt.edu/,57659.0,53.2,1220.0,1420.0,26.0,32.0,72.0,,,,,,
-194657,Rabbinical Academy Mesivta Rabbi Chaim Berlin,Brooklyn,NY,2,1,0,0,0,https://rabbinicalacademyrabbichaimberlin.com/,10800.0,100.0,,,,,19.0,,,,,,
-194666,Rabbinical College Bobover Yeshiva Bnei Zion,Brooklyn,NY,2,1,0,0,0,https://rabbinicalcollegeboboveryeshiva.edu/,10000.0,,,,,,97.0,,,,,,
-194693,Rabbinical College Beth Shraga,Monsey,NY,2,1,0,0,0,https://rabbinicalcollegebethshraga.com/,15800.0,92.6,,,,,45.0,,,,,,
+188340,Vaughn College of Aeronautics and Technology,Flushing,NY,2,2,0,0,0,https://www.vaughn.edu/,28000.0,,,,,,40.0,,,,40.7674,-73.833,
+188429,Adelphi University,Garden City,NY,2,3,0,0,0,https://www.adelphi.edu/,45450.0,77.5,1140.0,1310.0,24.0,30.0,69.0,,,,40.7268,-73.6333,
+188438,SUNY Adirondack,Queensbury,NY,1,2,0,0,1,https://www.sunyacc.edu/,5328.0,,,,,,,,,,43.3117,-73.6862,
+188517,Bryant & Stratton College-Albany,Albany,NY,2,1,0,0,0,https://www.bryantstratton.edu/,18610.0,,,,,,22.0,,,,42.6526,-73.7562,
+188526,Albany College of Pharmacy and Health Sciences,Albany,NY,2,1,0,0,0,https://www.acphs.edu/,39100.0,59.1,1120.0,1380.0,28.0,33.0,69.0,,,,42.6526,-73.7562,
+188641,Alfred University,Alfred,NY,2,2,0,0,0,https://www.alfred.edu/,38270.0,48.3,1100.0,1280.0,24.0,31.0,56.0,,,,42.2537,-77.7925,
+188669,The Ailey School,New York,NY,2,1,0,0,1,https://www.theaileyschool.edu/,13925.0,49.2,,,,,,,,,40.7128,-74.006,
+188678,American Academy of Dramatic Arts-New York,New York,NY,2,1,0,0,1,https://www.aada.edu/,38725.0,81.3,,,,,,,,,40.7128,-74.006,
+188687,American Academy McAllister Institute of Funeral Service,New York,NY,2,1,0,0,1,https://www.funeraleducation.org/,19838.0,,,,,,,,,,40.7128,-74.006,
+188854,American Musical and Dramatic Academy,New York,NY,2,2,0,0,0,https://www.amda.edu/,45260.0,24.7,,,,,72.0,,,,40.7128,-74.006,
+188915,Arnot Ogden Medical Center,Elmira,NY,2,1,0,0,1,https://www.arnothealth.org/,,100.0,,,,,,,,,42.0898,-76.8077,
+188942,Associated Beth Rivkah Schools,Brooklyn,NY,2,1,0,0,0,https://www.bethrivkah.edu/dhl,9700.0,100.0,,,,,74.0,,,,40.6501,-73.9496,
+189088,Bard College,Annandale-On-Hudson,NY,2,2,0,0,0,https://www.bard.edu/,62790.0,52.3,1290.0,1440.0,30.0,32.0,73.0,,,,42.0265,-73.9099,16800.0
+189097,Barnard College,New York,NY,2,2,0,0,0,https://www.barnard.edu/,64078.0,8.0,1453.0,1550.0,32.0,34.0,93.0,,,,40.8076,-73.9641,17500.0
+189228,Berkeley College-New York,New York,NY,3,2,0,0,0,https://berkeleycollege.edu/,25781.0,,,,,,40.0,,,,40.7128,-74.006,17200.0
+189273,Beth Hamedrash Shaarei Yosher Institute,Brooklyn,NY,2,1,0,0,0,https://bhsy.edu/,12000.0,90.3,,,,,35.0,,,,40.6501,-73.9496,
+189282,Mount Sinai Phillips School of Nursing,New York,NY,2,1,0,0,0,https://www.pson.edu/,39900.0,,,,,,,,,,40.7128,-74.006,
+189413,Boricua College,New York,NY,2,1,0,0,0,https://www.boricuacollege.edu/,12500.0,,,,,,71.0,,,,40.7128,-74.006,
+189547,SUNY Broome Community College,Binghamton,NY,1,3,0,0,1,https://www.sunybroome.edu/,5472.0,,,,,,,,,,42.0987,-75.9159,0.0
+189565,Bryant & Stratton College-Syracuse North,Liverpool,NY,2,1,0,0,0,https://www.bryantstratton.edu/,19459.0,,,,,,25.0,,,,43.106,-76.2177,
+189583,Bryant & Stratton College-Buffalo,Buffalo,NY,2,2,0,0,0,https://www.bryantstratton.edu/,17768.0,,,,,,28.0,,,,42.8864,-78.8784,
+189592,Bryant & Stratton College-Greece,Rochester,NY,2,1,0,0,0,https://www.bryantstratton.edu/,18573.0,,,,,,30.0,,,,43.1566,-77.6088,
+189705,Canisius University,Buffalo,NY,2,2,0,0,0,https://www.canisius.edu/,31100.0,81.8,,,,,71.0,,,,42.9004,-78.8727,15400.0
+189811,St Paul's School of Nursing-Queens,Rego Park,NY,3,1,0,0,1,https://www.stpaulsschoolofnursing.edu/,16897.0,,,,,,,,,,40.7265,-73.8638,
+189839,Cayuga County Community College,Auburn,NY,1,2,0,0,1,https://www.cayuga-cc.edu/,5136.0,,,,,,,,,,42.9312,-76.5697,0.0
+189857,Central Yeshiva Tomchei Tmimim Lubavitz,Brooklyn,NY,2,1,0,0,0,https://cyttl.edu/,8400.0,88.5,,,,,3.0,,,,40.6501,-73.9496,
+190008,Circle in the Square Theatre School,New York,NY,2,1,0,0,1,https://www.circlesquare.org/,24000.0,3.8,,,,,,,,,40.7128,-74.006,
+190044,Clarkson University,Potsdam,NY,2,2,0,0,0,https://www.clarkson.edu/,56642.0,77.2,1198.0,1390.0,26.0,31.0,74.0,,,,44.676,-74.9872,16800.0
+190053,Clinton Community College,Plattsburgh,NY,1,2,0,0,1,https://www.clinton.edu/,5518.0,,,,,,,,,,44.6997,-73.458,0.0
+190071,Cochran School of Nursing,Yonkers,NY,2,1,0,0,1,https://www.cochranschoolofnursing.us/,8120.0,,,,,,,,,,40.9311,-73.8987,0.0
+190099,Colgate University,Hamilton,NY,2,2,0,0,0,https://www.colgate.edu/,66622.0,12.0,1430.0,1530.0,33.0,34.0,91.0,,,,40.8487,-73.9044,0.0
+190114,Metropolitan College of New York,New York,NY,2,1,0,0,0,https://www.mcny.edu/,19338.0,76.5,,,,,25.0,,,,40.7128,-74.006,
+190150,Columbia University in the City of New York,New York,NY,2,5,0,0,0,https://www.columbia.edu/,64526.0,4.2,1490.0,1570.0,34.0,35.0,94.0,,,,40.8075,-73.9626,16848.0
+190169,Columbia-Greene Community College,Hudson,NY,1,2,0,0,1,https://www.sunycgcc.edu/,5256.0,,,,,,,,,,42.2559,-73.7958,0.0
+190372,The Cooper Union for the Advancement of Science and Art,New York,NY,2,1,0,0,0,https://www.cooper.edu/,44550.0,19.1,1400.0,1520.0,33.0,34.0,80.0,,,,40.7307,-73.9989,0.0
+190415,Cornell University,Ithaca,NY,2,5,0,0,0,https://www.cornell.edu/,65204.0,8.2,1480.0,1560.0,33.0,35.0,95.0,,,,42.4534,-76.4735,17270.0
+190442,SUNY Corning Community College,Corning,NY,1,2,0,0,1,https://www.corning-cc.edu/,5170.0,,,,,,,,,,42.1413,-77.0552,0.0
+190451,Pomeroy College of Nursing at Crouse Hospital,East Syracuse,NY,2,1,0,0,1,https://www.crouse.org/nursing,16328.0,40.0,,,,,,,,,43.0644,-76.079,
+190503,Culinary Institute of America,Hyde Park,NY,2,2,0,0,0,https://www.ciachef.edu/,35520.0,91.8,970.0,1195.0,17.0,25.0,65.0,,,,41.7837,-73.9374,16860.0
+190512,CUNY Bernard M Baruch College,New York,NY,1,4,0,0,0,https://www.baruch.cuny.edu/,6930.0,51.0,1210.0,1410.0,,,72.0,3.25,3.8,3.69,40.7405,-73.9836,0.0
+190521,CUNY Borough of Manhattan Community College,New York,NY,1,4,0,0,1,https://www.bmcc.cuny.edu/,4800.0,100.0,,,,,,,,,40.7195,-74.002,0.0
+190530,CUNY Bronx Community College,Bronx,NY,1,3,0,0,1,https://www.bcc.cuny.edu/,4800.0,100.0,,,,,,,,,40.8521,-73.9076,0.0
+190549,CUNY Brooklyn College,Brooklyn,NY,1,4,0,0,0,https://www.brooklyn.cuny.edu/,6930.0,54.0,1140.0,1420.0,,,57.0,3.02,3.63,3.46,40.6297,-73.9547,0.0
+190558,College of Staten Island CUNY,Staten Island,NY,1,4,0,0,0,https://www.csi.cuny.edu/,6930.0,98.0,,,,,33.0,2.87,3.43,3.25,40.6024,-74.1502,0.0
+190567,CUNY City College,New York,NY,1,4,0,0,0,https://www.ccny.cuny.edu/,6930.0,60.0,1220.0,1460.0,,,55.0,3.03,3.64,3.46,40.8196,-73.9499,0.0
+190576,CUNY Graduate School and University Center,New York,NY,1,3,0,0,0,https://www.gc.cuny.edu/,6930.0,38.6,,,,,,,,,40.8732,-73.8945,0.0
+190585,CUNY Hostos Community College,Bronx,NY,1,3,0,0,1,https://www.hostos.cuny.edu/,4800.0,100.0,,,,,,,,,40.8182,-73.9281,0.0
+190594,CUNY Hunter College,New York,NY,1,5,0,0,0,https://www.hunter.cuny.edu/,6930.0,53.0,1210.0,1470.0,,,61.0,3.12,3.72,3.56,40.7678,-73.9645,0.0
+190600,CUNY John Jay College of Criminal Justice,New York,NY,1,4,0,0,0,https://www.jjay.cuny.edu/,6930.0,56.0,1000.0,1250.0,,,55.0,2.94,3.52,3.35,40.7484,-74.0014,0.0
+190619,CUNY Kingsborough Community College,Brooklyn,NY,1,4,0,0,1,https://www.kbcc.cuny.edu/,4800.0,100.0,,,,,,,,,40.5781,-73.9553,0.0
+190628,CUNY LaGuardia Community College,Long Island City,NY,1,4,0,0,1,https://www.lagcc.cuny.edu/,4800.0,100.0,,,,,,,,,40.7428,-73.9442,0.0
+190637,CUNY Lehman College,Bronx,NY,1,4,0,0,0,https://www.lehman.edu/,6930.0,68.0,860.0,1220.0,,,49.0,2.96,3.56,3.39,40.8732,-73.8945,0.0
+190646,CUNY Medgar Evers College,Brooklyn,NY,1,2,0,0,0,https://www.mec.cuny.edu/,6930.0,80.0,780.0,1000.0,,,22.0,2.44,2.92,2.8,40.6631,-73.9414,0.0
+190655,CUNY New York City College of Technology,Brooklyn,NY,1,4,0,0,0,https://www.citytech.cuny.edu/,6930.0,73.0,880.0,1200.0,,,19.0,2.58,3.04,2.91,40.693,-73.9852,0.0
+190664,CUNY Queens College,Queens,NY,1,4,0,0,0,https://www.qc.cuny.edu/,6930.0,55.0,1100.0,1320.0,,,60.0,3.13,3.73,3.57,40.7362,-73.82,0.0
+190673,CUNY Queensborough Community College,Bayside,NY,1,4,0,0,1,https://www.qcc.cuny.edu/,4800.0,100.0,,,,,,,,,40.7553,-73.7575,0.0
+190691,CUNY York College,Jamaica,NY,1,3,0,0,0,https://www.york.cuny.edu/,6930.0,64.0,990.0,1210.0,,,30.0,2.54,3.0,2.88,40.6673,-73.7942,0.0
+190707,CVPH Medical Center School of Radiologic Technology,Plattsburgh,NY,2,1,0,0,1,https://www.cvph.org/Residency-and-Education/School-of-Radiology/,,41.2,,,,,,,,,44.6997,-73.4534,
+190716,D'Youville  University,Buffalo,NY,2,2,0,0,0,https://www.dyu.edu/,32400.0,82.4,885.0,1190.0,,,57.0,,,,42.8864,-78.8784,
+190725,Daemen University,Amherst,NY,2,2,0,0,0,https://www.daemen.edu/,33054.0,76.2,,,,,58.0,,,,42.9787,-78.7981,
+190752,Yeshiva of Far Rockaway Derech Ayson Rabbinical Seminary,Far Rockaway,NY,2,1,0,0,0,https://www.yofr.org/,10400.0,88.0,,,,,53.0,,,,40.6098,-73.7591,
+190761,Dominican University New York,Orangeburg,NY,2,2,0,0,0,https://www.duny.edu/,32160.0,78.8,1095.0,1235.0,,,57.0,,,,41.0462,-73.9513,
+190840,Dutchess Community College,Poughkeepsie,NY,1,3,0,0,1,https://www.sunydutchess.edu/,4800.0,,,,,,,,,,41.7087,-73.9325,0.0
+190956,Belanger School of Nursing,Schenectady,NY,2,1,0,0,1,https://www.ellismedicine.org/school-of-nursing/,10114.0,82.8,,,,,,,,,42.8142,-73.9396,
+190983,Elmira College,Elmira,NY,2,1,0,0,0,https://www.elmira.edu/,36152.0,90.8,1116.0,1332.0,,,64.0,,,,42.089,-76.8058,14800.0
+191083,Erie Community College,Buffalo,NY,1,3,0,0,1,https://www.ecc.edu/,10400.0,,,,,,,,,,42.8847,-78.7947,0.0
+191126,Fashion Institute of Technology,New York,NY,1,3,0,0,0,https://www.fitnyc.edu/,7170.0,57.6,,,,,83.0,,,,40.7488,-74.0013,0.0
+191199,Finger Lakes Community College,Canandaigua,NY,1,3,0,0,1,https://www.flcc.edu/,5280.0,,,,,,,,,,42.869,-76.9848,0.0
+191205,Five Towns College,Dix Hills,NY,3,1,0,0,0,https://www.ftc.edu/,28450.0,72.0,,,,,49.0,,,,40.8026,-73.3465,
+191241,Fordham University,Bronx,NY,2,4,0,0,0,https://www.fordham.edu/,60335.0,56.3,1330.0,1490.0,30.0,33.0,80.0,,,,40.8617,-73.8855,20224.0
+191302,Fulton-Montgomery Community College,Johnstown,NY,1,2,0,0,1,https://www.fmcc.edu/,5376.0,,,,,,,,,,43.0028,-74.3677,0.0
+191339,Genesee Community College,Batavia,NY,1,2,0,0,1,https://www.genesee.edu/,5150.0,,,,,,,,,,43.0028,-74.3677,0.0
+191515,Hamilton College,Clinton,NY,2,2,0,0,0,https://www.hamilton.edu/,62090.0,11.8,1410.0,1550.0,32.0,35.0,91.0,,,,43.0508,-75.4058,17000.0
+191533,Hartwick College,Oneonta,NY,2,2,0,0,0,https://www.hartwick.edu/,51762.0,68.7,1090.0,1280.0,,,46.0,,,,42.4605,-75.0658,15500.0
+191597,Helene Fuld College of Nursing,New York,NY,2,1,0,0,0,https://www.helenefuld.edu/,22267.0,23.8,,,,,,,,,40.7128,-74.006,
+191612,Herkimer County Community College,Herkimer,NY,1,2,0,0,1,https://www.herkimer.edu/,5116.0,,,,,,,,,,43.0249,-74.9911,0.0
+191621,Hilbert College,Hamburg,NY,2,1,0,0,0,https://www.hilbert.edu/,29300.0,98.0,980.0,1180.0,,,47.0,,,,42.7406,-73.6718,0.0
+191630,Hobart William Smith Colleges,Geneva,NY,2,2,0,0,0,https://www.hws.edu/,61858.0,57.3,1220.0,1360.0,26.0,32.0,73.0,,,,42.8687,-76.9781,
+191649,Hofstra University,Hempstead,NY,2,4,0,0,0,https://www.hofstra.edu/,54335.0,70.6,1210.0,1380.0,27.0,31.0,67.0,,,,40.6632,-73.6046,19990.0
+191676,Houghton University,Houghton,NY,2,2,0,0,0,https://www.houghton.edu/,16690.0,92.7,1180.0,1390.0,23.0,28.0,64.0,,,,42.1924,-78.1602,14200.0
+191719,Hudson Valley Community College,Troy,NY,1,3,0,0,1,https://www.hvcc.edu/,5056.0,,,,,,,,,,42.7295,-73.6786,0.0
+191931,Iona University,New Rochelle,NY,2,2,0,0,0,https://www.iona.edu/,43680.0,91.1,1055.0,1265.0,20.0,28.0,57.0,,,,40.9146,-73.784,19200.0
+191940,Isabella Graham Hart School of Practical Nursing,Rochester,NY,2,1,0,0,0,https://www.rochesterregional.org/for-healthcare-professionals/residency-training-programs/igh-school-of-practical-nursing/,,96.2,,,,,,,,,43.1566,-77.6088,
+191959,Island Drafting and Technical Institute,Amityville,NY,3,1,0,0,1,https://www.idti.edu/,18750.0,,,,,,,,,,40.6787,-73.4148,
+191968,Ithaca College,Ithaca,NY,2,2,0,0,0,https://www.ithaca.edu/,50070.0,69.9,1190.0,1370.0,27.0,31.0,74.0,,,,42.4534,-76.4735,16800.0
+191986,Jamestown Community College,Jamestown,NY,1,2,0,0,1,https://www.sunyjcc.edu/,5440.0,,,,,,,,,,42.1011,-79.234,0.0
+192004,Jamestown Business College,Jamestown,NY,3,1,0,0,0,https://www.jbc.edu/,12000.0,85.8,,,,,61.0,,,,42.097,-79.2353,
+192022,Jefferson Community College,Watertown,NY,1,2,0,0,1,https://www.sunyjefferson.edu/,5304.0,,,,,,,,,,43.9747,-76.0097,0.0
+192040,Jewish Theological Seminary of America,New York,NY,2,1,0,0,0,https://www.jtsa.edu/,62676.0,45.1,1440.0,1559.0,33.0,35.0,87.0,,,,40.7716,-73.9999,22800.0
+192110,The Juilliard School,New York,NY,2,2,0,0,0,https://www.juilliard.edu/,53300.0,9.0,,,,,90.0,,,,40.7716,-73.9836,0.0
+192165,Kehilath Yakov Rabbinical Seminary,Ossining,NY,2,1,0,0,0,https://kehilathyakov.com/,12800.0,,,,,,47.0,,,,41.1626,-73.8635,
+192192,Keuka College,Keuka Park,NY,2,2,0,0,0,https://www.keuka.edu/,36500.0,93.9,1008.0,1183.0,,,49.0,,,,42.6248,-77.1011,
+192271,LIM College,New York,NY,3,2,0,0,0,https://www.limcollege.edu/,31090.0,98.7,990.0,1200.0,15.0,25.0,53.0,,,,40.7574,-73.9844,0.0
+192323,Le Moyne College,Syracuse,NY,2,2,0,0,0,https://www.lemoyne.edu/,37770.0,75.3,1160.0,1340.0,25.0,31.0,71.0,,,,43.0786,-76.1547,16500.0
+192448,Long Island University,Brookville,NY,2,4,0,0,0,https://www.liu.edu/,39458.0,89.8,1140.0,1350.0,25.0,30.0,55.0,,,,40.7522,-73.4328,19600.0
+192509,Long Island Business Institute,Flushing,NY,3,1,0,0,1,https://www.libi.edu/,9800.0,73.2,,,,,,,,,40.7574,-73.8325,0.0
+192624,Machzikei Hadath Rabbinical College,Brooklyn,NY,2,1,0,0,0,https://mhrc.edu/,13500.0,95.0,,,,,28.0,,,,40.6501,-73.9496,
+192688,Mandl School-The College of Allied Health,New York,NY,3,1,0,0,1,https://www.mandl.edu/,19980.0,,,,,,,,,,40.7128,-74.006,
+192703,Manhattan College,Riverdale,NY,2,2,0,0,0,https://www.manhattan.edu/,46100.0,78.5,1150.0,1340.0,22.0,31.0,66.0,,,,41.7701,-73.9021,17980.0
+192712,Manhattan School of Music,New York,NY,2,2,0,0,0,https://www.msmnyc.edu/,53500.0,39.9,,,,,78.0,,,,40.7128,-74.006,
+192749,Manhattanville College,Purchase,NY,2,2,0,0,0,https://www.mville.edu/,40850.0,84.7,,,,,54.0,,,,41.0336,-73.6907,17200.0
+192785,Maria College of Albany,Albany,NY,2,1,0,0,0,https://www.mariacollege.edu/,16980.0,60.9,965.0,1095.0,,,43.0,,,,42.6897,-73.7922,0.0
+192800,Marion S Whelan School of Nursing of Geneva General Hospital,Geneva,NY,2,1,0,0,0,https://www.mswspn.com/,8925.0,100.0,,,,,,,,,42.869,-76.9848,0.0
+192819,Marist College,Poughkeepsie,NY,2,3,0,0,0,https://www.marist.edu/,45330.0,64.7,1220.0,1360.0,27.0,30.0,80.0,,,,41.7072,-73.9325,16940.0
+192864,Marymount Manhattan College,New York,NY,2,2,0,0,0,https://www.mmm.edu/,38400.0,78.9,1100.0,1300.0,25.0,29.0,50.0,,,,40.7716,-73.979,14800.0
+192961,St. Peter's Hospital College of Nursing,Albany,NY,2,1,0,0,1,https://www.sphp.com/careers/schools-of-nursing/,11456.0,100.0,,,,,,,,,40.9748,-73.8358,0.0
+192970,Memorial Hospital School of Radiation Therapy Technology,New York,NY,2,1,0,0,1,https://www.mskcc.org/mskcc/html/13431.cfm,5000.0,,,,,,,,,,40.7128,-74.006,
+193016,Mercy University,Dobbs Ferry,NY,2,3,0,0,0,https://www.mercy.edu/,21236.0,85.5,,,,,48.0,,,,41.0093,-73.8585,14560.0
+193052,Mesivta Torah Vodaath Rabbinical Seminary,Brooklyn,NY,2,1,0,0,0,https://independentrabbinicalcolleges.org/index.html,12500.0,89.7,,,,,,,,,40.6501,-73.9496,
+193061,Mesivta of Eastern Parkway-Yeshiva Zichron Meilech,Brooklyn,NY,2,1,0,0,0,https://mesivtaofeasternparkway.com/,10100.0,62.5,,,,,,,,,40.64,-73.935,0.0
+193070,Mesivtha Tifereth Jerusalem of America,New York,NY,2,1,0,0,0,https://mtj.edu/,13560.0,60.9,,,,,17.0,,,,40.7128,-74.006,
+193201,Mildred Elley School-Albany Campus,Albany,NY,3,1,0,0,1,https://www.mildred-elley.edu/,13275.0,,,,,,,,,,42.6526,-73.7562,
+193247,Mirrer Yeshiva Cent Institute,Brooklyn,NY,2,1,0,0,0,https://www.mirreryeshiva.com/,12500.0,77.8,,,,,64.0,,,,40.687,-73.9454,0.0
+193283,Mohawk Valley Community College,Utica,NY,1,3,0,0,1,https://www.mvcc.edu/,5162.0,,,,,,,,,,43.2006,-75.456,0.0
+193292,Molloy College,Rockville Centre,NY,2,2,0,0,0,https://www.molloy.edu/,36280.0,75.6,1080.0,1310.0,24.0,29.0,72.0,,,,40.8979,-73.8885,13800.0
+193308,Monroe College,Bronx,NY,3,3,0,0,0,https://www.monroecollege.edu/,15912.0,65.9,,,,,57.0,,,,40.8487,-73.8941,0.0
+193326,Monroe Community College,Rochester,NY,1,3,0,0,1,https://www.monroecc.edu/,4900.0,,,,,,,,,,43.1457,-77.5876,0.0
+193353,Mount Saint Mary College,Newburgh,NY,2,2,0,0,0,https://www.msmc.edu/,39820.0,82.5,1090.0,1255.0,,,66.0,,,,41.5012,-74.0173,14680.0
+193380,Montefiore School of Nursing,Mount Vernon,NY,2,1,0,0,1,https://montefiorenewrochelle.org/school-of-nursing,22620.0,,,,,,,,,,40.9126,-73.8371,
+193399,University of Mount Saint Vincent,Bronx,NY,2,2,0,0,0,https://www.mountsaintvincent.edu/,41200.0,84.6,920.0,1200.0,,,57.0,,,,40.8979,-73.8885,15200.0
+193478,Nassau Community College,Garden City,NY,1,4,0,0,1,https://www.ncc.edu/,5800.0,,,,,,,,,,40.722,-73.5861,0.0
+193584,Nazareth University,Rochester,NY,2,2,0,0,0,https://www2.naz.edu/,38790.0,79.5,1170.0,1330.0,25.0,30.0,73.0,,,,43.159,-77.5897,16200.0
+193609,Neighborhood Playhouse School of the Theater,New York City,NY,2,1,0,0,1,https://www.neighborhoodplayhouse.org/,17900.0,70.6,,,,,,,,,40.7128,-74.006,
+193654,The New School,New York,NY,2,3,0,0,0,https://www.newschool.edu/,54995.0,62.5,,,,,71.0,,,,40.7358,-74.0003,20460.0
+193900,New York University,New York,NY,2,5,0,0,0,https://www.nyu.edu/,60438.0,9.4,1480.0,1570.0,33.0,35.0,88.0,,,,40.7295,-73.9965,21370.0
+193946,Niagara County Community College,Sanborn,NY,1,2,0,0,1,https://www.niagaracc.suny.edu/,5136.0,,,,,,,,,,43.1376,-79.0194,0.0
+193973,Niagara University,Niagara University,NY,2,2,0,0,0,https://www.niagara.edu/,36100.0,85.3,1030.0,1240.0,23.0,27.0,70.0,,,,43.1376,-79.0194,
+194028,North Country Community College,Saranac Lake,NY,1,2,0,0,1,https://www.nccc.edu/,5280.0,,,,,,,,,,44.3286,-74.1311,0.0
+194091,New York Institute of Technology,Old Westbury,NY,2,3,0,0,0,https://www.nyit.edu/,41960.0,78.1,1180.0,1390.0,25.0,33.0,56.0,,,,40.7548,-73.5994,16420.0
+194116,New York School of Interior Design,New York,NY,2,1,0,0,0,https://www.nysid.edu/,36600.0,60.3,,,,,54.0,,,,40.7405,-73.9903,0.0
+194189,Ohr Hameir Theological Seminary,Peekskill,NY,2,1,0,0,0,https://ohrhameir.com/,10050.0,,,,,,,,,,41.2948,-73.9196,
+194222,Onondaga Community College,Syracuse,NY,1,3,0,0,1,https://www.sunyocc.edu/,5290.0,,,,,,,,,,43.0786,-76.1547,0.0
+194240,Orange County Community College,Middletown,NY,1,3,0,0,1,https://sunyorange.edu/,5664.0,,,,,,,,,,41.4457,-74.4218,0.0
+194310,Pace University,New York,NY,2,4,0,0,0,https://www.pace.edu/,49550.0,77.1,1130.0,1328.0,24.0,29.0,61.0,,,,40.7128,-74.006,20350.0
+194392,Paul Smiths College of Arts and Science,Paul Smiths,NY,2,1,0,0,0,https://www.paulsmiths.edu/,32012.0,90.7,,,,,53.0,,,,44.4378,-74.2544,14200.0
+194499,Plaza College,Forest Hills,NY,3,1,0,0,0,https://www.plazacollege.edu/,14000.0,30.0,,,,,62.0,,,,40.7196,-73.8448,
+194569,Davis College,Pottersville,NY,2,1,0,0,0,https://davisny.edu/,16800.0,33.3,,,,,39.0,,,,40.7716,-73.8296,0.0
+194578,Pratt Institute-Main,Brooklyn,NY,2,3,0,0,0,https://www.pratt.edu/,57659.0,53.2,1220.0,1420.0,26.0,32.0,72.0,,,,40.687,-73.9772,16900.0
+194657,Rabbinical Academy Mesivta Rabbi Chaim Berlin,Brooklyn,NY,2,1,0,0,0,https://rabbinicalacademyrabbichaimberlin.com/,10800.0,100.0,,,,,19.0,,,,40.64,-73.935,0.0
+194666,Rabbinical College Bobover Yeshiva Bnei Zion,Brooklyn,NY,2,1,0,0,0,https://rabbinicalcollegeboboveryeshiva.edu/,10000.0,,,,,,97.0,,,,40.6501,-73.9496,
+194693,Rabbinical College Beth Shraga,Monsey,NY,2,1,0,0,0,https://rabbinicalcollegebethshraga.com/,15800.0,92.6,,,,,45.0,,,,41.1112,-74.0687,
 194718,Rabbinical Seminary Mkor Chaim,Lakewood,NJ,2,1,0,0,0,https://www.mkorchaim.org/,8300.0,100.0,,,,,,,,,,,
-194736,Rabbinical College of Long Island,Long Beach,NY,2,1,0,0,0,https://rabbinicalcollegelongisland.com/,9790.0,100.0,,,,,34.0,,,,,,
-194763,Rabbinical Seminary of America,Flushing,NY,2,1,0,0,0,https://www.rabbinical.org/,10000.0,97.5,,,,,34.0,,,,,,
-194824,Rensselaer Polytechnic Institute,Troy,NY,2,3,0,0,0,https://www.rpi.edu/,60360.0,58.4,1330.0,1500.0,30.0,34.0,83.0,,,,40.8617,-73.8855,
-194958,Roberts Wesleyan University,Rochester,NY,2,2,0,0,0,https://www.roberts.edu/,36004.0,77.8,965.0,1250.0,,,64.0,,,,,,
-195003,Rochester Institute of Technology,Rochester,NY,2,4,0,0,0,https://www.rit.edu/,55784.0,71.4,1280.0,1460.0,29.0,33.0,71.0,,,,,,
-195030,University of Rochester,Rochester,NY,2,4,0,0,0,https://www.rochester.edu/,63150.0,35.9,1400.0,1540.0,31.0,34.0,84.0,,,,,,
-195058,Rockland Community College,Suffern,NY,1,3,0,0,1,https://www.sunyrockland.edu/,5472.0,,,,,,,,,,,,
-195128,Russell Sage College,Troy,NY,2,2,0,0,0,https://sage.edu/,35206.0,76.2,,,,,66.0,,,,,,
-195164,St Bonaventure University,Saint Bonaventure,NY,2,2,0,0,0,https://www.sbu.edu/,38950.0,81.5,1050.0,1260.0,23.0,30.0,70.0,,,,,,
-195173,St. Francis College,Brooklyn,NY,2,2,0,0,0,https://www.sfc.edu/,27460.0,,,,,,52.0,,,,40.6962,-73.9929,
-195191,St. Joseph's College of Nursing,Syracuse,NY,2,1,0,0,1,https://www.sjhcon.edu/,21816.0,45.5,,,,,,,,,,,
-195216,St Lawrence University,Canton,NY,2,2,0,0,0,https://www.stlawu.edu/,63450.0,58.5,1255.0,1410.0,29.0,32.0,79.0,,,,,,
-195234,The College of Saint Rose,Albany,NY,2,2,0,0,0,https://www.strose.edu/,36122.0,73.4,,,,,51.0,,,,,,
-195243,St. Thomas Aquinas College,Sparkill,NY,2,2,0,0,0,https://www.stac.edu/,36920.0,82.2,,,,,63.0,,,,,,
-195289,Samaritan Hospital School of Nursing,Troy,NY,2,1,0,0,1,https://www.sphp.com/careers/schools-of-nursing/,11456.0,,,,,,,,,,,,
-195304,Sarah Lawrence College,Bronxville,NY,2,2,0,0,0,https://www.sarahlawrence.edu/,63128.0,58.9,1270.0,1440.0,29.0,33.0,70.0,,,,,,
-195322,Schenectady County Community College,Schenectady,NY,1,2,0,0,1,https://sunysccc.edu/,4824.0,,,,,,,,,,,,
-195438,Sh'or Yoshuv Rabbinical College,Lawrence,NY,2,1,0,0,0,https://www.shoryoshuv.org/,11000.0,,,,,,,,,,,,
-195474,Siena College,Loudonville,NY,2,2,0,0,0,https://www.siena.edu/,42580.0,70.6,1093.0,1360.0,26.0,29.0,76.0,,,,,,
-195526,Skidmore College,Saratoga Springs,NY,2,2,0,0,0,https://www.skidmore.edu/,63730.0,22.9,1300.0,1460.0,30.0,33.0,82.0,,,,,,
-195544,St. Joseph's University-New York,Brooklyn,NY,2,2,0,0,0,https://www.sjny.edu/,33825.0,71.4,1090.0,1280.0,,,64.0,,,,,,
-195702,Saint Elizabeth College of Nursing,Utica,NY,2,1,0,0,1,https://www.secon.edu/,18100.0,100.0,,,,,,,,,,,
-195720,St. John Fisher University,Rochester,NY,2,2,0,0,0,https://www.sjf.edu/,38566.0,67.8,1120.0,1280.0,24.0,29.0,74.0,,,,,,
-195784,St Paul's School of Nursing-Staten Island,Staten Island,NY,3,1,0,0,1,https://www.stpaulsschoolofnursing.edu/,16872.0,,,,,,,,,,,,
-195809,St. John's University-New York,Queens,NY,2,4,0,0,0,https://www.stjohns.edu/,48301.0,79.7,1110.0,1320.0,24.0,29.0,68.0,,,,,,
-195988,Sullivan County Community College,Loch Sheldrake,NY,1,2,0,0,1,https://www.sunysullivan.edu/,5472.0,,,,,,,,,,,,
-196006,SUNY College of Technology at Alfred,Alfred,NY,1,2,0,0,0,https://www.alfredstate.edu/,7070.0,81.7,970.0,1170.0,16.0,23.0,53.0,2.82,3.61,3.21,,,
-196015,SUNY College of Technology at Canton,Canton,NY,1,2,0,0,0,https://www.canton.edu/,7070.0,96.3,,,,,44.0,2.82,3.52,3.17,,,
-196024,SUNY College of Technology at Delhi,Delhi,NY,1,2,0,0,0,https://www.delhi.edu/,7070.0,88.4,,,,,48.0,2.94,3.7,3.32,,,
-196033,SUNY College of Agriculture and Technology at Cobleskill,Cobleskill,NY,1,2,0,0,0,https://www.cobleskill.edu/,7070.0,83.3,990.0,1170.0,,,41.0,2.82,3.52,3.17,,,
-196042,Farmingdale State College,Farmingdale,NY,1,3,0,0,0,https://www.farmingdale.edu/,7070.0,69.1,1020.0,1200.0,19.0,27.0,57.0,,,,,,
-196051,SUNY Morrisville,Morrisville,NY,1,2,0,0,0,https://www.morrisville.edu/,7070.0,91.2,,,,,32.0,2.94,3.8,3.37,,,
-196060,University at Albany,Albany,NY,1,4,0,0,0,https://www.albany.edu/,7070.0,69.9,,,,,64.0,3.35,3.85,3.6,42.6862,-73.8227,
-196079,Binghamton University,Vestal,NY,1,4,0,0,0,https://www.binghamton.edu/,7070.0,37.7,1320.0,1490.0,29.0,34.0,84.0,3.7,3.95,3.83,42.0887,-76.0021,
-196088,University at Buffalo,Buffalo,NY,1,5,0,0,0,https://www.buffalo.edu/,7070.0,69.3,1210.0,1380.0,27.0,32.0,73.0,3.52,3.95,3.74,43.0013,-78.7874,
-196097,Stony Brook University,Stony Brook,NY,1,5,0,0,0,https://www.stonybrook.edu/,7070.0,49.0,1320.0,1490.0,28.0,33.0,78.0,3.61,3.9,3.75,40.912,-73.1221,
-196103,SUNY College of Environmental Science and Forestry,Syracuse,NY,1,2,0,0,0,https://www.esf.edu/,7070.0,82.9,,,,,70.0,3.44,3.9,3.67,,,
-196112,SUNY Polytechnic Institute,Utica,NY,1,2,0,0,0,https://www.sunypoly.edu/,7070.0,78.4,1150.0,1330.0,24.0,27.0,59.0,3.17,3.8,3.48,,,
-196121,SUNY Brockport,Brockport,NY,1,3,0,0,0,https://www.brockport.edu/,7070.0,71.3,1070.0,1240.0,18.0,26.0,57.0,3.09,3.75,3.42,43.2124,-77.9346,
-196130,SUNY Buffalo State University,Buffalo,NY,1,3,0,0,0,https://suny.buffalostate.edu/,7070.0,75.9,960.0,1190.0,,,36.0,2.88,3.61,3.25,,,
-196149,State University of New York at Cortland,Cortland,NY,1,3,0,0,0,https://www2.cortland.edu/,7070.0,50.7,,,,,68.0,3.61,3.85,3.73,42.6014,-76.1792,
-196158,SUNY at Fredonia,Fredonia,NY,1,2,0,0,0,https://www.fredonia.edu/,7070.0,79.2,1060.0,1290.0,21.0,28.0,53.0,3.0,3.8,3.4,42.4405,-79.3337,
-196167,SUNY College at Geneseo,Geneseo,NY,1,2,0,0,0,https://www.geneseo.edu/,7070.0,63.5,1200.0,1380.0,26.0,31.0,72.0,3.61,3.95,3.78,42.7948,-77.8192,
-196176,State University of New York at New Paltz,New Paltz,NY,1,3,0,0,0,https://www.newpaltz.edu/,7070.0,58.7,1170.0,1340.0,24.0,29.0,69.0,3.44,3.85,3.65,41.7488,-74.0931,
-196185,SUNY Oneonta,Oneonta,NY,1,3,0,0,0,https://suny.oneonta.edu/,7070.0,70.2,1090.0,1250.0,23.0,28.0,70.0,3.26,3.85,3.55,42.4534,-75.0612,
-196194,State University of New York at Oswego,Oswego,NY,1,3,0,0,0,https://www.oswego.edu/,7070.0,80.4,1060.0,1270.0,23.0,27.0,60.0,3.26,3.9,3.58,43.4532,-76.5122,
-196200,SUNY College at Potsdam,Potsdam,NY,1,2,0,0,0,https://www.potsdam.edu/,7070.0,85.5,,,,,48.0,3.0,3.8,3.4,44.6696,-74.9833,
-196219,SUNY at Purchase College,Purchase,NY,1,2,0,0,0,https://www.purchase.edu/,7070.0,72.8,1178.0,1363.0,27.0,32.0,62.0,3.26,3.85,3.55,41.034,-73.7142,
-196237,SUNY Old Westbury,Old Westbury,NY,1,2,0,0,0,https://www.oldwestbury.edu/,7070.0,84.6,,,,,47.0,2.82,3.61,3.21,40.754,-73.5998,
-196246,SUNY College at Plattsburgh,Plattsburgh,NY,1,2,0,0,0,https://www.plattsburgh.edu/,7070.0,75.2,1100.0,1270.0,,,59.0,2.88,3.75,3.31,44.6997,-73.4543,
-196255,SUNY Downstate Health Sciences University,Brooklyn,NY,1,2,0,0,0,https://www.downstate.edu/,7070.0,,,,,,,,,,,,
-196264,Empire State University,Saratoga Springs,NY,1,3,0,0,0,https://www.sunyempire.edu/,7070.0,,,,,,29.0,,,,,,
-196291,SUNY Maritime College,Throggs Neck,NY,1,2,0,0,0,https://www.sunymaritime.edu/,7070.0,78.5,1091.0,1285.0,22.0,26.0,75.0,3.09,3.8,3.44,,,
-196307,Upstate Medical University,Syracuse,NY,1,2,0,0,0,https://www.upstate.edu/,7070.0,,,,,,,,,,,,
-196389,Swedish Institute a College of Health Sciences,New York,NY,3,2,0,0,1,https://www.swedishinstitute.edu/,24000.0,,,,,,,,,,,,
-196413,Syracuse University,Syracuse,NY,2,5,0,0,0,https://www.syracuse.edu/,61310.0,41.7,1260.0,1430.0,28.0,32.0,81.0,,,,,,
-196431,Talmudical Seminary Oholei Torah,Brooklyn,NY,2,1,0,0,0,https://www.tsot.edu/,8000.0,78.1,,,,,14.0,,,,,,
-196440,Talmudical Institute of Upstate New York,Rochester,NY,2,1,0,0,0,https://www.tiuny.org/,6150.0,100.0,,,,,,,,,,,
-196565,Tompkins Cortland Community College,Dryden,NY,1,2,0,0,1,https://www.tompkinscortland.edu/,5570.0,,,,,,,,,,,,
-196583,Torah Temimah Talmudical Seminary,Staten Island,NY,2,1,0,0,0,https://torahtemimahtalmudicalseminary.com/,9600.0,64.7,,,,,10.0,,,,,,
-196592,Touro University,New York,NY,2,4,0,0,0,https://www.touro.edu/,18950.0,63.0,1275.0,1440.0,28.0,33.0,65.0,,,,,,
-196653,Trocaire College,Buffalo,NY,2,2,0,0,0,https://trocaire.edu/,19460.0,83.0,,,,,19.0,,,,,,
-196699,Ulster County Community College,Stone Ridge,NY,1,2,0,0,1,https://www.sunyulster.edu/,5280.0,,,,,,,,,,,,
-196866,Union College,Schenectady,NY,2,2,0,0,0,https://www.union.edu/,66105.0,43.8,1310.0,1480.0,30.0,33.0,85.0,,,,,,
-197018,United Talmudical Seminary,Brooklyn,NY,2,2,0,0,0,https://utsny.edu/,14133.0,,,,,,57.0,,,,,,
-197027,United States Merchant Marine Academy,Kings Point,NY,1,1,0,0,0,https://www.usmma.edu/,,32.5,1140.0,1300.0,23.0,29.0,81.0,,,,,,
-197036,United States Military Academy,West  Point,NY,1,2,0,0,0,https://www.westpoint.edu/,,14.0,1200.0,1430.0,28.0,33.0,85.0,,,,,,
-197045,Utica University,Utica,NY,2,2,0,0,0,https://www.utica.edu/,23208.0,87.2,1030.0,1210.0,,,55.0,,,,,,
-197133,Vassar College,Poughkeepsie,NY,2,2,0,0,0,https://www.vassar.edu/,66870.0,17.7,1435.0,1550.0,33.0,35.0,89.0,,,,,,
-197142,Villa Maria College,Buffalo,NY,2,1,0,0,0,https://www.villa.edu/,27530.0,86.7,,,,,31.0,,,,,,
-197151,School of Visual Arts,New York,NY,3,2,0,0,0,https://www.sva.edu/,49140.0,91.3,1165.0,1450.0,21.0,31.0,74.0,,,,,,
-197197,Wagner College,Staten Island,NY,2,2,0,0,0,https://www.wagner.edu/,50200.0,83.5,1150.0,1320.0,23.0,27.0,68.0,,,,,,
-197221,Webb Institute,Glen Cove,NY,2,1,0,0,0,https://www.webb.edu/,57830.0,20.0,1390.0,1525.0,,,81.0,,,,,,
-197230,Wells College,Aurora,NY,2,1,0,0,0,https://www.wells.edu/,33666.0,69.6,,,,,41.0,,,,,,
-197285,The College of Westchester,White Plains,NY,3,1,0,0,0,https://www.cw.edu/,23220.0,94.6,,,,,32.0,,,,,,
-197294,SUNY Westchester Community College,Valhalla,NY,1,3,0,0,1,https://www.sunywcc.edu/,4980.0,,,,,,,,,,,,
-197531,Word of Life Bible Institute,Pottersville,NY,2,1,0,0,1,https://www.wordoflife.edu/,10000.0,,,,,,,,,,,,
-197601,Yeshiva Karlin Stolin,Brooklyn,NY,2,1,0,0,0,https://yeshivakarlinstolin.org/,14000.0,,,,,,33.0,,,,,,
-197647,Yeshiva Derech Chaim,Brooklyn,NY,2,1,0,0,0,https://ydc.edu/,12700.0,70.2,,,,,18.0,,,,,,
-197674,Yeshiva of Nitra Rabbinical College,Chester,NY,2,1,0,0,0,https://yeshivaofnitra.org/,14000.0,,,,,,18.0,,,,,,
-197692,Yeshivath Shaar Hatorah,Kew Gardens,NY,2,1,0,0,0,https://shaarhatorah.edu/,18700.0,91.8,,,,,55.0,,,,,,
-197708,Yeshiva University,New York,NY,2,3,0,0,0,https://www.yu.edu/,46000.0,63.7,1320.0,1500.0,28.0,33.0,81.0,,,,,,
-197735,Yeshivath Viznitz,Monsey,NY,2,2,0,0,0,https://yeshivathviznitz.com/,9900.0,93.7,,,,,69.0,,,,,,
-197744,Yeshivath Zichron Moshe,South Fallsburg,NY,2,1,0,0,0,https://yeshivathzichronmoshe.com/,10780.0,52.2,,,,,,,,,,,
+194736,Rabbinical College of Long Island,Long Beach,NY,2,1,0,0,0,https://rabbinicalcollegelongisland.com/,9790.0,100.0,,,,,34.0,,,,40.589,-73.6535,0.0
+194763,Rabbinical Seminary of America,Flushing,NY,2,1,0,0,0,https://www.rabbinical.org/,10000.0,97.5,,,,,34.0,,,,40.7574,-73.8093,0.0
+194824,Rensselaer Polytechnic Institute,Troy,NY,2,3,0,0,0,https://www.rpi.edu/,60360.0,58.4,1330.0,1500.0,30.0,34.0,83.0,,,,40.8617,-73.8855,19000.0
+194958,Roberts Wesleyan University,Rochester,NY,2,2,0,0,0,https://www.roberts.edu/,36004.0,77.8,965.0,1250.0,,,64.0,,,,43.159,-77.5897,15400.0
+195003,Rochester Institute of Technology,Rochester,NY,2,4,0,0,0,https://www.rit.edu/,55784.0,71.4,1280.0,1460.0,29.0,33.0,71.0,,,,43.0851,-77.674,14613.0
+195030,University of Rochester,Rochester,NY,2,4,0,0,0,https://www.rochester.edu/,63150.0,35.9,1400.0,1540.0,31.0,34.0,84.0,,,,43.1284,-77.6274,16780.0
+195058,Rockland Community College,Suffern,NY,1,3,0,0,1,https://www.sunyrockland.edu/,5472.0,,,,,,,,,,41.1122,-74.1495,0.0
+195128,Russell Sage College,Troy,NY,2,2,0,0,0,https://sage.edu/,35206.0,76.2,,,,,66.0,,,,41.1237,-74.1502,0.0
+195164,St Bonaventure University,Saint Bonaventure,NY,2,2,0,0,0,https://www.sbu.edu/,38950.0,81.5,1050.0,1260.0,23.0,30.0,70.0,,,,42.6897,-77.5693,15200.0
+195173,St. Francis College,Brooklyn,NY,2,2,0,0,0,https://www.sfc.edu/,27460.0,,,,,,52.0,,,,40.6962,-73.9929,0.0
+195191,St. Joseph's College of Nursing,Syracuse,NY,2,1,0,0,1,https://www.sjhcon.edu/,21816.0,45.5,,,,,,,,,43.0481,-76.1474,
+195216,St Lawrence University,Canton,NY,2,2,0,0,0,https://www.stlawu.edu/,63450.0,58.5,1255.0,1410.0,29.0,32.0,79.0,,,,44.5957,-75.168,15800.0
+195234,The College of Saint Rose,Albany,NY,2,2,0,0,0,https://www.strose.edu/,36122.0,73.4,,,,,51.0,,,,42.66,-73.7922,14920.0
+195243,St. Thomas Aquinas College,Sparkill,NY,2,2,0,0,0,https://www.stac.edu/,36920.0,82.2,,,,,63.0,,,,41.0631,-74.0148,14400.0
+195289,Samaritan Hospital School of Nursing,Troy,NY,2,1,0,0,1,https://www.sphp.com/careers/schools-of-nursing/,11456.0,,,,,,,,,,42.7284,-73.6918,
+195304,Sarah Lawrence College,Bronxville,NY,2,2,0,0,0,https://www.sarahlawrence.edu/,63128.0,58.9,1270.0,1440.0,29.0,33.0,70.0,,,,40.617,-73.9218,22000.0
+195322,Schenectady County Community College,Schenectady,NY,1,2,0,0,1,https://sunysccc.edu/,4824.0,,,,,,,,,,42.8145,-73.9394,0.0
+195438,Sh'or Yoshuv Rabbinical College,Lawrence,NY,2,1,0,0,0,https://www.shoryoshuv.org/,11000.0,,,,,,,,,,40.6295,-73.9527,0.0
+195474,Siena College,Loudonville,NY,2,2,0,0,0,https://www.siena.edu/,42580.0,70.6,1093.0,1360.0,26.0,29.0,76.0,,,,42.9526,-73.7856,16320.0
+195526,Skidmore College,Saratoga Springs,NY,2,2,0,0,0,https://www.skidmore.edu/,63730.0,22.9,1300.0,1460.0,30.0,33.0,82.0,,,,43.0825,-73.7863,16882.0
+195544,St. Joseph's University-New York,Brooklyn,NY,2,2,0,0,0,https://www.sjny.edu/,33825.0,71.4,1090.0,1280.0,,,64.0,,,,40.64,-73.995,14800.0
+195702,Saint Elizabeth College of Nursing,Utica,NY,2,1,0,0,1,https://www.secon.edu/,18100.0,100.0,,,,,,,,,43.0814,-75.2327,12800.0
+195720,St. John Fisher University,Rochester,NY,2,2,0,0,0,https://www.sjf.edu/,38566.0,67.8,1120.0,1280.0,24.0,29.0,74.0,,,,43.1,-77.5533,15200.0
+195784,St Paul's School of Nursing-Staten Island,Staten Island,NY,3,1,0,0,1,https://www.stpaulsschoolofnursing.edu/,16872.0,,,,,,,,,,40.5958,-74.1453,0.0
+195809,St. John's University-New York,Queens,NY,2,4,0,0,0,https://www.stjohns.edu/,48301.0,79.7,1110.0,1320.0,24.0,29.0,68.0,,,,40.722,-73.7949,17440.0
+195988,Sullivan County Community College,Loch Sheldrake,NY,1,2,0,0,1,https://www.sunysullivan.edu/,5472.0,,,,,,,,,,41.7217,-74.7027,0.0
+196006,SUNY College of Technology at Alfred,Alfred,NY,1,2,0,0,0,https://www.alfredstate.edu/,7070.0,81.7,970.0,1170.0,16.0,23.0,53.0,2.82,3.61,3.21,42.2493,-74.9911,14140.0
+196015,SUNY College of Technology at Canton,Canton,NY,1,2,0,0,0,https://www.canton.edu/,7070.0,96.3,,,,,44.0,2.82,3.52,3.17,44.5957,-75.168,13200.0
+196024,SUNY College of Technology at Delhi,Delhi,NY,1,2,0,0,0,https://www.delhi.edu/,7070.0,88.4,,,,,48.0,2.94,3.7,3.32,42.2782,-74.9176,13400.0
+196033,SUNY College of Agriculture and Technology at Cobleskill,Cobleskill,NY,1,2,0,0,0,https://www.cobleskill.edu/,7070.0,83.3,990.0,1170.0,,,41.0,2.82,3.52,3.17,42.6718,-74.4854,13780.0
+196042,Farmingdale State College,Farmingdale,NY,1,3,0,0,0,https://www.farmingdale.edu/,7070.0,69.1,1020.0,1200.0,19.0,27.0,57.0,,,,40.7318,-73.4346,14640.0
+196051,SUNY Morrisville,Morrisville,NY,1,2,0,0,0,https://www.morrisville.edu/,7070.0,91.2,,,,,32.0,2.94,3.8,3.37,42.9104,-75.5869,13950.0
+196060,University at Albany,Albany,NY,1,4,0,0,0,https://www.albany.edu/,7070.0,69.9,,,,,64.0,3.35,3.85,3.6,42.6862,-73.8227,14230.0
+196079,Binghamton University,Vestal,NY,1,4,0,0,0,https://www.binghamton.edu/,7070.0,37.7,1320.0,1490.0,29.0,34.0,84.0,3.7,3.95,3.83,42.0887,-76.0021,15578.0
+196088,University at Buffalo,Buffalo,NY,1,5,0,0,0,https://www.buffalo.edu/,7070.0,69.3,1210.0,1380.0,27.0,32.0,73.0,3.52,3.95,3.74,43.0013,-78.7874,14936.0
+196097,Stony Brook University,Stony Brook,NY,1,5,0,0,0,https://www.stonybrook.edu/,7070.0,49.0,1320.0,1490.0,28.0,33.0,78.0,3.61,3.9,3.75,40.912,-73.1221,17296.0
+196103,SUNY College of Environmental Science and Forestry,Syracuse,NY,1,2,0,0,0,https://www.esf.edu/,7070.0,82.9,,,,,70.0,3.44,3.9,3.67,43.0367,-76.1349,14600.0
+196112,SUNY Polytechnic Institute,Utica,NY,1,2,0,0,0,https://www.sunypoly.edu/,7070.0,78.4,1150.0,1330.0,24.0,27.0,59.0,3.17,3.8,3.48,43.1009,-75.2327,14190.0
+196121,SUNY Brockport,Brockport,NY,1,3,0,0,0,https://www.brockport.edu/,7070.0,71.3,1070.0,1240.0,18.0,26.0,57.0,3.09,3.75,3.42,43.2124,-77.9346,14936.0
+196130,SUNY Buffalo State University,Buffalo,NY,1,3,0,0,0,https://suny.buffalostate.edu/,7070.0,75.9,960.0,1190.0,,,36.0,2.88,3.61,3.25,40.7548,-73.5994,13800.0
+196149,State University of New York at Cortland,Cortland,NY,1,3,0,0,0,https://www2.cortland.edu/,7070.0,50.7,,,,,68.0,3.61,3.85,3.73,42.6014,-76.1792,14960.0
+196158,SUNY at Fredonia,Fredonia,NY,1,2,0,0,0,https://www.fredonia.edu/,7070.0,79.2,1060.0,1290.0,21.0,28.0,53.0,3.0,3.8,3.4,42.4405,-79.3337,14410.0
+196167,SUNY College at Geneseo,Geneseo,NY,1,2,0,0,0,https://www.geneseo.edu/,7070.0,63.5,1200.0,1380.0,26.0,31.0,72.0,3.61,3.95,3.78,42.7948,-77.8192,14980.0
+196176,State University of New York at New Paltz,New Paltz,NY,1,3,0,0,0,https://www.newpaltz.edu/,7070.0,58.7,1170.0,1340.0,24.0,29.0,69.0,3.44,3.85,3.65,41.7488,-74.0931,14698.0
+196185,SUNY Oneonta,Oneonta,NY,1,3,0,0,0,https://suny.oneonta.edu/,7070.0,70.2,1090.0,1250.0,23.0,28.0,70.0,3.26,3.85,3.55,42.4534,-75.0612,14760.0
+196194,State University of New York at Oswego,Oswego,NY,1,3,0,0,0,https://www.oswego.edu/,7070.0,80.4,1060.0,1270.0,23.0,27.0,60.0,3.26,3.9,3.58,43.4532,-76.5122,14840.0
+196200,SUNY College at Potsdam,Potsdam,NY,1,2,0,0,0,https://www.potsdam.edu/,7070.0,85.5,,,,,48.0,3.0,3.8,3.4,44.6696,-74.9833,14980.0
+196219,SUNY at Purchase College,Purchase,NY,1,2,0,0,0,https://www.purchase.edu/,7070.0,72.8,1178.0,1363.0,27.0,32.0,62.0,3.26,3.85,3.55,41.034,-73.7142,13820.0
+196237,SUNY Old Westbury,Old Westbury,NY,1,2,0,0,0,https://www.oldwestbury.edu/,7070.0,84.6,,,,,47.0,2.82,3.61,3.21,40.754,-73.5998,13800.0
+196246,SUNY College at Plattsburgh,Plattsburgh,NY,1,2,0,0,0,https://www.plattsburgh.edu/,7070.0,75.2,1100.0,1270.0,,,59.0,2.88,3.75,3.31,44.6997,-73.4543,14080.0
+196255,SUNY Downstate Health Sciences University,Brooklyn,NY,1,2,0,0,0,https://www.downstate.edu/,7070.0,,,,,,,,,,40.6554,-73.9441,0.0
+196264,Empire State University,Saratoga Springs,NY,1,3,0,0,0,https://www.sunyempire.edu/,7070.0,,,,,,29.0,,,,41.7484,-74.0028,14698.0
+196291,SUNY Maritime College,Throggs Neck,NY,1,2,0,0,0,https://www.sunymaritime.edu/,7070.0,78.5,1091.0,1285.0,22.0,26.0,75.0,3.09,3.8,3.44,40.8075,-73.8252,6800.0
+196307,Upstate Medical University,Syracuse,NY,1,2,0,0,0,https://www.upstate.edu/,7070.0,,,,,,,,,,43.0439,-76.1447,0.0
+196389,Swedish Institute a College of Health Sciences,New York,NY,3,2,0,0,1,https://www.swedishinstitute.edu/,24000.0,,,,,,,,,,40.7405,-73.995,19840.0
+196413,Syracuse University,Syracuse,NY,2,5,0,0,0,https://www.syracuse.edu/,61310.0,41.7,1260.0,1430.0,28.0,32.0,81.0,,,,43.0367,-76.1349,18042.0
+196431,Talmudical Seminary Oholei Torah,Brooklyn,NY,2,1,0,0,0,https://www.tsot.edu/,8000.0,78.1,,,,,14.0,,,,40.6501,-73.9496,
+196440,Talmudical Institute of Upstate New York,Rochester,NY,2,1,0,0,0,https://www.tiuny.org/,6150.0,100.0,,,,,,,,,43.0851,-77.674,14613.0
+196565,Tompkins Cortland Community College,Dryden,NY,1,2,0,0,1,https://www.tompkinscortland.edu/,5570.0,,,,,,,,,,42.4779,-76.468,0.0
+196583,Torah Temimah Talmudical Seminary,Staten Island,NY,2,1,0,0,0,https://torahtemimahtalmudicalseminary.com/,9600.0,64.7,,,,,10.0,,,,40.5795,-74.1502,
+196592,Touro University,New York,NY,2,4,0,0,0,https://www.touro.edu/,18950.0,63.0,1275.0,1440.0,28.0,33.0,65.0,,,,40.7716,-73.995,0.0
+196653,Trocaire College,Buffalo,NY,2,2,0,0,0,https://trocaire.edu/,19460.0,83.0,,,,,19.0,,,,42.8847,-78.7947,0.0
+196699,Ulster County Community College,Stone Ridge,NY,1,2,0,0,1,https://www.sunyulster.edu/,5280.0,,,,,,,,,,41.8701,-74.1725,0.0
+196866,Union College,Schenectady,NY,2,2,0,0,0,https://www.union.edu/,66105.0,43.8,1310.0,1480.0,30.0,33.0,85.0,,,,42.8145,-73.9299,17700.0
+197018,United Talmudical Seminary,Brooklyn,NY,2,2,0,0,0,https://utsny.edu/,14133.0,,,,,,57.0,,,,40.687,-73.9454,0.0
+197027,United States Merchant Marine Academy,Kings Point,NY,1,1,0,0,0,https://www.usmma.edu/,,32.5,1140.0,1300.0,23.0,29.0,81.0,,,,40.8245,-73.7658,9800.0
+197036,United States Military Academy,West  Point,NY,1,2,0,0,0,https://www.westpoint.edu/,,14.0,1200.0,1430.0,28.0,33.0,85.0,,,,41.3907,-73.9558,0.0
+197045,Utica University,Utica,NY,2,2,0,0,0,https://www.utica.edu/,23208.0,87.2,1030.0,1210.0,,,55.0,,,,43.105,-75.2283,14280.0
+197133,Vassar College,Poughkeepsie,NY,2,2,0,0,0,https://www.vassar.edu/,66870.0,17.7,1435.0,1550.0,33.0,35.0,89.0,,,,41.6876,-73.8957,16590.0
+197142,Villa Maria College,Buffalo,NY,2,1,0,0,0,https://www.villa.edu/,27530.0,86.7,,,,,31.0,,,,42.8864,-78.8784,
+197151,School of Visual Arts,New York,NY,3,2,0,0,0,https://www.sva.edu/,49140.0,91.3,1165.0,1450.0,21.0,31.0,74.0,,,,40.7405,-73.9903,0.0
+197197,Wagner College,Staten Island,NY,2,2,0,0,0,https://www.wagner.edu/,50200.0,83.5,1150.0,1320.0,23.0,27.0,68.0,,,,40.5958,-74.0965,15800.0
+197221,Webb Institute,Glen Cove,NY,2,1,0,0,0,https://www.webb.edu/,57830.0,20.0,1390.0,1525.0,,,81.0,,,,40.8626,-73.6329,
+197230,Wells College,Aurora,NY,2,1,0,0,0,https://www.wells.edu/,33666.0,69.6,,,,,41.0,,,,42.7426,-76.7059,
+197285,The College of Westchester,White Plains,NY,3,1,0,0,0,https://www.cw.edu/,23220.0,94.6,,,,,32.0,,,,41.034,-73.7629,
+197294,SUNY Westchester Community College,Valhalla,NY,1,3,0,0,1,https://www.sunywcc.edu/,4980.0,,,,,,,,,,41.0761,-73.8052,0.0
+197531,Word of Life Bible Institute,Pottersville,NY,2,1,0,0,1,https://www.wordoflife.edu/,10000.0,,,,,,,,,,41.3907,-73.9558,0.0
+197601,Yeshiva Karlin Stolin,Brooklyn,NY,2,1,0,0,0,https://yeshivakarlinstolin.org/,14000.0,,,,,,33.0,,,,40.6501,-73.9496,
+197647,Yeshiva Derech Chaim,Brooklyn,NY,2,1,0,0,0,https://ydc.edu/,12700.0,70.2,,,,,18.0,,,,40.64,-73.9127,0.0
+197674,Yeshiva of Nitra Rabbinical College,Chester,NY,2,1,0,0,0,https://yeshivaofnitra.org/,14000.0,,,,,,18.0,,,,41.3609,-74.2752,
+197692,Yeshivath Shaar Hatorah,Kew Gardens,NY,2,1,0,0,0,https://shaarhatorah.edu/,18700.0,91.8,,,,,55.0,,,,40.7143,-73.8306,
+197708,Yeshiva University,New York,NY,2,3,0,0,0,https://www.yu.edu/,46000.0,63.7,1320.0,1500.0,28.0,33.0,81.0,,,,40.8503,-73.9028,11500.0
+197735,Yeshivath Viznitz,Monsey,NY,2,2,0,0,0,https://yeshivathviznitz.com/,9900.0,93.7,,,,,69.0,,,,41.1112,-74.0687,
+197744,Yeshivath Zichron Moshe,South Fallsburg,NY,2,1,0,0,0,https://yeshivathzichronmoshe.com/,10780.0,52.2,,,,,,,,,41.7334,-74.642,
 197814,College of the Albemarle,Elizabeth City,NC,1,2,0,0,1,https://www.albemarle.edu/,2102.0,,,,,,,,,,,,
 197850,South Piedmont Community College,Polkton,NC,1,2,0,0,1,https://www.spcc.edu/,1824.0,,,,,,,,,,,,
 197869,Appalachian State University,Boone,NC,1,5,0,0,0,https://www.appstate.edu/,4242.0,88.6,1100.0,1280.0,21.0,27.0,73.0,,,,,,
@@ -1793,9 +1793,9 @@ id,name,city,state,ctrl,size,hbcu,womens,yr2,web,tin,adm,sat25,sat75,act25,act75
 198367,Craven Community College,New Bern,NC,1,2,0,0,1,https://cravencc.edu/,1824.0,,,,,,,,,,,,
 198376,Davidson-Davie Community College,Thomasville,NC,1,2,0,0,1,https://www.davidsondavie.edu/,2125.0,,,,,,,,,,,,
 198385,Davidson College,Davidson,NC,2,2,0,0,0,https://davidson.edu/,59510.0,14.5,1360.0,1510.0,31.0,34.0,92.0,,,,,,
-198419,Duke University,Durham,NC,2,4,0,0,0,https://www.duke.edu/,63450.0,6.8,1510.0,1570.0,34.0,35.0,96.0,,,,,,
+198419,Duke University,Durham,NC,2,4,0,0,0,https://www.duke.edu/,63450.0,6.8,1510.0,1570.0,34.0,35.0,96.0,,,,35.994,-78.8986,17840.0
 198455,Durham Technical Community College,Durham,NC,1,2,0,0,1,https://www.durhamtech.edu/,2128.0,,,,,,,,,,,,
-198464,East Carolina University,Greenville,NC,1,5,0,0,0,https://www.ecu.edu/,4452.0,90.1,1050.0,1200.0,20.0,26.0,62.0,,,,,,
+198464,East Carolina University,Greenville,NC,1,5,0,0,0,https://www.ecu.edu/,4452.0,90.1,1050.0,1200.0,20.0,26.0,62.0,,,,35.9049,-79.0469,12112.0
 198491,Edgecombe Community College,Tarboro,NC,1,2,0,0,1,https://www.edgecombe.edu/,2432.0,,,,,,,,,,,,
 198507,Elizabeth City State University,Elizabeth City,NC,1,2,1,0,0,https://www.ecsu.edu/,1000.0,70.5,,,,,48.0,,,,,,
 198516,Elon University,Elon,NC,2,3,0,0,0,https://www.elon.edu/,44029.0,67.3,1143.0,1305.0,23.0,28.0,83.0,,,,,,
@@ -1834,7 +1834,7 @@ id,name,city,state,ctrl,size,hbcu,womens,yr2,web,tin,adm,sat25,sat75,act25,act75
 199087,Nash Community College,Rocky Mount,NC,1,2,0,0,1,https://www.nashcc.edu/,2600.0,,,,,,,,,,,,
 199102,North Carolina A & T State University,Greensboro,NC,1,4,1,0,0,https://www.ncat.edu/,3540.0,46.2,960.0,1190.0,16.0,22.0,55.0,,,,,,
 199111,University of North Carolina Asheville,Asheville,NC,1,2,0,0,0,https://unca.edu/,4122.0,93.9,1170.0,1350.0,22.0,29.0,55.0,,,,,,
-199120,University of North Carolina at Chapel Hill,Chapel Hill,NC,1,5,0,0,0,https://www.unc.edu/,7019.0,18.7,1370.0,1530.0,30.0,34.0,92.0,,,,,,
+199120,University of North Carolina at Chapel Hill,Chapel Hill,NC,1,5,0,0,0,https://www.unc.edu/,7019.0,18.7,1370.0,1530.0,30.0,34.0,92.0,,,,35.9049,-79.0469,12112.0
 199139,University of North Carolina at Charlotte,Charlotte,NC,1,5,0,0,0,https://www.charlotte.edu/,3812.0,80.2,1110.0,1320.0,21.0,27.0,68.0,,,,,,
 199148,University of North Carolina at Greensboro,Greensboro,NC,1,4,0,0,0,https://www.uncg.edu/,4422.0,89.8,1100.0,1280.0,22.0,27.0,58.0,,,,,,
 199157,North Carolina Central University,Durham,NC,1,3,1,0,0,https://www.nccu.edu/,3728.0,90.5,980.0,1100.0,17.0,18.0,46.0,,,,,,
@@ -1925,7 +1925,7 @@ id,name,city,state,ctrl,size,hbcu,womens,yr2,web,tin,adm,sat25,sat75,act25,act75
 201803,Choffin Career  and Technical Center,Youngstown,OH,1,1,0,0,0,https://www.choffinctcadulted.com/,11050.0,,,,,,,,,,,,
 201821,The Christ College of Nursing and Health Sciences,Cincinnati,OH,2,1,0,0,0,https://www.thechristcollege.edu/,17325.0,50.2,830.0,1000.0,17.0,22.0,60.0,,,,,,
 201867,Cincinnati College of Mortuary Science,Cincinnati,OH,2,1,0,0,0,https://www.ccms.edu/,21150.0,,,,,,,,,,,,
-201885,University of Cincinnati-Main Campus,Cincinnati,OH,1,5,0,0,0,https://www.uc.edu/,11228.0,87.7,1150.0,1360.0,24.0,29.0,71.0,,,,,,
+201885,University of Cincinnati-Main Campus,Cincinnati,OH,1,5,0,0,0,https://www.uc.edu/,11228.0,87.7,1150.0,1360.0,24.0,29.0,71.0,,,,41.502,-81.6773,13476.0
 201928,Cincinnati State Technical and Community College,Cincinnati,OH,1,3,0,0,0,https://www.cincinnatistate.edu/,4410.0,,,,,,20.0,,,,,,
 201946,University of Cincinnati-Clermont College,Batavia,OH,1,3,0,0,0,https://www.ucclermont.edu/,5712.0,,,,,,25.0,,,,,,
 201955,University of Cincinnati-Blue Ash College,Blue Ash,OH,1,3,0,0,0,https://www.ucblueash.edu/,6161.0,,,,,,15.0,,,,,,
@@ -1997,7 +1997,7 @@ id,name,city,state,ctrl,size,hbcu,womens,yr2,web,tin,adm,sat25,sat75,act25,act75
 204680,Ohio State University-Mansfield Campus,Mansfield,OH,1,1,0,0,0,https://mansfield.osu.edu/,8937.0,,,,,,14.0,,,,,,
 204699,Ohio State University-Marion Campus,Marion,OH,1,1,0,0,0,https://osumarion.osu.edu/,8937.0,,,,,,26.0,,,,,,
 204705,Ohio State University-Newark Campus,Newark,OH,1,2,0,0,0,https://newark.osu.edu/,8937.0,,,,,,31.0,,,,,,
-204796,Ohio State University-Main Campus,Columbus,OH,1,5,0,0,0,https://www.osu.edu/,11826.0,50.8,1330.0,1480.0,29.0,32.0,88.0,,,,,,
+204796,Ohio State University-Main Campus,Columbus,OH,1,5,0,0,0,https://www.osu.edu/,11826.0,50.8,1330.0,1480.0,29.0,32.0,88.0,,,,40.0001,-83.0152,13736.0
 204802,Ohio University-Eastern Campus,Saint Clairsville,OH,1,2,0,0,0,https://www.ohio.edu/eastern/,6178.0,,,,,,20.0,,,,,,
 204820,Ohio University-Chillicothe Campus,Chillicothe,OH,1,2,0,0,0,https://www.ohio.edu/chillicothe/,6178.0,,,,,,12.0,,,,,,
 204839,Ohio University-Southern Campus,Ironton,OH,1,2,0,0,0,https://www.ohio.edu/southern/,6178.0,,,,,,19.0,,,,,,
@@ -2100,11 +2100,11 @@ id,name,city,state,ctrl,size,hbcu,womens,yr2,web,tin,adm,sat25,sat75,act25,act75
 209490,Oregon Health & Science University,Portland,OR,1,2,0,0,0,https://www.ohsu.edu/,15336.0,,,,,,,,,,,,
 209506,Oregon Institute of Technology,Klamath Falls,OR,1,3,0,0,0,https://www.oit.edu/,10492.0,91.7,1045.0,1300.0,22.0,26.0,59.0,,,,,,
 209542,Oregon State University,Corvallis,OR,1,5,0,0,0,https://oregonstate.edu/,11145.0,78.8,,,,,71.0,,,,,,
-209551,University of Oregon,Eugene,OR,1,5,0,0,0,https://www.uoregon.edu/,12240.0,85.1,1130.0,1360.0,22.0,30.0,71.0,,,,,,
+209551,University of Oregon,Eugene,OR,1,5,0,0,0,https://www.uoregon.edu/,12240.0,85.1,1130.0,1360.0,22.0,30.0,71.0,,,,44.5646,-123.262,14559.0
 209603,Pacific Northwest College of Art,Portland,OR,2,1,0,0,0,https://willamette.edu/pnca/index.html,47026.0,68.5,,,,,46.0,,,,,,
 209612,Pacific University,Forest Grove,OR,2,2,0,0,0,https://www.pacificu.edu/,53174.0,91.8,990.0,1240.0,17.0,28.0,65.0,,,,,,
 209746,Portland Community College,Portland,OR,1,5,0,0,1,https://www.pcc.edu/,4608.0,,,,,,,,,,,,
-209807,Portland State University,Portland,OR,1,5,0,0,0,https://www.pdx.edu/,8694.0,90.9,,,,,53.0,,,,,,
+209807,Portland State University,Portland,OR,1,5,0,0,0,https://www.pdx.edu/,8694.0,90.9,,,,,53.0,,,,44.0462,-123.0722,13725.0
 209825,University of Portland,Portland,OR,2,2,0,0,0,https://www.up.edu/,54400.0,95.4,1190.0,1356.0,25.0,30.0,80.0,,,,,,
 209922,Reed College,Portland,OR,2,2,0,0,0,https://www.reed.edu/,66710.0,27.2,1300.0,1510.0,29.0,34.0,76.0,,,,,,
 209940,Rogue Community College,Grants Pass,OR,1,2,0,0,1,https://www.roguecc.edu/,4320.0,,,,,,,,,,,,
@@ -2131,7 +2131,7 @@ id,name,city,state,ctrl,size,hbcu,womens,yr2,web,tin,adm,sat25,sat75,act25,act75
 211343,Butler County Community College,Butler,PA,1,2,0,0,1,https://www.bc3.edu/,6990.0,,,,,,,,,,,,
 211352,Cabrini University,Radnor,PA,2,2,0,0,0,https://www.cabrini.edu/,34800.0,69.2,1069.0,1257.0,,,50.0,,,,,,
 211431,Carlow University,Pittsburgh,PA,2,2,0,0,0,https://www.carlow.edu/,33376.0,87.1,,,,,55.0,,,,,,
-211440,Carnegie Mellon University,Pittsburgh,PA,2,4,0,0,0,https://www.cmu.edu/,62260.0,11.4,1500.0,1570.0,34.0,35.0,92.0,,,,,,
+211440,Carnegie Mellon University,Pittsburgh,PA,2,4,0,0,0,https://www.cmu.edu/,62260.0,11.4,1500.0,1570.0,34.0,35.0,92.0,,,,39.9526,-75.1905,13200.0
 211468,Cedar Crest College,Allentown,PA,2,2,0,0,0,https://www.cedarcrest.edu/,44334.0,99.1,1000.0,1230.0,,,58.0,,,,,,
 211477,Central Penn College,Summerdale,PA,3,1,0,0,0,https://www.centralpenn.edu/,18324.0,25.9,,,,,39.0,,,,,,
 211556,Chatham University,Pittsburgh,PA,2,2,0,0,0,https://www.chatham.edu/,42250.0,70.1,1070.0,1290.0,23.0,27.0,66.0,,,,,,
@@ -2153,7 +2153,7 @@ id,name,city,state,ctrl,size,hbcu,womens,yr2,web,tin,adm,sat25,sat75,act25,act75
 212577,Franklin and Marshall College,Lancaster,PA,2,2,0,0,0,https://www.fandm.edu/,68180.0,31.8,1298.0,1460.0,29.0,32.0,86.0,,,,,,
 212601,Gannon University,Erie,PA,2,2,0,0,0,https://www.gannon.edu/,36865.0,76.7,,,,,70.0,,,,,,
 212656,Geneva College,Beaver Falls,PA,2,2,0,0,0,https://www.geneva.edu/,32350.0,,,,,,61.0,,,,,,
-212674,Gettysburg College,Gettysburg,PA,2,2,0,0,0,https://www.gettysburg.edu/,64230.0,47.5,1240.0,1460.0,27.0,32.0,83.0,,,,39.8309,-77.2311,
+212674,Gettysburg College,Gettysburg,PA,2,2,0,0,0,https://www.gettysburg.edu/,64230.0,47.5,1240.0,1460.0,27.0,32.0,83.0,,,,39.8309,-77.2311,14900.0
 212771,Gratz College,Melrose Park,PA,2,1,0,0,0,https://www.gratz.edu/,19648.0,,,,,,,,,,,,
 212805,Grove City College,Grove City,PA,2,2,0,0,0,https://www.gcc.edu/,20890.0,73.4,1128.0,1374.0,23.0,31.0,80.0,,,,,,
 212832,Gwynedd Mercy University,Gwynedd Valley,PA,2,2,0,0,0,https://www.gmercyu.edu/,37825.0,93.6,1048.0,1180.0,,,58.0,,,,,,
@@ -2226,14 +2226,14 @@ id,name,city,state,ctrl,size,hbcu,womens,yr2,web,tin,adm,sat25,sat75,act25,act75
 214892,Penn Commercial Business/Technical School,Washington,PA,3,1,0,0,1,https://www.penncommercial.edu/,12654.0,73.3,,,,,,,,,,,
 214971,Pennsylvania Academy of the Fine Arts,Philadelphia,PA,2,1,0,0,0,https://www.pafa.org/,43000.0,87.5,,,,,68.0,,,,,,
 215053,Pennsylvania College of Art and Design,Lancaster,PA,2,1,0,0,0,https://pcad.edu/,29250.0,45.9,,,,,64.0,,,,,,
-215062,University of Pennsylvania,Philadelphia,PA,2,5,0,0,0,https://www.upenn.edu/,58620.0,5.9,1500.0,1570.0,34.0,35.0,97.0,,,,39.9522,-75.1932,
+215062,University of Pennsylvania,Philadelphia,PA,2,5,0,0,0,https://www.upenn.edu/,58620.0,5.9,1500.0,1570.0,34.0,35.0,97.0,,,,39.9522,-75.1932,16340.0
 215105,University of the Arts,Philadelphia,PA,2,2,0,0,0,https://www.uarts.edu/,54010.0,78.2,,,,,69.0,,,,,,
 215114,Cairn University-Langhorne,Langhorne,PA,2,2,0,0,0,https://www.cairn.edu/,31881.0,83.6,1050.0,1260.0,23.0,27.0,65.0,,,,,,
 215239,Community College of Philadelphia,Philadelphia,PA,1,4,0,0,1,https://www.ccp.edu/,7632.0,,,,,,,,,,,,
 215266,University of Pittsburgh-Bradford,Bradford,PA,1,2,0,0,0,https://www.upb.pitt.edu/,13660.0,90.8,1030.0,1260.0,22.0,31.0,43.0,,,,,,
 215275,University of Pittsburgh-Greensburg,Greensburg,PA,1,2,0,0,0,https://www.greensburg.pitt.edu/,13660.0,97.9,1075.0,1275.0,22.0,28.0,40.0,,,,,,
 215284,University of Pittsburgh-Johnstown,Johnstown,PA,1,2,0,0,0,https://www.upj.pitt.edu/,13660.0,95.9,1040.0,1255.0,19.0,32.0,53.0,,,,,,
-215293,University of Pittsburgh-Pittsburgh Campus,Pittsburgh,PA,1,5,0,0,0,https://www.pitt.edu/,20154.0,49.7,1270.0,1450.0,29.0,33.0,84.0,,,,,,
+215293,University of Pittsburgh-Pittsburgh Campus,Pittsburgh,PA,1,5,0,0,0,https://www.pitt.edu/,20154.0,49.7,1270.0,1450.0,29.0,33.0,84.0,,,,40.7965,-77.86,11774.0
 215309,University of Pittsburgh-Titusville,Titusville,PA,1,1,0,0,1,https://www.titusville.pitt.edu/home,11568.0,44.6,,,,,,,,,,,
 215381,Pittsburgh Institute of Aeronautics,West Mifflin,PA,2,1,0,0,1,https://www.pia.edu/,16995.0,,,,,,,,,,,,
 215390,Pittsburgh Institute of Mortuary Science Inc,Pittsburgh,PA,2,1,0,0,1,https://www.pims.edu/,,49.0,,,,,,,,,,,
@@ -2286,7 +2286,7 @@ id,name,city,state,ctrl,size,hbcu,womens,yr2,web,tin,adm,sat25,sat75,act25,act75
 217013,Wilson College,Chambersburg,PA,2,2,0,0,0,https://www.wilson.edu/,25950.0,90.0,940.0,1110.0,,,52.0,,,,,,
 217040,Yeshivath Beth Moshe,Scranton,PA,2,1,0,0,0,https://yeshivabethmoshe.com/,10200.0,100.0,,,,,,,,,,,
 217059,York College of Pennsylvania,York,PA,2,2,0,0,0,https://www.ycp.edu/,22120.0,94.2,1030.0,1230.0,22.0,28.0,60.0,,,,,,
-217156,Brown University,Providence,RI,2,4,0,0,0,https://www.brown.edu/,65656.0,5.2,1500.0,1570.0,34.0,35.0,96.0,,,,41.8268,-71.4025,
+217156,Brown University,Providence,RI,2,4,0,0,0,https://www.brown.edu/,65656.0,5.2,1500.0,1570.0,34.0,35.0,96.0,,,,41.8268,-71.4025,15680.0
 217165,Bryant University,Smithfield,RI,2,2,0,0,0,https://www.bryant.edu/,50272.0,65.7,1160.0,1340.0,28.0,32.0,81.0,,,,,,
 217235,Johnson & Wales University-Providence,Providence,RI,2,2,0,0,0,https://www.jwu.edu/campuses/providence/,39792.0,83.7,970.0,1230.0,20.0,26.0,55.0,,,,,,
 217305,New England Institute of Technology,East Greenwich,RI,2,2,0,0,0,https://www.neit.edu/,33225.0,72.7,,,,,57.0,,,,,,
@@ -2335,7 +2335,7 @@ id,name,city,state,ctrl,size,hbcu,womens,yr2,web,tin,adm,sat25,sat75,act25,act75
 218539,Presbyterian College,Clinton,SC,2,2,0,0,0,https://www.presby.edu/,40200.0,72.3,1080.0,1280.0,22.0,27.0,61.0,,,,,,
 218645,University of South Carolina Aiken,Aiken,SC,1,2,0,0,0,https://www.usca.edu/,10398.0,79.7,970.0,1200.0,17.0,23.0,40.0,,,,,,
 218654,University of South Carolina Beaufort,Bluffton,SC,1,2,0,0,0,https://www.uscb.edu/,10344.0,69.2,,,,,39.0,,,,,,
-218663,University of South Carolina-Columbia,Columbia,SC,1,5,0,0,0,https://www.sc.edu/,12288.0,61.5,1180.0,1380.0,26.0,32.0,78.0,,,,,,
+218663,University of South Carolina-Columbia,Columbia,SC,1,5,0,0,0,https://www.sc.edu/,12288.0,61.5,1180.0,1380.0,26.0,32.0,78.0,,,,29.7174,-95.4018,14200.0
 218672,University of South Carolina-Lancaster,Lancaster,SC,1,2,0,0,1,https://www.sc.edu/about/system_and_campuses/lancaster/index.php,7158.0,75.9,,,,,,,,,,,
 218681,University of South Carolina-Salkehatchie,Allendale,SC,1,1,0,0,1,https://sc.edu/about/system_and_campuses/salkehatchie/index.php,7158.0,76.3,,,,,,,,,,,
 218690,University of South Carolina-Sumter,Sumter,SC,1,2,0,0,1,https://www.sc.edu/about/system_and_campuses/sumter/index.php,7158.0,76.3,,,,,,,,,,,
@@ -2424,7 +2424,7 @@ id,name,city,state,ctrl,size,hbcu,womens,yr2,web,tin,adm,sat25,sat75,act25,act75
 221908,Northeast State Community College,Blountville,TN,1,3,0,0,1,https://www.northeaststate.edu/,4224.0,,,,,,,,,,,,
 221953,Tusculum University,Greeneville,TN,2,2,0,0,0,https://www.tusculum.edu/,27500.0,60.4,,,,,31.0,,,,,,
 221971,Union University,Jackson,TN,2,2,0,0,0,https://www.uu.edu/,19476.0,47.2,1030.0,1340.0,22.0,29.0,71.0,,,,,,
-221999,Vanderbilt University,Nashville,TN,2,4,0,0,0,https://www.vanderbilt.edu/,61618.0,6.3,1510.0,1560.0,34.0,35.0,92.0,,,,,,
+221999,Vanderbilt University,Nashville,TN,2,4,0,0,0,https://www.vanderbilt.edu/,61618.0,6.3,1510.0,1560.0,34.0,35.0,92.0,,,,36.1447,-86.8027,17696.0
 222053,Volunteer State Community College,Gallatin,TN,1,3,0,0,1,https://www.volstate.edu/,4224.0,,,,,,,,,,,,
 222062,Walters State Community College,Morristown,TN,1,3,0,0,1,https://www.ws.edu/,4224.0,,,,,,,,,,,,
 222105,William R Moore College of Technology,Memphis,TN,2,1,0,0,1,https://www.mooretech.edu/,8460.0,,,,,,,,,,,,
@@ -2501,7 +2501,7 @@ id,name,city,state,ctrl,size,hbcu,womens,yr2,web,tin,adm,sat25,sat75,act25,act75
 226879,Wade College,Dallas,TX,3,1,0,0,0,https://www.wadecollege.edu/,17680.0,,,,,,45.0,,,,,,
 227146,Navarro College,Corsicana,TX,1,3,0,0,0,https://www.navarrocollege.edu/,1620.0,,,,,,24.0,,,,,,
 227182,Lone Star College System,The Woodlands,TX,1,5,0,0,0,https://www.lonestar.edu/,5544.0,,,,,,19.0,,,,,,
-227216,University of North Texas,Denton,TX,1,5,0,0,0,https://www.unt.edu/,8319.0,72.5,980.0,1230.0,19.0,27.0,60.0,,,,,,
+227216,University of North Texas,Denton,TX,1,5,0,0,0,https://www.unt.edu/,8319.0,72.5,980.0,1230.0,19.0,27.0,60.0,,,,30.2849,-97.7341,12600.0
 227225,Northeast Texas Community College,Mount Pleasant,TX,1,2,0,0,1,https://www.ntcc.edu/,2712.0,,,,,,,,,,,,
 227304,Odessa College,Odessa,TX,1,3,0,0,0,https://www.odessa.edu/,3120.0,,,,,,28.0,,,,,,
 227331,Our Lady of the Lake University,San Antonio,TX,2,2,0,0,0,https://www.ollusa.edu/,30804.0,,,,,,42.0,,,,,,
@@ -2523,7 +2523,7 @@ id,name,city,state,ctrl,size,hbcu,womens,yr2,web,tin,adm,sat25,sat75,act25,act75
 228042,Schreiner University,Kerrville,TX,2,2,0,0,0,https://www.schreiner.edu/,37396.0,88.0,,,,,44.0,,,,,,
 228149,St. Mary's University,San Antonio,TX,2,2,0,0,0,https://www.stmarytx.edu/,35144.0,88.9,980.0,1150.0,16.0,23.0,59.0,,,,,,
 228158,South Plains College,Levelland,TX,1,3,0,0,1,https://www.southplainscollege.edu/,2568.0,,,,,,,,,,,,
-228246,Southern Methodist University,Dallas,TX,2,4,0,0,0,https://www.smu.edu/,57212.0,61.2,1320.0,1480.0,30.0,34.0,83.0,,,,,,
+228246,Southern Methodist University,Dallas,TX,2,4,0,0,0,https://www.smu.edu/,57212.0,61.2,1320.0,1480.0,30.0,34.0,83.0,,,,29.7604,-95.3698,0.0
 228316,Southwest Texas Junior College,Uvalde,TX,1,3,0,0,1,https://www.swtjc.edu/,3240.0,,,,,,,,,,,,
 228325,Southwestern Assemblies of God University,Waxahachie,TX,2,2,0,0,0,https://www.sagu.edu/,17650.0,84.2,926.0,1110.0,17.0,22.0,36.0,,,,,,
 228343,Southwestern University,Georgetown,TX,2,2,0,0,0,https://www.southwestern.edu/,50558.0,39.1,1170.0,1340.0,24.0,30.0,69.0,,,,,,
@@ -2539,7 +2539,7 @@ id,name,city,state,ctrl,size,hbcu,womens,yr2,web,tin,adm,sat25,sat75,act25,act75
 228653,The University of Texas Medical Branch at Galveston,Galveston,TX,1,2,0,0,0,https://www.utmb.edu/,7343.0,,,,,,,,,,,,
 228699,Texarkana College,Texarkana,TX,1,2,0,0,1,https://www.texarkanacollege.edu/,1704.0,,,,,,,,,,,,
 228705,Texas A & M University-Kingsville,Kingsville,TX,1,3,0,0,0,https://www.tamuk.edu/,5137.0,92.3,980.0,1160.0,,,46.0,,,,,,
-228723,Texas A & M University-College Station,College Station,TX,1,5,0,0,0,https://www.tamu.edu/,9003.0,63.2,1140.0,1380.0,25.0,31.0,84.0,,,,,,
+228723,Texas A & M University-College Station,College Station,TX,1,5,0,0,0,https://www.tamu.edu/,9003.0,63.2,1140.0,1380.0,25.0,31.0,84.0,,,,30.628,-96.3344,11444.0
 228769,The University of Texas at Arlington,Arlington,TX,1,5,0,0,0,https://www.uta.edu/,9206.0,81.3,990.0,1230.0,18.0,26.0,56.0,,,,,,
 228778,The University of Texas at Austin,Austin,TX,1,5,0,0,0,https://www.utexas.edu/,11678.0,29.1,1230.0,1490.0,27.0,33.0,88.0,,,,,,
 228787,The University of Texas at Dallas,Richardson,TX,1,5,0,0,0,https://www.utdallas.edu/,14564.0,65.5,1170.0,1410.0,25.0,32.0,71.0,,,,,,
@@ -2552,7 +2552,7 @@ id,name,city,state,ctrl,size,hbcu,womens,yr2,web,tin,adm,sat25,sat75,act25,act75
 229018,The University of Texas Permian Basin,Odessa,TX,1,3,0,0,0,https://www.utpb.edu/,6577.0,84.5,910.0,1110.0,16.0,20.0,43.0,,,,,,
 229027,The University of Texas at San Antonio,San Antonio,TX,1,5,0,0,0,https://www.utsa.edu/,6239.0,88.5,1000.0,1200.0,19.0,26.0,51.0,,,,,,
 229063,Texas Southern University,Houston,TX,1,3,1,0,0,https://www.tsu.edu/,6941.0,93.4,800.0,1000.0,15.0,19.0,20.0,,,,,,
-229115,Texas Tech University,Lubbock,TX,1,5,0,0,0,https://www.ttu.edu/,8935.0,70.9,1090.0,1270.0,22.0,28.0,67.0,,,,,,
+229115,Texas Tech University,Lubbock,TX,1,5,0,0,0,https://www.ttu.edu/,8935.0,70.9,1090.0,1270.0,22.0,28.0,67.0,,,,30.2849,-97.7341,12600.0
 229160,Texas Wesleyan University,Fort Worth,TX,2,2,0,0,0,https://www.txwes.edu/,32960.0,62.4,970.0,1150.0,16.0,23.0,32.0,,,,,,
 229179,Texas Woman's University,Denton,TX,1,4,0,0,0,https://www.twu.edu/,5712.0,95.0,,,,,44.0,,,,,,
 229267,Trinity University,San Antonio,TX,2,2,0,0,0,https://new.trinity.edu/,50712.0,28.2,1320.0,1465.0,30.0,33.0,82.0,,,,,,
@@ -2608,7 +2608,7 @@ id,name,city,state,ctrl,size,hbcu,womens,yr2,web,tin,adm,sat25,sat75,act25,act75
 232043,Eastern Mennonite University,Harrisonburg,VA,2,2,0,0,0,https://emu.edu/,41410.0,99.7,,,,,47.0,,,,,,
 232052,Eastern Shore Community College,Melfa,VA,1,1,0,0,1,https://www.es.vccs.edu/,4758.0,,,,,,,,,,,,
 232089,Ferrum College,Ferrum,VA,2,1,0,0,0,https://www.ferrum.edu/,37400.0,100.0,880.0,1100.0,,,29.0,,,,,,
-232186,George Mason University,Fairfax,VA,1,5,0,0,0,https://www2.gmu.edu/,10095.0,88.8,1140.0,1340.0,25.0,30.0,69.0,,,,,,
+232186,George Mason University,Fairfax,VA,1,5,0,0,0,https://www2.gmu.edu/,10095.0,88.8,1140.0,1340.0,25.0,30.0,69.0,,,,36.9916,-76.3093,12336.0
 232195,Germanna Community College,Locust Grove,VA,1,3,0,0,1,https://www.germanna.edu/,4788.0,,,,,,,,,,,,
 232256,Hampden-Sydney College,Hampden-Sydney,VA,2,1,0,0,0,https://www.hsc.edu/,49754.0,50.1,1060.0,1230.0,22.0,31.0,65.0,,,,,,
 232265,Hampton University,Hampton,VA,2,2,1,0,0,https://www.hamptonu.edu/,26198.0,48.3,857.0,1226.0,12.0,24.0,56.0,,,,,,
@@ -2616,7 +2616,7 @@ id,name,city,state,ctrl,size,hbcu,womens,yr2,web,tin,adm,sat25,sat75,act25,act75
 232414,J Sargeant Reynolds Community College,Richmond,VA,1,3,0,0,1,https://www.reynolds.edu/,4881.0,,,,,,,,,,,,
 232423,James Madison University,Harrisonburg,VA,1,5,0,0,0,https://www.jmu.edu/,7914.0,76.2,1170.0,1320.0,25.0,29.0,81.0,,,,,,
 232450,Brightpoint Community College,Chester,VA,1,3,0,0,1,https://www.brightpoint.edu/,4788.0,,,,,,,,,,,,
-232557,Liberty University,Lynchburg,VA,2,5,0,0,0,https://www.liberty.edu/,15015.0,99.3,,,,,63.0,,,,,,
+232557,Liberty University,Lynchburg,VA,2,5,0,0,0,https://www.liberty.edu/,15015.0,99.3,,,,,63.0,,,,37.2707,-76.7075,12780.0
 232566,Longwood University,Farmville,VA,1,2,0,0,0,https://www.longwood.edu/,8660.0,84.8,1020.0,1190.0,22.0,25.0,61.0,,,,,,
 232575,Laurel Ridge Community College,Middletown,VA,1,3,0,0,1,https://www.laurelridge.edu/,4758.0,,,,,,,,,,,,
 232609,University of Lynchburg,Lynchburg,VA,2,2,0,0,0,https://www.lynchburg.edu/,35540.0,82.2,980.0,1230.0,,,62.0,,,,,,
@@ -2662,7 +2662,7 @@ id,name,city,state,ctrl,size,hbcu,womens,yr2,web,tin,adm,sat25,sat75,act25,act75
 233921,Virginia Polytechnic Institute and State University,Blacksburg,VA,1,5,0,0,0,https://www.vt.edu/,12698.0,57.0,1240.0,1420.0,27.0,32.0,86.0,,,,,,
 233949,Virginia Western Community College,Roanoke,VA,1,3,0,0,1,https://virginiawestern.edu/,4818.0,,,,,,,,,,,,
 234030,Virginia Commonwealth University,Richmond,VA,1,5,0,0,0,https://www.vcu.edu/,12850.0,93.1,1030.0,1270.0,22.0,30.0,65.0,,,,,,
-234076,University of Virginia-Main Campus,Charlottesville,VA,1,5,0,0,0,https://www.virginia.edu/,18823.0,16.9,1410.0,1530.0,32.0,34.0,95.0,,,,,,
+234076,University of Virginia-Main Campus,Charlottesville,VA,1,5,0,0,0,https://www.virginia.edu/,18823.0,16.9,1410.0,1530.0,32.0,34.0,95.0,,,,38.0326,-78.508,13040.0
 234085,Virginia Military Institute,Lexington,VA,1,2,0,0,0,https://www.vmi.edu/,10076.0,81.7,1040.0,1260.0,22.0,28.0,82.0,,,,,,
 234137,Virginia University of Lynchburg,Lynchburg,VA,2,1,1,0,0,https://www.vul.edu/,8448.0,,,,,,26.0,,,,,,
 234155,Virginia State University,Petersburg,VA,1,3,1,0,0,https://www.vsu.edu/,5540.0,89.1,800.0,1050.0,14.0,20.0,41.0,,,,,,
@@ -2714,8 +2714,8 @@ id,name,city,state,ctrl,size,hbcu,womens,yr2,web,tin,adm,sat25,sat75,act25,act75
 236753,Tacoma Community College,Tacoma,WA,1,3,0,0,0,https://www.tacomacc.edu/,4477.0,,,,,,33.0,,,,,,
 236887,Walla Walla Community College,Walla Walla,WA,1,2,0,0,0,https://www.wwcc.edu/,6513.0,,,,,,47.0,,,,,,
 236896,Walla Walla University,College Place,WA,2,2,0,0,0,https://www.wallawalla.edu/,31899.0,,,,,,64.0,,,,,,
-236939,Washington State University,Pullman,WA,1,5,0,0,0,https://wsu.edu/,10976.0,85.4,,,,,62.0,,,,,,
-236948,University of Washington-Seattle Campus,Seattle,WA,1,5,0,0,0,https://www.washington.edu/,11524.0,42.5,,,,,84.0,,,,,,
+236939,Washington State University,Pullman,WA,1,5,0,0,0,https://wsu.edu/,10976.0,85.4,,,,,62.0,,,,47.751,-120.7401,13440.0
+236948,University of Washington-Seattle Campus,Seattle,WA,1,5,0,0,0,https://www.washington.edu/,11524.0,42.5,,,,,84.0,,,,47.6567,-122.3066,13440.0
 236975,Wenatchee Valley College,Wenatchee,WA,1,2,0,0,0,https://www.wvc.edu/,4623.0,,,,,,40.0,,,,,,
 237011,Western Washington University,Bellingham,WA,1,4,0,0,0,https://wwu.edu/,7997.0,91.3,1110.0,1350.0,23.0,29.0,66.0,,,,,,
 237039,Whatcom Community College,Bellingham,WA,1,2,0,0,0,https://whatcom.edu/,3633.0,,,,,,36.0,,,,,,
@@ -2787,7 +2787,7 @@ id,name,city,state,ctrl,size,hbcu,womens,yr2,web,tin,adm,sat25,sat75,act25,act75
 240198,Northwood Technical College,Rice Lake,WI,1,2,0,0,1,https://www.northwoodtech.edu/,4524.0,,,,,,,,,,,,
 240268,University of Wisconsin-Eau Claire,Eau Claire,WI,1,3,0,0,0,https://www.uwec.edu/,7645.0,76.1,,,21.0,27.0,68.0,,,,,,
 240277,University of Wisconsin-Green Bay,Green Bay,WI,1,4,0,0,0,https://www.uwgb.edu/,6767.0,87.8,,,18.0,25.0,53.0,,,,,,
-240329,University of Wisconsin-La Crosse,La Crosse,WI,1,4,0,0,0,https://www.uwlax.edu/,7974.0,73.2,,,21.0,27.0,71.0,,,,,,
+240329,University of Wisconsin-La Crosse,La Crosse,WI,1,4,0,0,0,https://www.uwlax.edu/,7974.0,73.2,,,21.0,27.0,71.0,,,,43.0753,-89.4081,13840.0
 240338,Wisconsin Lutheran College,Milwaukee,WI,2,2,0,0,0,https://www.wlc.edu/,34520.0,79.0,1060.0,1300.0,22.0,28.0,63.0,,,,,,
 240365,University of Wisconsin-Oshkosh,Oshkosh,WI,1,4,0,0,0,https://www.uwosh.edu/,6806.0,86.7,,,18.0,24.0,58.0,,,,,,
 240374,University of Wisconsin-Parkside,Kenosha,WI,1,2,0,0,0,https://www.uwp.edu/,6582.0,72.6,,,18.0,25.0,40.0,,,,,,
@@ -2795,7 +2795,7 @@ id,name,city,state,ctrl,size,hbcu,womens,yr2,web,tin,adm,sat25,sat75,act25,act75
 240417,University of Wisconsin-Stout,Menomonie,WI,1,3,0,0,0,https://www.uwstout.edu/,7330.0,84.7,,,19.0,26.0,53.0,,,,,,
 240426,University of Wisconsin-Superior,Superior,WI,1,2,0,0,0,https://www.uwsuper.edu/,6826.0,93.6,,,18.0,24.0,44.0,,,,,,
 240444,University of Wisconsin-Madison,Madison,WI,1,5,0,0,0,https://www.wisc.edu/,9644.0,43.3,1360.0,1510.0,28.0,32.0,89.0,,,,,,
-240453,University of Wisconsin-Milwaukee,Milwaukee,WI,1,5,0,0,0,https://uwm.edu/,8455.0,88.4,,,18.0,24.0,51.0,,,,,,
+240453,University of Wisconsin-Milwaukee,Milwaukee,WI,1,5,0,0,0,https://uwm.edu/,8455.0,88.4,,,18.0,24.0,51.0,,,,44.9778,-93.265,13668.0
 240462,University of Wisconsin-Platteville,Platteville,WI,1,3,0,0,0,https://www.uwplatt.edu/,6827.0,87.3,,,21.0,27.0,62.0,,,,,,
 240471,University of Wisconsin-River Falls,River Falls,WI,1,3,0,0,0,https://www.uwrf.edu/,6837.0,81.6,,,19.0,25.0,61.0,,,,,,
 240480,University of Wisconsin-Stevens Point,Stevens Point,WI,1,3,0,0,0,https://www.uwsp.edu/,7112.0,90.1,,,20.0,25.0,56.0,,,,,,
@@ -2870,8 +2870,8 @@ id,name,city,state,ctrl,size,hbcu,womens,yr2,web,tin,adm,sat25,sat75,act25,act75
 243638,College of Micronesia-FSM,Pohnpei,FM,1,2,0,0,0,https://www.comfsm.fm/,4350.0,80.9,,,,,29.0,,,,,,
 243647,Palau Community College,Koror,PW,1,1,0,0,1,https://palau.edu/,3120.0,,,,,,,,,,,,
 243665,University of the Virgin Islands,Charlotte Amalie,VI,1,2,1,0,0,https://www.uvi.edu/,4955.0,97.4,800.0,1020.0,14.0,20.0,29.0,,,,,,
-243744,Stanford University,Stanford,CA,2,4,0,0,0,https://www.stanford.edu/,61731.0,3.9,1510.0,1580.0,34.0,35.0,93.0,,,,,,
-243780,Purdue University-Main Campus,West Lafayette,IN,1,5,0,0,0,https://www.purdue.edu/,9718.0,50.3,1190.0,1460.0,27.0,34.0,83.0,,,,,,
+243744,Stanford University,Stanford,CA,2,4,0,0,0,https://www.stanford.edu/,61731.0,3.9,1510.0,1580.0,34.0,35.0,93.0,,,,40.3487,-74.6593,17800.0
+243780,Purdue University-Main Campus,West Lafayette,IN,1,5,0,0,0,https://www.purdue.edu/,9718.0,50.3,1190.0,1460.0,27.0,34.0,83.0,,,,40.7451,-74.0252,14400.0
 243799,Blue Hills Regional Technical School,Canton,MA,1,1,0,0,0,https://www.bluehills.org/practical-nursing/overview,,100.0,,,,,,,,,,,
 243823,Parker University,Dallas,TX,2,2,0,0,0,https://www.parker.edu/,25560.0,,,,,,72.0,,,,,,
 243832,EDP University of Puerto Rico Inc-San Juan,San Juan,PR,2,2,0,0,0,https://www.edpuniversity.edu/,5550.0,77.1,,,,,24.0,,,,,,
@@ -2881,7 +2881,7 @@ id,name,city,state,ctrl,size,hbcu,womens,yr2,web,tin,adm,sat25,sat75,act25,act75
 244446,Georgia Piedmont Technical College,Clarkston,GA,1,2,0,0,1,https://www.gptc.edu/,2400.0,,,,,,,,,,,,
 245625,Warren County Community College,Washington,NJ,1,2,0,0,1,https://www.warren.edu/,5220.0,,,,,,,,,,,,
 245652,St. John's College,Santa Fe,NM,2,1,0,0,0,https://www.sjc.edu/,37842.0,49.5,1260.0,1450.0,27.0,31.0,60.0,,,,,,
-245777,Bais Medrash Elyon,Monsey,NY,2,1,0,0,0,https://baismedroshelyon.com/,8600.0,80.0,,,,,,,,,,,
+245777,Bais Medrash Elyon,Monsey,NY,2,1,0,0,0,https://baismedroshelyon.com/,8600.0,80.0,,,,,,,,,41.1112,-74.0687,
 245838,Antioch University-Los Angeles,Culver City,CA,2,1,0,0,0,https://www.antiochla.edu/,16050.0,,,,,,,,,,,,
 245847,Antioch University-Santa Barbara,Santa Barbara,CA,2,1,0,0,0,https://www.antiochsb.edu/,19260.0,,,,,,,,,,,,
 245883,Antioch University-Seattle,Seattle,WA,2,1,0,0,0,https://www.antiochseattle.edu/,19260.0,,,,,,,,,,,,
@@ -2929,7 +2929,7 @@ id,name,city,state,ctrl,size,hbcu,womens,yr2,web,tin,adm,sat25,sat75,act25,act75
 366252,Pennsylvania College of Technology,Williamsport,PA,1,2,0,0,0,https://www.pct.edu/,15450.0,,,,,,50.0,,,,,,
 366261,Commonwealth Institute of Funeral Service,Houston,TX,2,1,0,0,1,https://www.commonwealth.edu/,15213.0,,,,,,,,,,,,
 366340,Stone Child College,Box Elder,MT,1,1,0,0,0,https://www.stonechild.edu/,2520.0,,,,,,32.0,,,,,,
-366395,Suffolk County Community College,Selden,NY,1,5,0,0,1,https://www.sunysuffolk.edu/,5640.0,,,,,,,,,,,,
+366395,Suffolk County Community College,Selden,NY,1,5,0,0,1,https://www.sunysuffolk.edu/,5640.0,,,,,,,,,,40.8651,-73.0425,
 366401,Las Positas College,Livermore,CA,1,3,0,0,1,https://www.laspositascollege.edu/,1104.0,,,,,,,,,,,,
 366465,Ogeechee Technical College,Statesboro,GA,1,2,0,0,1,https://www.ogeecheetech.edu/,2400.0,,,,,,,,,,,,
 366535,Remington College-Mobile Campus,Mobile,AL,2,1,0,0,1,https://www.remingtoncollege.edu/locations/mobile/,20476.0,,,,,,,,,,,,
@@ -2951,7 +2951,7 @@ id,name,city,state,ctrl,size,hbcu,womens,yr2,web,tin,adm,sat25,sat75,act25,act75
 372329,IBMC College,Fort Collins,CO,3,1,0,0,1,https://www.ibmc.edu/,15120.0,,,,,,,,,,,,
 372921,Fortis College-Smyrna,Smyrna,GA,3,1,0,0,1,https://fortis.edu/,14676.0,,,,,,,,,,,,
 373711,Upper Cape Cod Regional Technical School,Bourne,MA,1,1,0,0,0,https://www.uctpracticalnursing.com/,,100.0,,,,,,,,,,,
-375230,Yeshiva Gedolah Imrei Yosef D'spinka,Brooklyn,NY,2,1,0,0,0,https://spinka58st.com/,11500.0,,,,,,62.0,,,,,,
+375230,Yeshiva Gedolah Imrei Yosef D'spinka,Brooklyn,NY,2,1,0,0,0,https://spinka58st.com/,11500.0,,,,,,62.0,,,,40.6501,-73.9496,
 375416,Remington College-Cleveland Campus,Cleveland,OH,2,1,0,0,1,https://www.remingtoncollege.edu/locations/cleveland/,16254.0,,,,,,,,,,,,
 375966,Eastern Center for Arts and Technology,Willow Grove,PA,1,1,0,0,0,https://www.eastech.org/,,100.0,,,,,,,,,,,
 376224,CEM College-Humacao,Humacao,PR,3,1,0,0,0,https://www.cemcollege.edu/cem/,12900.0,,,,,,44.0,,,,,,
@@ -2967,7 +2967,7 @@ id,name,city,state,ctrl,size,hbcu,womens,yr2,web,tin,adm,sat25,sat75,act25,act75
 377564,University of Washington-Tacoma Campus,Tacoma,WA,1,2,0,0,0,https://www.tacoma.uw.edu/,11524.0,82.9,,,,,62.0,,,,,,
 377661,Valley College-Martinsburg,Martinsburg,WV,3,1,0,0,0,https://www.valley.edu/,,,,,,,58.0,,,,,,
 378576,Pacific College of Health and Science,San Diego,CA,3,1,0,0,0,https://www.pacificcollege.edu/,10492.0,,,,,,67.0,,,,,,
-379621,Madison Oneida BOCES-Practical Nursing Program,Verona,NY,1,1,0,0,0,https://www.moboces.org/programs_services/adulted/health_occupations,,91.7,,,,,,,,,,,
+379621,Madison Oneida BOCES-Practical Nursing Program,Verona,NY,1,1,0,0,0,https://www.moboces.org/programs_services/adulted/health_occupations,,91.7,,,,,,,,,43.1534,-75.5411,
 380359,Bay Mills Community College,Brimley,MI,1,1,0,0,0,https://www.bmcc.edu/,2660.0,,,,,,30.0,,,,,,
 380368,Fond du Lac Tribal and Community College,Cloquet,MN,1,2,0,0,0,https://www.fdltcc.edu/,5418.0,,,,,,21.0,,,,,,
 380377,Northwest Indian College,Bellingham,WA,1,1,0,0,0,https://www.nwic.edu/,3564.0,,,,,,27.0,,,,,,
@@ -2987,11 +2987,11 @@ id,name,city,state,ctrl,size,hbcu,womens,yr2,web,tin,adm,sat25,sat75,act25,act75
 384421,Rabbi Jacob Joseph School,Edison,NJ,2,1,0,0,0,https://rabbijacobjoseph.com/,12450.0,90.3,,,,,4.0,,,,,,
 385503,Fortis Institute-Scranton,Scranton,PA,3,1,0,0,1,https://www.fortis.edu/,14237.0,,,,,,,,,,,,
 385619,Everglades University,Boca Raton,FL,2,2,0,0,0,https://www.evergladesuniversity.edu/,19968.0,86.4,,,,,58.0,,,,,,
-386153,Seminar L'moros Bais Yaakov,Brooklyn,NY,2,1,0,0,1,https://seminarlmorosbaisyaakov.com/,11300.0,87.9,,,,,,,,,,,
+386153,Seminar L'moros Bais Yaakov,Brooklyn,NY,2,1,0,0,1,https://seminarlmorosbaisyaakov.com/,11300.0,87.9,,,,,,,,,40.6501,-73.9496,
 386472,Herzing University-Orlando,Winter Park,FL,2,1,0,0,0,https://www.herzing.edu/,12360.0,89.9,,,,,45.0,,,,,,
 388520,College of Biblical Studies-Houston,Houston,TX,2,1,0,0,0,https://cbshouston.edu/,7200.0,,,,,,,,,,,,
 392257,The College of Health Care Professions-Northwest,Houston,TX,3,2,0,0,0,https://www.chcp.edu/,,,,,,,46.0,,,,,,
-392354,"School of Professional Horticulture, New York Botanical Garden",Bronx,NY,2,1,0,0,1,https://www.nybg.org/edu/soph/,8750.0,75.0,,,,,,,,,,,
+392354,"School of Professional Horticulture, New York Botanical Garden",Bronx,NY,2,1,0,0,1,https://www.nybg.org/edu/soph/,8750.0,75.0,,,,,,,,,40.8448,-73.8648,
 395362,Copper Mountain Community College,Joshua Tree,CA,1,2,0,0,1,https://www.cmccd.edu/,1104.0,,,,,,,,,,,,
 399212,Santiago Canyon College,Orange,CA,1,4,0,0,1,https://www.sccollege.edu/SitePages/Home.aspx,1104.0,,,,,,,,,,,,
 399869,Southern California Institute of Technology,Anaheim,CA,3,1,0,0,0,https://www.scitech.edu/,17915.0,87.5,,,,,78.0,,,,,,
@@ -3004,8 +3004,8 @@ id,name,city,state,ctrl,size,hbcu,womens,yr2,web,tin,adm,sat25,sat75,act25,act75
 404055,Brookline College-Tempe,Tempe,AZ,3,1,0,0,0,https://www.brooklinecollege.edu/,,,,,,,65.0,,,,,,
 404338,Schiller International University,Tampa,FL,3,1,0,0,0,https://www.schiller.edu/,13680.0,,,,,,,,,,,,
 404426,Coconino Community College,Flagstaff,AZ,1,2,0,0,1,https://www.coconino.edu/,3254.0,,,,,,,,,,,,
-405058,Yeshivas Novominsk,Brooklyn,NY,2,1,0,0,0,https://yeshivasnovominsk.com/,8540.0,90.2,,,,,65.0,,,,,,
-405854,Rabbinical College of Ohr Shimon Yisroel,Brooklyn,NY,2,1,0,0,0,https://ohr-sy.com/,22500.0,,,,,,31.0,,,,,,
+405058,Yeshivas Novominsk,Brooklyn,NY,2,1,0,0,0,https://yeshivasnovominsk.com/,8540.0,90.2,,,,,65.0,,,,40.6501,-73.9496,
+405854,Rabbinical College of Ohr Shimon Yisroel,Brooklyn,NY,2,1,0,0,0,https://ohr-sy.com/,22500.0,,,,,,31.0,,,,40.6501,-73.9496,
 405872,Carroll Community College,Westminster,MD,1,2,0,0,1,https://www.carrollcc.edu/,5712.0,,,,,,,,,,,,
 406024,Galen College of Nursing-Tampa Bay,Saint Petersburg,FL,3,2,0,0,0,https://www.galencollege.edu/tampabay,16200.0,,,,,,64.0,,,,,,
 406033,Galen College of Nursing-San Antonio,San Antonio,TX,3,2,0,0,0,https://www.galencollege.edu/sanantonio/,16200.0,,,,,,68.0,,,,,,
@@ -3022,7 +3022,7 @@ id,name,city,state,ctrl,size,hbcu,womens,yr2,web,tin,adm,sat25,sat75,act25,act75
 413617,College of Menominee Nation,Keshena,WI,2,1,0,0,0,https://www.menominee.edu/,6000.0,,,,,,28.0,,,,,,
 413626,Leech Lake Tribal College,Cass Lake,MN,1,1,0,0,1,https://www.lltc.edu/,3888.0,,,,,,,,,,,,
 414461,Mech-Tech College,Caguas,PR,3,2,0,0,1,https://www.mechtech.edu/,10944.0,,,,,,,,,,,,
-414595,Pacific College of Health and Science,New York,NY,3,1,0,0,0,https://www.pacificcollege.edu/,10994.0,,,,,,68.0,,,,,,
+414595,Pacific College of Health and Science,New York,NY,3,1,0,0,0,https://www.pacificcollege.edu/,10994.0,,,,,,68.0,,,,40.7128,-74.006,
 414878,Trine University-Regional/Non-Traditional Campuses,Angola,IN,2,3,0,0,0,https://trine.edu/online/index.aspx,9576.0,21.6,,,,,,,,,,,
 414911,Pennsylvania Highlands Community College,Johnstown,PA,1,2,0,0,1,https://www.pennhighlands.edu/,7080.0,,,,,,,,,,,,
 416801,The University of Texas MD Anderson Cancer Center,Houston,TX,1,1,0,0,0,https://www.mdanderson.org/,4933.0,,,,,,,,,,,,
@@ -3035,13 +3035,13 @@ id,name,city,state,ctrl,size,hbcu,womens,yr2,web,tin,adm,sat25,sat75,act25,act75
 417734,Southeast Missouri Hospital College of Nursing and Health Sciences,Cape Girardeau,MO,2,1,0,0,0,https://www.sehcollege.edu/,11124.0,100.0,,,18.0,19.0,,,,,,,
 417752,Messenger College,Bedford,TX,2,1,0,0,0,https://www.messengercollege.edu/,9600.0,50.0,,,,,,,,,,,
 417840,Prism Career Institute-Philadelphia,Philadelphia,PA,3,1,0,0,0,https://prismcareerinstitute.edu/,,100.0,,,,,,,,,,,
-417868,Clinton Essex Warren Washington BOCES,Plattsburgh,NY,1,1,0,0,0,https://www.cves.org/,,32.9,,,,,,,,,,,
-417886,Jefferson Lewis BOCES-Practical Nursing Program,Watertown,NY,1,1,0,0,0,https://www.boces.com/,18481.0,,,,,,,,,,,,
-417910,Veeb Nassau County School of Practical Nursing,Hicksville,NY,1,1,0,0,0,https://www.veebpnprogram.org/,19500.0,,,,,,,,,,,,
-417992,Orange Ulster BOCES-Practical Nursing Program,Newburgh,NY,1,1,0,0,0,https://www.ouboces.org/,,78.6,,,,,,,,,,,
-418029,Washington Saratoga Warren Hamilton Essex BOCES-Practical Nursing Program,Hudson Falls,NY,1,1,0,0,0,https://www.wswheboces.org/,,100.0,,,,,,,,,,,
-418065,Eastern Suffolk BOCES,Sayville,NY,1,1,0,0,0,https://adulteducation.esboces.org/programs-services/eastern-suffolk-school-of-practical-nursing/nursing,,96.3,,,,,,,,,,,
-418126,New York College of Health Professions,Syosset,NY,2,1,0,0,0,https://www.nycollege.edu/,14040.0,,,,,,54.0,,,,,,
+417868,Clinton Essex Warren Washington BOCES,Plattsburgh,NY,1,1,0,0,0,https://www.cves.org/,,32.9,,,,,,,,,44.6997,-73.4534,
+417886,Jefferson Lewis BOCES-Practical Nursing Program,Watertown,NY,1,1,0,0,0,https://www.boces.com/,18481.0,,,,,,,,,,43.9747,-75.9107,
+417910,Veeb Nassau County School of Practical Nursing,Hicksville,NY,1,1,0,0,0,https://www.veebpnprogram.org/,19500.0,,,,,,,,,,40.7682,-73.5246,
+417992,Orange Ulster BOCES-Practical Nursing Program,Newburgh,NY,1,1,0,0,0,https://www.ouboces.org/,,78.6,,,,,,,,,41.5034,-74.0104,
+418029,Washington Saratoga Warren Hamilton Essex BOCES-Practical Nursing Program,Hudson Falls,NY,1,1,0,0,0,https://www.wswheboces.org/,,100.0,,,,,,,,,43.2987,-73.589,
+418065,Eastern Suffolk BOCES,Sayville,NY,1,1,0,0,0,https://adulteducation.esboces.org/programs-services/eastern-suffolk-school-of-practical-nursing/nursing,,96.3,,,,,,,,,40.7437,-73.0854,
+418126,New York College of Health Professions,Syosset,NY,2,1,0,0,0,https://www.nycollege.edu/,14040.0,,,,,,54.0,,,,40.8229,-73.5021,
 418223,Northern Career Institute,Eastlake,OH,1,1,0,0,0,https://ncioh.edu/,14000.0,,,,,,,,,,,,
 418427,Chester County Intermediate Unit,Downingtown,PA,1,1,0,0,0,https://www.chestercountynursing.org/,,49.4,,,,,,,,,,,
 418445,Jefferson County Dubois Area Vocational Technical Practical Nursing Program,Reynoldsville,PA,1,1,0,0,0,https://www.jefftech.us/,,76.9,,,,,,,,,,,
@@ -3058,7 +3058,7 @@ id,name,city,state,ctrl,size,hbcu,womens,yr2,web,tin,adm,sat25,sat75,act25,act75
 419721,Automeca Technical College-Ponce,Ponce,PR,3,1,0,0,0,https://www.automeca.com/,8800.0,,,,,,,,,,,,
 420024,Centura College-Chesapeake,Chesapeake,VA,3,1,0,0,0,https://www.centuracollege.edu/campuses/chesapeake,16500.0,,,,,,67.0,,,,,,
 420042,University of Phoenix-Hawaii,Kapolei,HI,3,1,0,0,0,https://www.phoenix.edu/,9552.0,,,,,,,,,,,,
-420325,Yeshiva D'monsey Rabbinical College,Monsey,NY,2,1,0,0,0,https://yeshivadmonsey.com/,9200.0,42.3,,,,,5.0,,,,,,
+420325,Yeshiva D'monsey Rabbinical College,Monsey,NY,2,1,0,0,0,https://yeshivadmonsey.com/,9200.0,42.3,,,,,5.0,,,,41.1112,-74.0687,
 420398,Northwest Vista College,San Antonio,TX,1,4,0,0,1,https://alamo.edu/nvc/,6750.0,,,,,,,,,,,,
 420431,Oconee Fall Line Technical College,Sandersville,GA,1,2,0,0,1,https://www.oftc.edu/,2400.0,,,,,,,,,,,,
 420440,York County Community College,Wells,ME,1,2,0,0,1,https://www.yccc.edu/,2880.0,,,,,,,,,,,,
@@ -3066,7 +3066,7 @@ id,name,city,state,ctrl,size,hbcu,womens,yr2,web,tin,adm,sat25,sat75,act25,act75
 420556,Columbia Gorge Community College,The Dalles,OR,1,1,0,0,1,https://www.cgcc.edu/,4284.0,,,,,,,,,,,,
 420723,Tillamook Bay Community College,Tillamook,OR,1,1,0,0,1,https://tillamookbaycc.edu/,3888.0,,,,,,,,,,,,
 421708,Arizona College of Nursing-Tempe,Tempe,AZ,3,2,0,0,0,https://www.arizonacollege.edu/,23573.0,100.0,,,,,9.0,,,,,,
-421841,New York Conservatory for Dramatic Arts,New York,NY,3,1,0,0,1,https://www.nycda.edu/,36200.0,82.3,,,,,,,,,,,
+421841,New York Conservatory for Dramatic Arts,New York,NY,3,1,0,0,1,https://www.nycda.edu/,36200.0,82.3,,,,,,,,,40.7128,-74.006,
 421878,Eastern International College-Jersey City,Jersey City,NJ,3,1,0,0,0,https://www.eicollege.edu/,17950.0,100.0,,,,,25.0,,,,,,
 422695,Pacific College,Costa Mesa,CA,3,1,0,0,0,https://www.pacific-college.edu/,,50.0,,,,,76.0,,,,,,
 423652,Oregon Coast Community College,Newport,OR,1,1,0,0,1,https://www.oregoncoastcc.org/,4428.0,,,,,,,,,,,,
@@ -3081,12 +3081,12 @@ id,name,city,state,ctrl,size,hbcu,womens,yr2,web,tin,adm,sat25,sat75,act25,act75
 429128,Urban College of Boston,Boston,MA,2,1,0,0,1,https://www.urbancollege.edu/,7608.0,,,,,,,,,,,,
 430184,Strayer University-Maryland,Suitland,MD,3,2,0,0,0,https://www.strayer.edu/campus-locations/maryland/prince-georges,13725.0,,,,,,,,,,,,
 430670,San Juan Bautista School of Medicine,Caguas,PR,2,1,0,0,0,https://www.sanjuanbautista.edu/,5535.0,100.0,,,,,,,,,,,
-430883,Cayuga Onondaga BOCES-Practical Nursing Program,Auburn,NY,1,1,0,0,0,https://www.cayboces.org/,12750.0,31.2,,,,,,,,,,,
+430883,Cayuga Onondaga BOCES-Practical Nursing Program,Auburn,NY,1,1,0,0,0,https://www.cayboces.org/,12750.0,31.2,,,,,,,,,42.932,-76.5658,
 430935,Colegio de Cinematografía Artes y Television,Bayamon,PR,3,1,0,0,1,https://www.ccatpuertorico.com/,6195.0,,,,,,,,,,,,
 430971,Delaware County Technical School-Practical Nursing Program,Broomall,PA,1,1,0,0,0,https://www.dciu.org/lpn,,100.0,,,,,,,,,,,
 431266,Henrico County-Saint Marys Hospital School of Practical Nursing,Richmond,VA,1,1,0,0,0,https://henricocte.com/career-classes/areas-of-study/practical-nursing/,,67.3,,,,,,,,,,,
 431600,UPMC Mercy School of Nursing,Pittsburgh,PA,2,1,0,0,1,https://www.upmc.com/mercyson,14190.0,74.5,,,,,,,,,,,
-431983,Yeshiva of the Telshe Alumni,Riverdale,NY,2,1,0,0,0,https://yeshivatelshealumni.com/,9200.0,,,,,,6.0,,,,,,
+431983,Yeshiva of the Telshe Alumni,Riverdale,NY,2,1,0,0,0,https://yeshivatelshealumni.com/,9200.0,,,,,,6.0,,,,40.8979,-73.9122,
 432384,Platt College-Ontario,Ontario,CA,3,1,0,0,0,https://www.plattcollege.edu/,14804.0,,,,,,57.0,,,,,,
 432524,Delaware College of Art and Design,Wilmington,DE,2,1,0,0,1,https://www.dcad.edu/,28330.0,61.0,,,,,,,,,,,
 433004,American University of Health Sciences,Signal Hill,CA,3,1,0,0,0,https://www.auhs.edu/,21420.0,100.0,,,,,,,,,,,
@@ -3130,7 +3130,7 @@ id,name,city,state,ctrl,size,hbcu,womens,yr2,web,tin,adm,sat25,sat75,act25,act75
 439455,MDT College of Health Sciences,Chicago,IL,3,1,0,0,0,https://www.atsinstitute.edu/,20800.0,67.7,,,,,,,,,,,
 439701,The King's University,Southlake,TX,2,1,0,0,0,https://www.tku.edu/,11400.0,100.0,,,,,40.0,,,,,,
 439738,Fortis College-Baton Rouge,Baton Rouge,LA,3,1,0,0,1,https://www.fortis.edu/,16004.0,,,,,,,,,,,,
-439783,New York College of Traditional Chinese Medicine,Mineola,NY,2,1,0,0,0,https://www.nyctcm.edu/,16290.0,,,,,,,,,,,,
+439783,New York College of Traditional Chinese Medicine,Mineola,NY,2,1,0,0,0,https://www.nyctcm.edu/,16290.0,,,,,,,,,,40.749,-73.6404,
 439792,Fortis College-Orange Park,Orange Park,FL,3,1,0,0,1,https://fortis.edu/,14102.0,,,,,,,,,,,,
 439862,Pacific Islands University,Mangilao,GU,2,1,0,0,0,https://www.piu.edu/,6553.0,39.4,,,,,,,,,,,
 439871,PCI College,Cerritos,CA,3,1,0,0,0,https://www.pci-ed.com/,,,,,,,74.0,,,,,,
@@ -3150,7 +3150,7 @@ id,name,city,state,ctrl,size,hbcu,womens,yr2,web,tin,adm,sat25,sat75,act25,act75
 441229,Smith Chason College,Los Angeles,CA,3,2,0,0,0,https://wcui.edu/,17985.0,,,,,,49.0,,,,,,
 441487,Texas County Technical College,Houston,MO,3,1,0,0,1,https://www.texascountytech.edu/,18960.0,100.0,,,,,,,,,,,
 441496,Aviation Institute of Maintenance-Kansas City,Kansas City,MO,3,1,0,0,1,https://aviationmaintenance.edu/campuses/kansas-city-mo,16520.0,,,,,,,,,,,,
-441609,Yeshiva Shaarei Torah of Rockland,Suffern,NY,2,1,0,0,0,https://www.yst.edu/,13000.0,34.7,,,,,,,,,,,
+441609,Yeshiva Shaarei Torah of Rockland,Suffern,NY,2,1,0,0,0,https://www.yst.edu/,13000.0,34.7,,,,,,,,,41.1126,-74.1496,
 441636,American Institute of Alternative Medicine,Columbus,OH,3,1,0,0,0,https://www.aiam.edu/,14047.0,84.4,,,,,55.0,,,,,,
 441690,Universidad Pentecostal Mizpa,Rio Piedras,PR,2,1,0,0,0,https://mizpa.edu/,3720.0,,,,,,14.0,,,,,,
 441706,Caribbean Forensic and Technical College,San Juan,PR,3,1,0,0,0,https://www.caribbeanforensic.com/,8500.0,,,,,,,,,,,,
@@ -3190,7 +3190,7 @@ id,name,city,state,ctrl,size,hbcu,womens,yr2,web,tin,adm,sat25,sat75,act25,act75
 444130,Northcentral University,San Diego,CA,2,4,0,0,0,https://www.nu.edu/,11064.0,,,,,,,,,,,,
 444194,Bayamon Community College,Bayamon,PR,3,1,0,0,0,https://www.bccpr.org/,8385.0,,,,,,,,,,,,
 444398,Baptist University of the Americas,San Antonio,TX,2,1,0,0,0,https://www.bua.edu/,6960.0,,,,,,27.0,,,,,,
-444413,Beis Medrash Heichal Dovid,Far Rockaway,NY,2,1,0,0,0,https://www.heichaldovid.org/,9640.0,70.0,,,,,18.0,,,,,,
+444413,Beis Medrash Heichal Dovid,Far Rockaway,NY,2,1,0,0,0,https://www.heichaldovid.org/,9640.0,70.0,,,,,18.0,,,,40.6098,-73.7591,
 444510,CES College,Burbank,CA,2,1,0,0,0,https://www.cescollege.edu/,,60.0,,,,,,,,,,,
 444565,Culinary Institute Inc,Houston,TX,3,1,0,0,1,https://www.culinaryinstitute.edu/,12600.0,,,,,,,,,,,,
 444583,Escuela Hotelera de San Juan,Hato Rey,PR,3,1,0,0,0,https://www.escuelahotelera.edu/,13960.0,,,,,,,,,,,,
@@ -3223,7 +3223,7 @@ id,name,city,state,ctrl,size,hbcu,womens,yr2,web,tin,adm,sat25,sat75,act25,act75
 446525,SAE Institute of Technology-Nashville,Nashville,TN,3,2,0,0,0,https://usa.sae.edu/,14816.0,,,,,,46.0,,,,,,
 446561,Stanbridge University,Irvine,CA,3,2,0,0,0,https://www.stanbridge.edu/,,11.4,,,,,77.0,,,,,,
 446598,Universal College of Healing Arts,Omaha,NE,3,1,0,0,1,https://www.ucha.edu/,11422.0,,,,,,,,,,,,
-446604,Uta Mesivta of Kiryas Joel,Monroe,NY,2,2,0,0,0,https://utam.edu/,15000.0,,,,,,78.0,,,,,,
+446604,Uta Mesivta of Kiryas Joel,Monroe,NY,2,2,0,0,0,https://utam.edu/,15000.0,,,,,,78.0,,,,41.3312,-74.1874,
 446640,Harrisburg University of Science and Technology,Harrisburg,PA,2,2,0,0,0,https://www.harrisburgu.edu/,23900.0,81.8,,,,,43.0,,,,,,
 446774,Blue Ridge Community and Technical College,Martinsburg,WV,1,2,0,0,1,https://www.blueridgectc.edu/,434.0,,,,,,,,,,,,
 447014,Daytona College,Ormond Beach,FL,3,1,0,0,0,https://daytonacollege.edu/,,,,,,,72.0,,,,,,
@@ -3268,8 +3268,8 @@ id,name,city,state,ctrl,size,hbcu,womens,yr2,web,tin,adm,sat25,sat75,act25,act75
 451352,Southeastern College-Charlotte,Charlotte,NC,3,1,0,0,1,https://www.sec.edu/,22384.0,97.5,,,,,,,,,,,
 451370,Yeshivas Be'er Yitzchok,Elizabeth,NJ,2,1,0,0,0,https://yeshivasbeeryitzchok.org/,11200.0,100.0,,,,,,,,,,,
 451398,Yeshiva Toras Chaim,Lakewood,NJ,2,1,0,0,0,https://ytclakewood.com/,12600.0,98.4,,,,,27.0,,,,,,
-451404,Talmudical Seminary of Bobov,Brooklyn,NY,2,1,0,0,0,https://www.independentrabbinicalcolleges.org/,13200.0,98.1,,,,,43.0,,,,,,
-451413,Center for Allied Health Education,Brooklyn,NY,3,1,0,0,1,https://www.cahe.edu/,,18.5,,,,,,,,,,,
+451404,Talmudical Seminary of Bobov,Brooklyn,NY,2,1,0,0,0,https://www.independentrabbinicalcolleges.org/,13200.0,98.1,,,,,43.0,,,,40.6501,-73.9496,
+451413,Center for Allied Health Education,Brooklyn,NY,3,1,0,0,1,https://www.cahe.edu/,,18.5,,,,,,,,,40.6501,-73.9496,
 451556,Southwest University at El Paso,El Paso,TX,3,2,0,0,0,https://southwestuniversity.edu/,14000.0,,,,,,66.0,,,,,,
 451750,Bryant & Stratton College-Wauwatosa,Wauwatosa,WI,2,1,0,0,0,https://www.bryantstratton.edu/,19330.0,,,,,,23.0,,,,,,
 451857,Remington College-Houston Southeast Campus,League City,TX,2,1,0,0,1,https://www.remingtoncollege.edu/locations/houston/webster/,13484.0,,,,,,,,,,,,
@@ -3291,7 +3291,7 @@ id,name,city,state,ctrl,size,hbcu,womens,yr2,web,tin,adm,sat25,sat75,act25,act75
 454865,Cambridge College of Healthcare & Technology,Delray Beach,FL,3,2,0,0,0,https://www.cambridgehealth.edu/,15230.0,,,,,,56.0,,,,,,
 455114,College of Western Idaho,Nampa,ID,1,4,0,0,1,https://cwi.edu/,3400.0,,,,,,,,,,,,
 455196,Jersey College,Teterboro,NJ,3,2,0,0,1,https://www.jerseycollege.edu/,,67.9,915.0,1090.0,17.0,22.0,,,,,,,
-455257,Yeshiva of Machzikai Hadas,Brooklyn,NY,2,1,0,0,0,https://yeshivaofmachzikaihadas.com/,10600.0,66.2,,,,,71.0,,,,,,
+455257,Yeshiva of Machzikai Hadas,Brooklyn,NY,2,1,0,0,0,https://yeshivaofmachzikaihadas.com/,10600.0,66.2,,,,,71.0,,,,40.6501,-73.9496,
 455479,Fortis Institute-Pensacola,Pensacola,FL,3,1,0,0,1,https://www.fortis.edu/,14511.0,,,,,,,,,,,,
 455512,Woodland Community College,Woodland,CA,1,2,0,0,1,https://wcc.yccd.edu/,1104.0,,,,,,,,,,,,
 455628,Fortis Institute-Birmingham,Birmingham,AL,3,1,0,0,1,https://www.fortis.edu/,14539.0,,,,,,,,,,,,
@@ -3315,7 +3315,7 @@ id,name,city,state,ctrl,size,hbcu,womens,yr2,web,tin,adm,sat25,sat75,act25,act75
 457484,Pacific Rim Christian University,Honolulu,HI,2,1,0,0,0,https://www.pacrim.edu/#home,11880.0,,,,,,52.0,,,,,,
 457624,Southern Worcester County Regional Vocational School District,Charlton,MA,1,1,0,0,0,https://www.baypath.net/evening-programs-division/practical-nursing/,,100.0,,,,,,,,,,,
 457697,City Vision University,Kansas City,MO,2,1,0,0,0,https://www.cityvision.edu/,6400.0,,,,,,,,,,,,
-457800,New York Medical Career Training Center,Flushing,NY,3,1,0,0,1,https://nymedtraining.com/,,100.0,,,,,,,,,,,
+457800,New York Medical Career Training Center,Flushing,NY,3,1,0,0,1,https://nymedtraining.com/,,100.0,,,,,,,,,40.7674,-73.833,
 457925,Portland Actors Conservatory,Portland,OR,2,1,0,0,1,https://pac.edu/,11750.0,66.7,,,,,,,,,,,
 458034,Houston International College Cardiotech Ultrasound School,Houston,TX,3,1,0,0,1,https://www.cardiotech.org/,10473.0,40.0,,,,,,,,,,,
 458113,Ascent College,Gainesville,VA,2,1,0,0,0,https://ascent.edu/,7680.0,,,,,,,,,,,,
@@ -3350,7 +3350,7 @@ id,name,city,state,ctrl,size,hbcu,womens,yr2,web,tin,adm,sat25,sat75,act25,act75
 460677,ICPR Junior College,Manati,PR,3,1,0,0,1,https://www.icprjc.edu/,7879.0,,,,,,,,,,,,
 460756,Hawaii Medical College,Honolulu,HI,3,1,0,0,1,https://www.hmi.edu/,25387.0,,,,,,,,,,,,
 460871,Chamberlain University-Virginia,Vienna,VA,3,1,0,0,0,https://www.chamberlain.edu/,19572.0,100.0,,,,,,,,,,,
-461014,Mildred Elley-New York Campus,New York,NY,3,2,0,0,1,https://www.mildred-elley.edu/,14881.0,,,,,,,,,,,,
+461014,Mildred Elley-New York Campus,New York,NY,3,2,0,0,1,https://www.mildred-elley.edu/,14881.0,,,,,,,,,,40.7128,-74.006,
 461023,National Paralegal College,Phoenix,AZ,3,1,0,0,0,https://nationalparalegal.edu/,7800.0,,,,,,32.0,,,,,,
 461032,Carolina College of Biblical Studies,Fayetteville,NC,2,1,0,0,0,https://ccbs.edu/,5976.0,,,,,,,,,,,,
 461148,New York Film Academy,Burbank,CA,3,2,0,0,0,https://www.nyfa.edu/,34898.0,,,,,,71.0,,,,,,
@@ -3374,8 +3374,8 @@ id,name,city,state,ctrl,size,hbcu,womens,yr2,web,tin,adm,sat25,sat75,act25,act75
 475200,Whitworth University-Adult Degree Programs,Spokane,WA,2,1,0,0,0,https://www.whitworth.edu/cms/,13560.0,,,,,,,,,,,,
 475273,"Springfield College-Regional, Online, and Continuing Education",Springfield,MA,2,1,0,0,0,https://springfield.edu/regional-and-online,19152.0,,,,,,,,,,,,
 475398,Catholic Distance University,Charles Town,WV,2,1,0,0,0,https://cdu.edu/,8280.0,,,,,,,,,,,,
-475422,Finger Lakes Health College of Nursing & Health Sciences,Geneva,NY,2,1,0,0,1,https://www.flhcon.edu/,10900.0,,,,,,,,,,,,
-475565,CUNY Stella and Charles Guttman Community College,New York,NY,1,2,0,0,1,https://www.guttman.cuny.edu/,4800.0,100.0,,,,,,,,,40.7548,-73.9986,
+475422,Finger Lakes Health College of Nursing & Health Sciences,Geneva,NY,2,1,0,0,1,https://www.flhcon.edu/,10900.0,,,,,,,,,,42.8687,-76.9781,
+475565,CUNY Stella and Charles Guttman Community College,New York,NY,1,2,0,0,1,https://www.guttman.cuny.edu/,4800.0,100.0,,,,,,,,,40.7548,-73.9986,0.0
 475608,Criswell College,Dallas,TX,2,1,0,0,0,https://www.criswell.edu/,13440.0,91.7,,,,,57.0,,,,,,
 475635,Beverly Hills Design Institute,Beverly Hills,CA,3,1,0,0,0,https://www.bhdi.edu/,23220.0,,,,,,,,,,,,
 475705,Annenberg School of Nursing,Reseda,CA,2,1,0,0,0,https://www.asn.edu/,,80.0,,,,,,,,,,,
@@ -3383,11 +3383,11 @@ id,name,city,state,ctrl,size,hbcu,womens,yr2,web,tin,adm,sat25,sat75,act25,act75
 475732,Chamberlain University-Georgia,Sandy Springs,GA,3,2,0,0,0,https://www.chamberlain.edu/,20300.0,96.2,,,,,,,,,,,
 475741,Chamberlain University-Indiana,Indianapolis,IN,3,1,0,0,0,https://www.chamberlain.edu/,18900.0,100.0,,,,,,,,,,,
 475839,Sessions College for Professional Design,Tempe,AZ,3,1,0,0,0,https://www.sessions.edu/,12240.0,,,,,,50.0,,,,,,
-476355,Miami Ad School-New York,Astoria,NY,3,1,0,0,1,https://miamiadschool.com/locations/new-york/,19400.0,,,,,,,,,,,,
+476355,Miami Ad School-New York,Astoria,NY,3,1,0,0,1,https://miamiadschool.com/locations/new-york/,19400.0,,,,,,,,,,40.7721,-73.9303,
 476601,Bais HaMedrash and Mesivta of Baltimore,Baltimore,MD,2,1,0,0,0,https://www.bhmb.edu/,13100.0,100.0,,,,,12.0,,,,,,
 476683,Athena Career Academy,Toledo,OH,3,1,0,0,1,https://www.athenacareers.edu/,,60.0,,,,,,,,,,,
 476692,Yeshiva Gedolah Zichron Leyma,Union,NJ,2,1,0,0,0,https://www.yzl.edu/,11350.0,70.6,,,,,,,,,,,
-476717,Be'er Yaakov Talmudic Seminary,Spring Valley,NY,2,1,0,0,0,https://www.byts.edu/,12300.0,,,,,,53.0,,,,,,
+476717,Be'er Yaakov Talmudic Seminary,Spring Valley,NY,2,1,0,0,0,https://www.byts.edu/,12300.0,,,,,,53.0,,,,41.1126,-74.0437,
 476939,FVI School of Nursing and Technology,Miami,FL,3,1,0,0,1,https://www.fvi.edu/,,61.3,,,,,,,,,,,
 476975,Colorado State University Global,Aurora,CO,1,3,0,0,0,https://csuglobal.edu/,8400.0,92.9,,,,,,,,,,,
 477039,West Coast University-Dallas,Richardson,TX,3,2,0,0,0,https://westcoastuniversity.edu/,15790.0,,,,,,,,,,,,
@@ -3395,7 +3395,7 @@ id,name,city,state,ctrl,size,hbcu,womens,yr2,web,tin,adm,sat25,sat75,act25,act75
 479956,Pennsylvania State University-World Campus,University Park,PA,1,4,0,0,0,https://www.worldcampus.psu.edu/,15204.0,80.3,1100.0,1340.0,18.0,30.0,34.0,,,,,,
 479992,Brand College,Glendale,CA,3,1,0,0,0,https://brandcollege.edu/,,100.0,,,,,,,,,,,
 480073,South University-Austin,Round Rock,TX,3,1,0,0,0,"https://www.southuniversity.edu/austin#location=Austin, TX",15732.0,,,,,,9.0,,,,,,
-480091,Bryant & Stratton College-Online,Orchard Park,NY,2,3,0,0,0,https://www.bryantstratton.edu/,15706.0,,,,,,18.0,,,,,,
+480091,Bryant & Stratton College-Online,Orchard Park,NY,2,3,0,0,0,https://www.bryantstratton.edu/,15706.0,,,,,,18.0,,,,42.7676,-78.745,
 480198,Warner Pacific University Professional and Graduate Studies,Portland,OR,2,1,0,0,0,https://www.warnerpacific.edu/,12960.0,67.1,,,,,,,,,,,
 480204,Platt College-Riverside,Riverside,CA,3,1,0,0,0,https://www.plattcollege.edu/,14804.0,,,,,,56.0,,,,,,
 480569,Florida Institute of Technology-Online,Melbourne,FL,2,2,0,0,0,https://www.fit.edu/,12240.0,44.4,,,,,,,,,,,
@@ -3409,7 +3409,7 @@ id,name,city,state,ctrl,size,hbcu,womens,yr2,web,tin,adm,sat25,sat75,act25,act75
 481207,Institute of Health Sciences,Hunt Valley,MD,3,1,0,0,0,https://www.iohs.org/,14400.0,,,,,,,,,,,,
 481225,Mid-South Christian College,Memphis,TN,2,1,0,0,0,https://www.midsouthchristian.edu/,10102.0,100.0,,,,,,,,,,,
 481401,Grace School of Theology,Conroe,TX,2,1,0,0,0,https://www.gsot.edu/,6240.0,,,,,,,,,,,,
-481410,Yeshiva Gedolah Kesser Torah,Monsey,NY,2,1,0,0,0,https://yeshivagedolahkessertorah.com/,9300.0,35.7,,,,,38.0,,,,,,
+481410,Yeshiva Gedolah Kesser Torah,Monsey,NY,2,1,0,0,0,https://yeshivagedolahkessertorah.com/,9300.0,35.7,,,,,38.0,,,,41.1112,-74.0687,
 481438,Yeshiva Yesodei Hatorah,Lakewood,NJ,2,1,0,0,0,https://yeshivayesodeihatorahlakewood.com/,12500.0,100.0,,,,,7.0,,,,,,
 481456,Bonnie Joseph Academy of Cosmetology & Barbering,Heber City,UT,3,1,0,0,0,https://bonniejosephacademy.edu/,,85.7,,,,,,,,,,,
 481720,South University-High Point,High Point,NC,3,1,0,0,0,"https://www.southuniversity.edu/high-point#location=High Point, NC",19836.0,,,,,,,,,,,,
@@ -3418,7 +3418,7 @@ id,name,city,state,ctrl,size,hbcu,womens,yr2,web,tin,adm,sat25,sat75,act25,act75
 482185,Academy of Interactive Entertainment,Seattle,WA,2,1,0,0,1,https://seattle.aie.edu/,24600.0,65.0,,,,,,,,,,,
 482228,Veritas Baptist College,Lawrenceburg,IN,2,1,0,0,0,https://www.vbc.edu/,8376.0,100.0,,,,,29.0,,,,,,
 482255,Aviation Institute of Maintenance-Las Vegas,Las Vegas,NV,3,1,0,0,1,https://aviationmaintenance.edu/campuses/las-vegas-nv,16520.0,,,,,,,,,,,,
-482413,DeVry College of New York,New York,NY,3,1,0,0,0,https://www.devry.edu/,14392.0,100.0,,,,,33.0,,,,,,
+482413,DeVry College of New York,New York,NY,3,1,0,0,0,https://www.devry.edu/,14392.0,100.0,,,,,33.0,,,,40.7128,-74.006,
 482422,DeVry University-Arizona,Phoenix,AZ,3,1,0,0,0,https://www.devry.edu/,14392.0,,,,,,,,,,,,
 482431,DeVry University-California,Ontario,CA,3,2,0,0,0,https://www.devry.edu/,14392.0,43.2,,,,,43.0,,,,,,
 482459,DeVry University-Florida,Orlando,FL,3,1,0,0,0,https://www.devry.edu/,14392.0,100.0,,,,,,,,,,,
@@ -3453,7 +3453,7 @@ id,name,city,state,ctrl,size,hbcu,womens,yr2,web,tin,adm,sat25,sat75,act25,act75
 484756,University of Phoenix-Texas,Dallas,TX,3,1,0,0,0,https://www.phoenix.edu/,9552.0,,,,,,,,,,,,
 484844,Minerva University,San Francisco,CA,2,1,0,0,0,https://minerva.edu/,18700.0,3.6,,,,,89.0,,,,,,
 484862,University of West Los Angeles,Inglewood,CA,3,1,0,0,0,https://www.uwla.edu/,6960.0,,,,,,,,,,,,
-484871,Rabbinical College Ohr Yisroel,Brooklyn,NY,2,1,0,0,0,https://www.rabbinicalcollegeohryisroel.com/,9000.0,,,,,,52.0,,,,,,
+484871,Rabbinical College Ohr Yisroel,Brooklyn,NY,2,1,0,0,0,https://www.rabbinicalcollegeohryisroel.com/,9000.0,,,,,,52.0,,,,40.6501,-73.9496,
 484905,University of North Texas at Dallas,Dallas,TX,1,2,0,0,0,https://untdallas.edu/,7840.0,93.9,820.0,990.0,14.0,21.0,44.0,,,,,,
 484932,BridgeValley Community & Technical College,South  Charleston,WV,1,2,0,0,1,https://www.bridgevalley.edu/,4682.0,,,,,,,,,,,,
 485111,Georgia Military College,Milledgeville,GA,1,3,0,0,0,https://www.gmc.edu/,7605.0,,,,,,33.0,,,,,,
@@ -3465,12 +3465,12 @@ id,name,city,state,ctrl,size,hbcu,womens,yr2,web,tin,adm,sat25,sat75,act25,act75
 485698,American College of the Building Arts,Charleston,SC,2,1,0,0,0,https://acba.edu/,19872.0,62.1,1050.0,1230.0,18.0,26.0,62.0,,,,,,
 485768,Atlantis University,Miami,FL,3,1,0,0,0,https://atlantisuniversity.edu/,10800.0,,,,,,61.0,,,,,,
 485856,Studio Incamminati,Philadelphia,PA,2,1,0,0,1,https://www.studioincamminati.edu/,17308.0,100.0,,,,,,,,,,,
-485999,Bet Medrash Gadol Ateret Torah,Brooklyn,NY,2,1,0,0,0,https://betmedrashgadolaterettorah.com/,10500.0,65.3,,,,,52.0,,,,,,
-486017,Yeshiva Ohr Yisrael,Brooklyn,NY,2,1,0,0,0,https://www.yoy.edu/,9400.0,100.0,,,,,,,,,,,
-486026,Yeshiva Sholom Shachna,Brooklyn,NY,2,1,0,0,0,https://yeshivasholomshachna.com/,10500.0,87.0,,,,,6.0,,,,,,
+485999,Bet Medrash Gadol Ateret Torah,Brooklyn,NY,2,1,0,0,0,https://betmedrashgadolaterettorah.com/,10500.0,65.3,,,,,52.0,,,,40.6501,-73.9496,
+486017,Yeshiva Ohr Yisrael,Brooklyn,NY,2,1,0,0,0,https://www.yoy.edu/,9400.0,100.0,,,,,,,,,40.6501,-73.9496,
+486026,Yeshiva Sholom Shachna,Brooklyn,NY,2,1,0,0,0,https://yeshivasholomshachna.com/,10500.0,87.0,,,,,6.0,,,,40.6501,-73.9496,
 486053,Bethlehem College & Seminary,Minneapolis,MN,2,1,0,0,0,https://bcsmn.edu/,7520.0,,,,,,50.0,,,,,,
 486123,Theatre of Arts,Hollywood,CA,3,1,0,0,1,https://www.toa.edu/,21830.0,,,,,,,,,,,,
-486196,Beth Medrash Meor Yitzchok,Monsey,NY,2,1,0,0,0,https://bethmedrashmeoryitzchok.com/,12400.0,52.1,,,,,49.0,,,,,,
+486196,Beth Medrash Meor Yitzchok,Monsey,NY,2,1,0,0,0,https://bethmedrashmeoryitzchok.com/,12400.0,52.1,,,,,49.0,,,,41.1112,-74.0687,
 486202,Mingo Extended Learning Center,Delbarton,WV,1,1,0,0,0,https://www.mingoschools.com/Domain/15,,100.0,,,,,,,,,,,
 486239,San Ignacio University,Doral,FL,3,1,0,0,0,https://www.sanignaciouniversity.edu/,10200.0,,,,,,70.0,,,,,,
 486257,Valor Christian College,Canal Winchester,OH,2,1,0,0,0,https://www.valorcollege.edu/,7992.0,,,,,,41.0,,,,,,
@@ -3497,15 +3497,15 @@ id,name,city,state,ctrl,size,hbcu,womens,yr2,web,tin,adm,sat25,sat75,act25,act75
 487588,Concorde Career College-Southaven,Southaven,MS,3,1,0,0,1,https://www.concorde.edu/campus/southaven-mississippi,,100.0,,,,,,,,,,,
 487603,Northwest University-Center for Online and Extended Education,Kirkland,WA,2,2,0,0,0,https://www.northwestu.edu/,14652.0,,,,,,31.0,,,,,,
 487658,Academy of Interactive Entertainment,Lafayette,LA,2,1,0,0,1,https://lafayette.aie.edu/,24600.0,80.0,,,,,,,,,,,
-487746,Yeshiva Zichron Aryeh,Far Rockaway,NY,2,1,0,0,0,https://yeshivazichronaryeh.com/,9070.0,60.0,,,,,,,,,,,
+487746,Yeshiva Zichron Aryeh,Far Rockaway,NY,2,1,0,0,0,https://yeshivazichronaryeh.com/,9070.0,60.0,,,,,,,,,40.6098,-73.7591,
 487861,Felbry College,Columbus,OH,3,1,0,0,0,https://felbrycollege.edu/,17744.0,64.7,,,,,77.0,,,,,,
 487977,Martinsburg College,Martinsburg,WV,3,2,0,0,0,https://www.martinsburgcollege.edu/,,100.0,,,,,79.0,,,,,,
 487995,Alhambra Medical University,Alhambra,CA,3,1,0,0,0,https://www.amu.edu/,11100.0,,,,,,,,,,,,
-488004,Central Yeshiva Beth Joseph,Brooklyn,NY,2,1,0,0,0,https://centralyeshivabethjoseph.com/,10000.0,,,,,,,,,,,,
+488004,Central Yeshiva Beth Joseph,Brooklyn,NY,2,1,0,0,0,https://centralyeshivabethjoseph.com/,10000.0,,,,,,,,,,40.6501,-73.9496,
 488031,Abraham Lincoln University,Glendale,CA,3,1,0,0,0,https://www.alu.edu/,8640.0,,,,,,,,,,,,
 488059,Med College,Hialeah,FL,3,1,0,0,1,https://www.medcollege.edu/,21330.0,,,,,,,,,,,,
 488077,Sonoran Desert Institute,Tempe,AZ,3,2,0,0,1,https://www.sdi.edu/,10880.0,,,,,,,,,,,,
-488305,Elim Bible Institute and College,Lima,NY,2,1,0,0,0,https://elim.edu/,9178.0,100.0,,,,,70.0,,,,,,
+488305,Elim Bible Institute and College,Lima,NY,2,1,0,0,0,https://elim.edu/,9178.0,100.0,,,,,70.0,,,,42.8962,-77.605,
 488314,Beth Medrash of Asbury Park,Lakewood,NJ,2,1,0,0,0,https://baismedrashzichronmeir.com/,11760.0,42.3,,,,,,,,,,,
 488350,Yeshiva Gedolah Shaarei Shmuel,Lakewood,NJ,2,1,0,0,0,https://yeshivagedolahshaareishmuel.com/,9720.0,53.0,,,,,70.0,,,,,,
 488387,Claremont Lincoln University,Claremont,CA,2,1,0,0,0,https://claremontlincoln.edu/,6000.0,,,,,,,,,,,,
@@ -3535,25 +3535,25 @@ id,name,city,state,ctrl,size,hbcu,womens,yr2,web,tin,adm,sat25,sat75,act25,act75
 490203,Bolivar Technical College,Bolivar,MO,2,1,0,0,0,https://www.bolivarcollege.edu/,22030.0,81.8,,,,,,,,,,,
 490221,MAK Beauty Institute,Cumming,GA,3,1,0,0,0,https://www.makbeautyinstitute.com/,,58.3,,,,,,,,,,,
 490230,Reformed University,Lawrenceville,GA,2,1,0,0,0,https://runiv.edu/,4800.0,73.4,,,,,,,,,,,
-490276,Yeshiva Shaar Ephraim,Monsey,NY,2,1,0,0,0,https://shaarephraim.org/,16800.0,,,,,,8.0,,,,,,
+490276,Yeshiva Shaar Ephraim,Monsey,NY,2,1,0,0,0,https://shaarephraim.org/,16800.0,,,,,,8.0,,,,41.1112,-74.0687,
 490285,California Institute of Arts & Technology,San Diego,CA,3,1,0,0,0,https://www.ciat.edu/,14640.0,,,,,,70.0,,,,,,
 490319,Yeshiva Bais Aharon,Lakewood,NJ,2,1,0,0,0,https://www.yeshivabaisaharon.com/,10200.0,75.0,,,,,,,,,,,
-490328,Mechon L'hoyroa,Monsey,NY,2,1,0,0,0,https://www.mechonlhoyroa.com/,11800.0,,,,,,,,,,,,
-490346,Elyon College,Brooklyn,NY,2,1,0,0,1,https://elyon.edu/,14520.0,,,,,,,,,,,,
+490328,Mechon L'hoyroa,Monsey,NY,2,1,0,0,0,https://www.mechonlhoyroa.com/,11800.0,,,,,,,,,,41.1112,-74.0687,
+490346,Elyon College,Brooklyn,NY,2,1,0,0,1,https://elyon.edu/,14520.0,,,,,,,,,,40.6501,-73.9496,
 490382,Harmony Health Care Institute,Merrimack,NH,3,1,0,0,0,https://www.harmony-health.org/,,92.9,,,,,,,,,,,
 490498,Digital Media Institute,Shreveport,LA,2,1,0,0,1,https://www.dmi.edu/,,31.9,,,,,,,,,,,
-490504,Yeshiva Ohr Naftoli,New Windsor,NY,2,1,0,0,0,https://www.yeshivaohrnaftoli.com/,10100.0,80.6,,,,,27.0,,,,,,
+490504,Yeshiva Ohr Naftoli,New Windsor,NY,2,1,0,0,0,https://www.yeshivaohrnaftoli.com/,10100.0,80.6,,,,,27.0,,,,41.4787,-74.029,
 490513,Bais Medrash Mayan Hatorah,Lakewood,NJ,2,1,0,0,0,https://baismedrashmayanhatorah.com/,11750.0,66.7,,,,,65.0,,,,,,
 490805,Purdue University Northwest,Hammond,IN,1,3,0,0,0,https://www.pnw.edu/,7259.0,70.6,920.0,1140.0,16.0,25.0,44.0,,,,,,
 490878,Platt College-Anaheim,Anaheim,CA,3,1,0,0,0,https://www.plattcollege.edu/,14804.0,,,,,,62.0,,,,,,
 490975,Fortis College-Cutler Bay,Cutler Bay,FL,3,1,0,0,1,https://www.fortis.edu/,12936.0,,,,,,,,,,,,
-491057,Yeshiva Kollel Tifereth Elizer,Brooklyn,NY,2,1,0,0,0,https://www.yeshivakolleltiferethelizer.com/,12300.0,75.0,,,,,,,,,,,
+491057,Yeshiva Kollel Tifereth Elizer,Brooklyn,NY,2,1,0,0,0,https://www.yeshivakolleltiferethelizer.com/,12300.0,75.0,,,,,,,,,40.6501,-73.9496,
 491181,Galen College of Nursing-ARH,Hazard,KY,3,1,0,0,1,https://www.galencollege.edu/nursing-programs/hazard/,15660.0,,,,,,,,,,,,
 491190,The Chicago School at San Diego,San Diego,CA,2,1,0,0,0,https://www.thechicagoschool.edu/in-the-community/locations/,18576.0,100.0,,,,,,,,,,,
 491251,The Culinary School of Fort Worth,Fort Worth,TX,3,1,0,0,0,https://www.csftw.edu/,,63.2,,,,,,,,,,,
 491288,University of Wisconsin-Milwaukee Flex,Milwaukee,WI,1,1,0,0,0,https://flex.wisconsin.edu/,6750.0,92.3,,,,,,,,,,,
 491297,University of Wisconsin-Parkside Flex,Kenosha,WI,1,1,0,0,0,https://flex.wisconsin.edu/,6750.0,,,,,,,,,,,,
-491446,Bnos Zion Of Bobov Seminary,Brooklyn,NY,2,1,0,0,1,https://www.bnoszionbobov.com/,8950.0,87.9,,,,,,,,,,,
+491446,Bnos Zion Of Bobov Seminary,Brooklyn,NY,2,1,0,0,1,https://www.bnoszionbobov.com/,8950.0,87.9,,,,,,,,,40.6501,-73.9496,
 491525,Union Bible College,Westfield,IN,2,1,0,0,0,https://ubca.org/,5760.0,86.7,,,,,33.0,,,,,,
 491570,Institute of Medical Ultrasound,Atlanta,GA,3,1,0,0,0,https://www.imu.edu/,31002.0,,,,,,,,,,,,
 491613,Yeshiva Gedolah Tiferes Boruch,North Plainfield,NJ,2,1,0,0,0,https://yeshivagedolahtiferesboruch.com/,9550.0,100.0,,,,,,,,,,,
@@ -3578,15 +3578,15 @@ id,name,city,state,ctrl,size,hbcu,womens,yr2,web,tin,adm,sat25,sat75,act25,act75
 493488,Premiere International College,Fort Myers,FL,3,1,0,0,1,https://picollege.edu/,19375.0,,,,,,,,,,,,
 493512,San Diego Global Knowledge University,San Diego,CA,3,1,0,0,0,https://sdgku.edu/,10320.0,,,,,,,,,,,,
 493521,Global Tech College,Toledo,OH,3,1,0,0,1,https://www.globaltech.edu/,11550.0,,,,,,,,,,,,
-493594,Yeshiva of Ocean,Greenfield Park,NY,2,1,0,0,0,https://yeshivaofocean.com/,8600.0,38.0,,,,,,,,,,,
-493600,Congregation Talmidei Mesivta Tiferes Shmiel Aleksander,Brooklyn,NY,2,1,0,0,0,https://yeshivaaleksander.org/,21000.0,,,,,,12.0,,,,,,
+493594,Yeshiva of Ocean,Greenfield Park,NY,2,1,0,0,0,https://yeshivaofocean.com/,8600.0,38.0,,,,,,,,,41.75,-74.5,
+493600,Congregation Talmidei Mesivta Tiferes Shmiel Aleksander,Brooklyn,NY,2,1,0,0,0,https://yeshivaaleksander.org/,21000.0,,,,,,12.0,,,,40.6501,-73.9496,
 493619,Young Americans College of the Performing Arts,Corona,CA,2,1,0,0,1,https://www.yacollege.edu/,10540.0,100.0,,,,,,,,,,,
-493646,Ohel Margulia Seminary,Monsey,NY,2,1,0,0,1,https://ohelmarguliaseminary.com/,9500.0,92.0,,,,,,,,,,,
-493664,Yeshivat Hechal Shemuel,Brooklyn,NY,2,1,0,0,0,https://hechalshemuel.com/,12380.0,100.0,,,,,,,,,,,
+493646,Ohel Margulia Seminary,Monsey,NY,2,1,0,0,1,https://ohelmarguliaseminary.com/,9500.0,92.0,,,,,,,,,41.1112,-74.0687,
+493664,Yeshivat Hechal Shemuel,Brooklyn,NY,2,1,0,0,0,https://hechalshemuel.com/,12380.0,100.0,,,,,,,,,40.6501,-73.9496,
 493673,Professional University Dr. Carlos J. Borrero Rios,Hato Rey,PR,3,1,0,0,0,https://upcjbr.university/,4560.0,,,,,,,,,,,,
 493707,Yeshiva Gedolah of Woodlake Village,Lakewood,NJ,2,1,0,0,0,https://yeshivaohrzechariah.com/,8830.0,95.5,,,,,50.0,,,,,,
 493716,Yeshiva Gedola Tiferes Yaakov Yitzchok,Lakewood,NJ,2,1,0,0,0,https://yeshivatyy.com/,13700.0,50.0,,,,,,,,,,,
-493798,New York Seminary,Brooklyn,NY,2,1,0,0,1,https://thenyseminary.com/,12750.0,69.8,,,,,,,,,,,
+493798,New York Seminary,Brooklyn,NY,2,1,0,0,1,https://thenyseminary.com/,12750.0,69.8,,,,,,,,,40.6501,-73.9496,
 493813,Falcon Institute of Health and Science,Bethlehem,PA,3,1,0,0,0,https://www.falconihs.com/,27000.0,100.0,,,,,,,,,,,
 493822,College Unbound,Providence,RI,2,1,0,0,0,https://collegeunbound.edu/,10488.0,,,,,,,,,,,,
 493895,SANS Technology Institute,North Bethesda,MD,3,2,0,0,0,https://www.sans.edu/,20250.0,,,,,,,,,,,,
@@ -3595,13 +3595,13 @@ id,name,city,state,ctrl,size,hbcu,womens,yr2,web,tin,adm,sat25,sat75,act25,act75
 494278,EDP University of Puerto Rico-Humacao,Humacao,PR,2,1,0,0,0,https://www.edpuniversity.edu/,5550.0,84.9,,,,,,,,,,,
 494287,EDP University of Puerto Rico-Manati,Manati,PR,2,1,0,0,0,https://www.edpuniversity.edu/,5550.0,66.4,,,,,,,,,,,
 494436,Fortis Institute-Cookeville,Cookeville,TN,3,1,0,0,1,https://www.fortis.edu/,14450.0,,,,,,,,,,,,
-494463,Derech Hachaim Seminary,Monroe,NY,2,1,0,0,1,https://derechhachaimseminary.com/,11000.0,92.9,,,,,,,,,,,
+494463,Derech Hachaim Seminary,Monroe,NY,2,1,0,0,1,https://derechhachaimseminary.com/,11000.0,92.9,,,,,,,,,41.3312,-74.1874,
 494542,Sattler College,Boston,MA,2,1,0,0,0,https://sattler.edu/,10000.0,54.3,,,,,,,,,,,
 494597,Faith Theological Seminary and Christian College,Tampa,FL,2,1,0,0,0,https://www.ftscc.org/,1320.0,,,,,,93.0,,,,,,
 494603,The Southwestern Baptist Theological Seminary,Fort Worth,TX,2,2,0,0,0,https://swbts.edu/,9096.0,52.7,,,,,36.0,,,,,,
 494630,Christ Mission College,San Antonio,TX,2,1,0,0,0,https://cmctx.edu/,7083.0,,,,,,,,,,,,
 494685,Urshan College,Wentzville,MO,2,1,0,0,0,https://urshancollege.org/,7656.0,83.9,920.0,1110.0,18.0,23.0,55.0,,,,,,
-494737,Yeshiva Yesoda Hatorah Vetz Chaim,Brooklyn,NY,2,1,0,0,0,https://yeshivayh.org/,21000.0,,,,,,35.0,,,,,,
+494737,Yeshiva Yesoda Hatorah Vetz Chaim,Brooklyn,NY,2,1,0,0,0,https://yeshivayh.org/,21000.0,,,,,,35.0,,,,40.6501,-73.9496,
 494755,West Virginia Junior College-United Career Institute,Irwin,PA,3,1,0,0,1,https://unitedcareer.edu/,12535.0,,,,,,,,,,,,
 494764,Aviation Institute of Maintenance-Charlotte,Charlotte,NC,3,1,0,0,1,https://aviationmaintenance.edu/campuses/charlotte-nc,16520.0,,,,,,,,,,,,
 494807,Ponce Health Sciences University-East,Ponce,PR,3,1,0,0,0,https://www.psm.edu/,8840.0,58.0,,,,,,,,,,,
@@ -3609,7 +3609,7 @@ id,name,city,state,ctrl,size,hbcu,womens,yr2,web,tin,adm,sat25,sat75,act25,act75
 494852,Stautzenberger College-Rockford Career College,Rockford,IL,3,1,0,0,1,https://www.rockfordcareercollege.edu/,16249.0,,,,,,,,,,,,
 494959,Northern Pennsylvania Regional College,Warren,PA,1,1,0,0,1,https://regionalcollegepa.org/,4800.0,,,,,,,,,,,,
 494986,Apex College of Veterinary Technology,Colorado Springs,CO,3,1,0,0,1,https://www.apexcvt.edu/,13500.0,,,,,,,,,,,,
-495031,Bais Medrash of Dexter Park,Chestnut Ridge,NY,2,1,0,0,0,https://bmdpark.com/,11000.0,92.3,,,,,,,,,,,
+495031,Bais Medrash of Dexter Park,Chestnut Ridge,NY,2,1,0,0,0,https://bmdpark.com/,11000.0,92.3,,,,,,,,,41.0831,-74.0517,
 495059,Oak Valley College,Rialto,CA,2,1,0,0,0,https://oakvalley.edu/,16000.0,,,,,,43.0,,,,,,
 495110,Great Lakes Boat Building School,Cedarville,MI,2,1,0,0,0,https://www.glbbs.edu/,23967.0,,,,,,,,,,,,
 495147,Pacific Northwest Christian College,Kennewick,WA,2,1,0,0,1,https://www.pnwcc.edu/,11000.0,,,,,,,,,,,,
@@ -3671,8 +3671,8 @@ id,name,city,state,ctrl,size,hbcu,womens,yr2,web,tin,adm,sat25,sat75,act25,act75
 498562,Commonwealth University of Pennsylvania,Bloomsburg,PA,1,4,0,0,0,https://www.commonwealthu.edu/,7716.0,94.7,970.0,1180.0,18.0,25.0,53.0,,,,,,
 498571,Pennsylvania Western University,California,PA,1,4,0,0,0,https://www.pennwest.edu/,7716.0,93.7,940.0,1170.0,20.0,26.0,51.0,,,,,,
 498757,Medical Solutions Academy,Danville,VA,3,1,0,0,0,https://www.medicalsolutionsacademy.org/,4386.0,,,,,,,,,,,,
-498809,Yeshiva of Kasho,Brooklyn,NY,2,1,0,0,0,https://yokny.org/,14000.0,,,,,,11.0,,,,,,
-498906,Yeshivas Sanz Klauzenburg,Brooklyn,NY,2,1,0,0,0,https://yeshivasanzk.org/,14000.0,,,,,,27.0,,,,,,
+498809,Yeshiva of Kasho,Brooklyn,NY,2,1,0,0,0,https://yokny.org/,14000.0,,,,,,11.0,,,,40.6501,-73.9496,
+498906,Yeshivas Sanz Klauzenburg,Brooklyn,NY,2,1,0,0,0,https://yeshivasanzk.org/,14000.0,,,,,,27.0,,,,40.6501,-73.9496,
 498924,URBE University,Sweetwater,FL,3,1,0,0,0,https://urbeuniversity.edu/,30450.0,,,,,,61.0,,,,,,
 499149,Herzing University-Nashville,Nashville,TN,2,1,0,0,0,https://www.herzing.edu/,12360.0,91.2,,,,,,,,,,,
 499176,College of Biomedical Equipment Technology,Schertz,TX,3,1,0,0,1,https://www.cbet.edu/,1200.0,,,,,,,,,,,,
