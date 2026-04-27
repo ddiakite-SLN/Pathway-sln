@@ -22,7 +22,7 @@ unitid,school_name,badges
 164739,Brandeis University,Posse
 164924,Boston College,QuestBridge
 164988,Boston University,QuestBridge
-166027,Harvard University,QuestBridge
+166027,Harvard University,"QuestBridge,Posse"
 166683,Massachusetts Institute of Technology,QuestBridge
 168148,Tufts University,QuestBridge
 168218,Wellesley College,QuestBridge
@@ -36,8 +36,8 @@ unitid,school_name,badges
 189097,Barnard College,"HEOP,QuestBridge"
 189143,Boricua College,HEOP
 189654,Canisius University,HEOP
-190150,Columbia University,"HEOP,QuestBridge"
-190415,Cornell University,"HEOP,QuestBridge"
+190150,Columbia University,"HEOP,QuestBridge,Posse"
+190415,Cornell University,"HEOP,QuestBridge,Posse"
 190716,Clarkson University,HEOP
 191209,Daemen University,HEOP
 191241,Hamilton College,"HEOP,Posse,QuestBridge"
@@ -55,14 +55,14 @@ unitid,school_name,badges
 193016,Mercy University,"HEOP,SLN Partner"
 193353,Mount Saint Mary College,HEOP
 193436,Nazareth University,HEOP
-193654,New York Institute of Technology,HEOP
-193900,New York University,"HEOP,QuestBridge"
+193654,New York Institute of Technology,"HEOP,Posse"
+193900,New York University,"HEOP,QuestBridge,Posse"
 193973,Niagara University,HEOP
 194578,Paul Smith's College,HEOP
 194719,Pratt Institute,HEOP
-194824,Fordham University,HEOP
+194824,Fordham University,"HEOP,Posse"
 194958,Mount Holyoke College,Posse
-195003,Rochester Institute of Technology,HEOP
+195003,Rochester Institute of Technology,"HEOP,Posse"
 195135,Russell Sage College,HEOP
 195173,St. Francis College,SLN Partner
 195191,Siena University,HEOP
@@ -95,3 +95,4 @@ unitid,school_name,badges
 234076,University of Virginia,QuestBridge
 240444,University of Wisconsin-Madison,Posse
 243744,Stanford University,QuestBridge
+192819,Marist College,Posse
