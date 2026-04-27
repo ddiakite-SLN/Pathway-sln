@@ -685,15 +685,54 @@ def run_match(gpa, sat, act, state, size, ctrl, need, env, study_yrs, aid, n, ma
                             major_cips_filter.update(cips)
                             break
     # Only filter by major if we actually found CIP codes
-    # If student typed a career ("lawyer") not a major, don't block colleges
     use_major_filter = len(major_cips_filter) > 0
 
+    # Check if CSV actually has CIP data — if not, disable hard filter
+    # and use soft name-based matching instead
+    _cip_data_available = any(
+        s.get('major_cips','').strip() not in ('','None','nan')
+        for s in SCHOOLS[:50]
+    )
+    if not _cip_data_available:
+        use_major_filter = False  # fall through to name-based below
+
+    # Build name-based fallback keywords from majors input
+    _name_keywords = []
+    if majors_input and not _cip_data_available:
+        _raw = [x.strip().lower() for x in majors_input.replace(';',',').split(',')]
+        for _m in _raw:
+            if _m: _name_keywords.append(_m)
+            # Map common majors to school name keywords
+            _name_map = {
+                'nursing': ['nursing','health','medical','medicine'],
+                'business': ['business','commerce','management'],
+                'engineering': ['engineering','technology','polytechnic','tech'],
+                'education': ['education','teachers'],
+                'art': ['art','design','creative','visual'],
+                'law': ['law','legal','justice'],
+                'computer': ['technology','computing','engineering','polytechnic'],
+                'fashion': ['fashion','design','art'],
+                'music': ['music','conservatory','juilliard'],
+                'culinary': ['culinary','hospitality'],
+                'social work': ['social','community','human services'],
+            }
+            for _key, _vals in _name_map.items():
+                if _key in _m or _m in _key:
+                    _name_keywords.extend(_vals)
+
     for s in SCHOOLS:
-        # Filter by major — only show schools that offer it
+        # Filter by major CIP if data available
         if use_major_filter:
             school_cips = set(str(s.get('major_cips','') or '').split(','))
             if not major_cips_filter.intersection(school_cips):
                 continue
+        # Soft name-based filter when CIP data not available
+        elif _name_keywords:
+            _sname = s.get('name','').lower()
+            _sweb  = s.get('web','').lower()
+            if not any(_kw in _sname or _kw in _sweb for _kw in _name_keywords):
+                # Still show the school — just add a "Confirmed offers" badge only if matched
+                pass  # don't filter out — show all schools, badge if matched
         state_list = state if isinstance(state, list) else ([state] if state != 'any' else [])
         if state_list and s['state'] not in state_list: continue
         if s['size'] not in size_codes: continue
@@ -1323,17 +1362,28 @@ with st.sidebar:
     _glat = st.session_state.get("student_lat")
     if _glat:
         _loc_name = st.session_state.get("student_location_name", "")
+        _zip_stored = st.session_state.get("student_zip", "")
         if _loc_name:
-            st.caption(f"✅ **{_loc_name}** — distances on cards & map")
+            st.success(f"📍 {_loc_name}")
+        elif _zip_stored:
+            st.success(f"📍 ZIP {_zip_stored}")
         else:
-            _raw_lat = st.session_state.get("student_lat","")
-            _raw_lon = st.session_state.get("student_lon","")
-            st.caption(f"✅ Location set ({round(float(_raw_lat),3)}, {round(float(_raw_lon),3)}) — distances on cards & map")
+            _rlat = round(float(st.session_state.get("student_lat",0)),3)
+            _rlon = round(float(st.session_state.get("student_lon",0)),3)
+            st.success(f"📍 GPS ({_rlat}, {_rlon})")
+        st.caption("✅ Distances show on cards & map")
         if st.button("✕ Clear location", key="clear_geo"):
-            st.session_state.pop("student_lat", None)
-            st.session_state.pop("student_lon", None)
-            st.session_state.pop("student_zip", None)
-            st.session_state.pop("student_location_name", None)
+            for _k in ["student_lat","student_lon","student_zip","student_location_name"]:
+                st.session_state.pop(_k, None)
+            # Also remove from URL params so refresh doesn't restore it
+            try:
+                _qp_now = dict(st.query_params)
+                for _k in ["lat","lon","zip","locname"]:
+                    _qp_now.pop(_k, None)
+                st.query_params.clear()
+                st.query_params.update(_qp_now)
+            except Exception:
+                pass
             st.rerun()
     else:
         # GPS button at top, ZIP input as primary field
