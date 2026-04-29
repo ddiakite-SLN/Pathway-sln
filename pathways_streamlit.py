@@ -305,6 +305,40 @@ SAMPLE_SCHOOLS = [
 
 SCHOOLS = load_schools()
 
+# Load program completion counts (from IPEDS 2023 — how many grads per program per school)
+@st.cache_data
+def load_program_counts():
+    try:
+        import pandas as _ppd
+        _pc = _ppd.read_csv('school_program_counts.csv',
+                            dtype={'id': int, 'cip_prefix': str, 'completions': float})
+        # Build dict: school_id -> {cip_prefix -> completions}
+        _result = {}
+        for _, row in _pc.iterrows():
+            sid = int(row['id'])
+            if sid not in _result:
+                _result[sid] = {}
+            _result[sid][row['cip_prefix']] = int(row['completions'])
+        return _result
+    except Exception:
+        return {}
+PROGRAM_COUNTS = load_program_counts()
+
+# Load program strength data (IPEDS 2023 completions per school per CIP prefix)
+try:
+    import pandas as _pdpc
+    _pc = _pdpc.read_csv('school_program_counts.csv')
+    # Build dict: school_id -> {cip_prefix -> completions}
+    PROGRAM_COUNTS = {}
+    for _, _row in _pc.iterrows():
+        _sid = int(_row['id'])
+        if _sid not in PROGRAM_COUNTS:
+            PROGRAM_COUNTS[_sid] = {}
+        PROGRAM_COUNTS[_sid][str(_row['cip_prefix'])] = int(_row['completions'])
+    del _pc, _pdpc
+except Exception:
+    PROGRAM_COUNTS = {}
+
 # Build CUNY and SUNY id sets from actual data (ctrl=1 public, state=NY)
 # Can't rely on name alone — Stony Brook, UAlbany etc don't have 'SUNY' in name
 _CUNY_IDS = set()
@@ -779,6 +813,16 @@ def run_match(gpa, sat, act, state, size, ctrl, need, env, study_yrs, aid, n, ma
         adm_display = f"{float(adm_val):.1f}%" if adm_val and adm_val==adm_val else "Acceptance rate N/A"
         sticker = int(tin) if tin else 0
         dl = DEADLINES.get(s.get('id'),{})
+        # Program strength: how many grads in this major at this school
+        _prog_strength = 0
+        if major_prefixes_filter and PROGRAM_COUNTS:
+            _sid = s.get('id')
+            if _sid and int(_sid) in PROGRAM_COUNTS:
+                _scounts = PROGRAM_COUNTS[int(_sid)]
+                for _pfx in major_prefixes_filter:
+                    for _cpfx, _cnt in _scounts.items():
+                        if _cpfx.startswith(_pfx[:4]):
+                            _prog_strength += _cnt
         results.append({
             **s,
             'fit': fit,
@@ -786,20 +830,28 @@ def run_match(gpa, sat, act, state, size, ctrl, need, env, study_yrs, aid, n, ma
             'adm_display': adm_display,
             'sticker': sticker,
             'tuition_only': int(tuition_only) if tuition_only else 0,
-            'roomboard_added': rb,  # None=unknown, 0=commuter, >0=real
+            'roomboard_added': rb,
             'rd': dl.get('rd','Check website'),
             'ea': dl.get('ea',''),
             'ed': dl.get('ed',''),
             'sys': dl.get('sys',''),
+            'prog_strength': _prog_strength,
         })
     fit_order={'safety':0,'match':1,'reach':2,'unknown':3}
     sort_mode = st.session_state.get('sort_multi', ['Best Fit'])
 
     # Natural balanced selection — like Niche
     # Pick from across the selectivity spectrum so student sees real options
-    safeties = sorted([r for r in results if r['fit']=='safety'], key=lambda x: -(x.get('grad') or 0))
-    matches  = sorted([r for r in results if r['fit']=='match'],  key=lambda x: -(x.get('grad') or 0))
-    reaches  = sorted([r for r in results if r['fit']=='reach'],  key=lambda x: -(x.get('grad') or 0))
+    # Sort key: if major typed, rank by program strength (completions) first, then grad rate
+    def _sort_key(x):
+        strength = x.get('prog_strength', 0)
+        grad     = x.get('grad') or 0
+        net      = x.get('net') or 999999
+        return (-strength, -grad, net)
+
+    safeties = sorted([r for r in results if r['fit']=='safety'], key=_sort_key)
+    matches  = sorted([r for r in results if r['fit']=='match'],  key=_sort_key)
+    reaches  = sorted([r for r in results if r['fit']=='reach'],  key=_sort_key)
     unknowns = sorted([r for r in results if r['fit']=='unknown'], key=lambda x: x.get('net') or 999999)
 
     # Natural proportions — fill from each bucket, best schools first
@@ -1828,9 +1880,10 @@ with tab1:
             # ── 3-COLUMN SIDE-BY-SIDE VIEW ───────────────────────
             # Get ALL matches (not capped by n slider) for complete picture
             matches = run_match(gpa, sat, act, state_val,
-                income_val, ny_res, immig, first_gen,
-                env_pref, school_size, school_type, study_yrs,
-                majors_input, only_gpa, only_adm, n=9999)
+                SIZE_MAP[school_size], CTRL_MAP[school_type],
+                need_val, ENV_MAP[env_pref], YRS_MAP[study_yrs], aid, 9999,
+                majors_input=majors_input,
+                only_gpa=only_gpa_data, only_adm=only_adm_data)
             fit_icons = {'safety':'🟢','match':'🎯','reach':'⚠️','unknown':'⚪'}
 
             def _school_mini_card(s):
@@ -1847,6 +1900,15 @@ with tab1:
                 cols[1].caption(f"${int(net):,}/yr" if net is not None else "Aid N/A")
                 if adm and adm == adm:
                     st.caption(f"{adm:.0f}% acceptance")
+                # Show program strength if major typed
+                if majors_input and majors_input.strip():
+                    _sid = int(s.get('id',0))
+                    _raw2 = majors_input.strip().lower().split(',')[0]
+                    _pref2 = KEYWORD_PREFIXES.get(_raw2, next((v for k,v in KEYWORD_PREFIXES.items() if _raw2 in k or k in _raw2), []))
+                    _c2s = set(p[:2] for p in _pref2)
+                    _cnt = sum(PROGRAM_STRENGTH.get(_sid,{}).get(c,0) for c in _c2s)
+                    if _cnt > 0:
+                        st.caption(f"📚 {_cnt} graduates/yr in this field")
                 if not in_list:
                     if st.button("+ Add", key=f"3col_add_{s['id']}", use_container_width=True):
                         st.session_state.my_list.append(s)
@@ -1856,9 +1918,14 @@ with tab1:
                 st.markdown("---")
 
             # Split matches into 3 buckets
-            _cuny  = [s for s in matches if s.get('id') in _CUNY_IDS]
-            _suny  = [s for s in matches if s.get('id') in _SUNY_IDS]
-            _priv  = [s for s in matches if s.get('id') not in _CUNY_IDS and s.get('id') not in _SUNY_IDS]
+            def _prog_sort(x):
+                # Sort by: fit bucket first (match→safety→reach), then program strength, then grad rate
+                fit_rank = {'match':0,'safety':1,'reach':2,'unknown':3}.get(x.get('fit','unknown'),3)
+                return (fit_rank, -x.get('prog_strength',0), -(x.get('grad') or 0))
+
+            _cuny  = sorted([s for s in matches if s.get('id') in _CUNY_IDS], key=_prog_sort)
+            _suny  = sorted([s for s in matches if s.get('id') in _SUNY_IDS], key=_prog_sort)
+            _priv  = sorted([s for s in matches if s.get('id') not in _CUNY_IDS and s.get('id') not in _SUNY_IDS], key=_prog_sort)
 
             col_c, col_s, col_p = st.columns(3)
 
