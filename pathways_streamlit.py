@@ -34,6 +34,8 @@ if 'sort_mode' not in st.session_state:
     st.session_state.sort_mode = 'fit'
 if 'matches' not in st.session_state:
     st.session_state.matches = []
+if 'compare_list' not in st.session_state:
+    st.session_state.compare_list = []
 if 'aid' not in st.session_state:
     st.session_state.aid = {"pell":0,"tap":0,"dream":0,"heop":False,"total":0}
 if 'career_results' not in st.session_state:
@@ -1539,6 +1541,20 @@ with tab1:
         if only_gpa_data: filter_parts.append("with verified GPA data")
         if only_adm_data: filter_parts.append("with published acceptance rate")
         filter_desc = " · ".join(filter_parts) if filter_parts else "all states"
+        if len(m) == 0:
+            st.error("🔍 No schools found with your current filters.")
+            st.markdown("**Try one of these fixes:**")
+            c1, c2, c3 = st.columns(3)
+            if c1.button("🗺️ Expand to all states", key="fix_states"):
+                st.session_state["states_multi"] = []
+                st.rerun()
+            if c2.button("📚 Clear major filter", key="fix_major"):
+                st.session_state["majors_input"] = ""
+                st.rerun()
+            if c3.button("📊 Show all school types", key="fix_type"):
+                st.session_state["school_type"] = "Any"
+                st.rerun()
+            st.stop()
         st.caption(f"Showing **{len(m)} schools** — {filter_desc}")
         c1.metric("Colleges Found", len(m))
         c2.metric("Est. Annual Aid", f"${aid['total']:,}")
@@ -1572,6 +1588,41 @@ with tab1:
         view_mode = st.radio("View as", ["📋 Cards", "📊 Table", "🏛️ CUNY · SUNY · Private"], horizontal=True, key="view_mode")
         st.caption("📊 Data: IPEDS 2023-24 · Peterson's 2025 · Aid: Federal & NY HESC 2026-27")
         st.markdown("---")
+
+        # ── COMPARE PANEL ─────────────────────────────────────
+        if len(st.session_state.compare_list) == 2:
+            _ca, _cb = st.session_state.compare_list
+            st.markdown("### ⚖️ Side-by-Side Comparison")
+            _cc1, _cc2 = st.columns(2)
+            def _cmp_card(col, sch):
+                with col:
+                    _fit = sch.get('fit','unknown')
+                    _fit_label = {'safety':'✅ Safety','match':'🎯 Match','reach':'⚠️ Reach','unknown':'⚪'}.get(_fit,_fit)
+                    _net = sch.get('net')
+                    _sticker = int(sch.get('sticker') or 0)
+                    _adm = sch.get('adm')
+                    _grad = sch.get('grad')
+                    st.markdown(f"#### {sch.get('name','')}")
+                    st.caption(f"{sch.get('city','')}, {sch.get('state','')} · {'Public' if sch.get('ctrl')==1 else 'Private'}")
+                    st.markdown(f"**Fit:** {_fit_label}")
+                    st.markdown(f"**You Pay/yr:** {'${:,}'.format(int(_net)) if _net is not None else 'N/A'}")
+                    st.markdown(f"**Sticker Price:** {'${:,}'.format(_sticker) if _sticker else 'N/A'}")
+                    st.markdown(f"**Acceptance Rate:** {'{:.0f}%'.format(_adm) if _adm and _adm==_adm else 'N/A'}")
+                    st.markdown(f"**Grad Rate:** {'{:.0f}%'.format(_grad) if _grad else 'N/A'}")
+                    _sat25 = sch.get('sat25'); _sat75 = sch.get('sat75')
+                    st.markdown(f"**SAT Range:** {'{:.0f}–{:.0f}'.format(_sat25,_sat75) if _sat25 else 'N/A'}")
+                    _gpa25 = sch.get('gpa_25'); _gpa75 = sch.get('gpa_75')
+                    st.markdown(f"**GPA Range:** {f'{_gpa25}–{_gpa75}' if _gpa25 else 'N/A'}")
+                    st.markdown(f"**RD Deadline:** {sch.get('rd','Check website')}")
+                    _web = sch.get('web','')
+                    if _web: st.markdown(f"[🌐 Website]({_web})  ·  [🎓 Admissions]({_web.rstrip('/')+'/admissions'})")
+            _cmp_card(_cc1, _ca)
+            _cc2.markdown("---" * 5)
+            _cmp_card(_cc2, _cb)
+            if st.button("✕ Clear comparison", key="clear_cmp"):
+                st.session_state.compare_list = []
+                st.rerun()
+            st.markdown("---")
 
         # Apply multi-sort
         fit_order = {'safety':0,'match':1,'reach':2,'unknown':3}
@@ -1928,6 +1979,19 @@ with tab1:
                             st.markdown(f"**🎓 You pay: ${net:,}/yr**")
                         else:
                             st.markdown("**You pay:** N/A")
+                        # ── Why this school? plain-English reason ──────────
+                        _why_parts = []
+                        if fit == 'safety':   _why_parts.append("your scores are above their range")
+                        elif fit == 'match':  _why_parts.append("your scores fit their middle 50%")
+                        elif fit == 'reach':  _why_parts.append("their bar is above your current scores")
+                        if net is not None and net < 8000: _why_parts.append(f"very affordable at ${net:,}/yr")
+                        elif net is not None and net < 15000: _why_parts.append(f"affordable at ${net:,}/yr")
+                        if s.get('grad') and s['grad'] > 70: _why_parts.append(f"{int(s['grad'])}% grad rate")
+                        if s.get('state') == 'NY': _why_parts.append("in-state school")
+                        if 'CUNY' in s.get('name',''): _why_parts.append("CUNY — TAP & Pell friendly")
+                        if school_uid in EOP_DATA: _why_parts.append("offers EOP/SEEK support")
+                        if _why_parts:
+                            st.caption("💡 " + " · ".join(_why_parts[:3]))
 
                         grad = s.get('grad')
                         st.markdown(f"**Grad rate:** {int(grad)}%" if grad else "**Grad rate:** N/A")
@@ -1939,6 +2003,18 @@ with tab1:
                         else:
                             if st.button("+ Add to list", key=f"add_{s['id']}", use_container_width=True):
                                 st.session_state.my_list.append(s)
+                                st.rerun()
+                        # Compare checkbox — max 2 schools
+                        _in_cmp = any(x['id']==s['id'] for x in st.session_state.compare_list)
+                        if st.checkbox("⚖️ Compare", key=f"cmp_{s['id']}", value=_in_cmp):
+                            if not _in_cmp:
+                                if len(st.session_state.compare_list) >= 2:
+                                    st.session_state.compare_list.pop(0)
+                                st.session_state.compare_list.append(s)
+                                st.rerun()
+                        else:
+                            if _in_cmp:
+                                st.session_state.compare_list = [x for x in st.session_state.compare_list if x['id'] != s['id']]
                                 st.rerun()
 
                         fit_exp = ""
