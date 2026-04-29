@@ -305,6 +305,20 @@ SAMPLE_SCHOOLS = [
 
 SCHOOLS = load_schools()
 
+# Build CUNY and SUNY id sets from actual data (ctrl=1 public, state=NY)
+# Can't rely on name alone — Stony Brook, UAlbany etc don't have 'SUNY' in name
+_CUNY_IDS = set()
+_SUNY_IDS = set()
+for _s in SCHOOLS:
+    _nm = _s.get('name','')
+    _st = _s.get('state','')
+    _ct = int(_s.get('ctrl',0) or 0)
+    _id = _s.get('id')
+    if 'CUNY' in _nm or 'City University of New York' in _nm:
+        _CUNY_IDS.add(_id)
+    elif _st == 'NY' and _ct == 1 and _id not in _CUNY_IDS:
+        _SUNY_IDS.add(_id)
+
 
 CAREERS = [
     {"id":"rn","name":"Registered Nurse","icon":"🏥","field":"Healthcare","salary_entry":59730,"salary_mid":81220,"salary_senior":107000,"growth":"6%","demand":"High","why":"You want to help people directly and build a stable career.","day":"Check on patients, administer medications, coordinate with doctors. No two days the same.","majors":["Nursing (BSN)","Health Sciences","Biology"],"traits":{"people":5,"helping":5,"science":4,"creativity":2,"data":2,"physical":3,"leadership":3,"outdoors":1},"values":{"impact":5,"stability":5,"income":3,"creativity":2,"autonomy":3,"prestige":3},"styles":{"solo":1,"team":5,"variety":4,"routine":2,"indoors":5,"outdoors":1}},
@@ -816,6 +830,11 @@ def run_match(gpa, sat, act, state, size, ctrl, need, env, study_yrs, aid, n, ma
                 selected.pop()
             selected.append(pr)
 
+    # For 3-column view, return ALL results (not capped by n)
+    # Caller can pass n=9999 to get everything
+    if n >= 999:
+        all_sel = safeties + matches + reaches + unknowns
+        return all_sel
     return selected[:n]
 
 # ── Career Match Runner ──────────────────────────────────────
@@ -1807,6 +1826,11 @@ with tab1:
 
         elif view_mode == "🏛️ CUNY · SUNY · Private":
             # ── 3-COLUMN SIDE-BY-SIDE VIEW ───────────────────────
+            # Get ALL matches (not capped by n slider) for complete picture
+            matches = run_match(gpa, sat, act, state_val,
+                income_val, ny_res, immig, first_gen,
+                env_pref, school_size, school_type, study_yrs,
+                majors_input, only_gpa, only_adm, n=9999)
             fit_icons = {'safety':'🟢','match':'🎯','reach':'⚠️','unknown':'⚪'}
 
             def _school_mini_card(s):
@@ -1832,10 +1856,9 @@ with tab1:
                 st.markdown("---")
 
             # Split matches into 3 buckets
-            _cuny  = [s for s in matches if 'CUNY' in s.get('name','') or s.get('ctrl')==5]
-            _suny  = [s for s in matches if s not in _cuny and s.get('state')=='NY' and
-                      ('SUNY' in s.get('name','') or 'State University' in s.get('name',''))]
-            _priv  = [s for s in matches if s not in _cuny and s not in _suny]
+            _cuny  = [s for s in matches if s.get('id') in _CUNY_IDS]
+            _suny  = [s for s in matches if s.get('id') in _SUNY_IDS]
+            _priv  = [s for s in matches if s.get('id') not in _CUNY_IDS and s.get('id') not in _SUNY_IDS]
 
             col_c, col_s, col_p = st.columns(3)
 
