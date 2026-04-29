@@ -1878,12 +1878,21 @@ with tab1:
 
         elif view_mode == "🏛️ CUNY · SUNY · Private":
             # ── 3-COLUMN SIDE-BY-SIDE VIEW ───────────────────────
-            # Get ALL matches (not capped by n slider) for complete picture
-            matches = run_match(gpa, sat, act, state_val,
+            # Use all results — re-run with n=9999 only if already ran once
+            if not st.session_state.get('ran_match'):
+                st.info("👆 Fill in your profile on the left and click **Find My Colleges** first.")
+                st.stop()
+            try:
+                _need_val3 = "full" if income < 50000 else "some"
+                _aid3 = calculate_aid(income, ny_res, immig, first_gen)
+                matches = run_match(gpa, sat, act, state_val,
                 SIZE_MAP[school_size], CTRL_MAP[school_type],
-                need_val, ENV_MAP[env_pref], YRS_MAP[study_yrs], aid, 9999,
+                _need_val3, ENV_MAP[env_pref], YRS_MAP[study_yrs], _aid3, 9999,
                 majors_input=majors_input,
                 only_gpa=only_gpa_data, only_adm=only_adm_data)
+            except Exception as _e3:
+                st.error(f"Could not load results: {_e3}")
+                st.stop()
             fit_icons = {'safety':'🟢','match':'🎯','reach':'⚠️','unknown':'⚪'}
 
             def _school_mini_card(s):
