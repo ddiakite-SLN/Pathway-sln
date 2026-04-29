@@ -241,11 +241,13 @@ import json as _json
 try:
     with open('major_keywords.json') as _f:
         _mdata = _json.load(_f)
-    KEYWORD_MAP = _mdata.get('keyword_map', {})
-    CIP_NAMES   = _mdata.get('cip_names', {})
+    KEYWORD_MAP     = _mdata.get('keyword_map', {})
+    KEYWORD_PREFIXES = _mdata.get('keyword_prefixes', {})
+    CIP_NAMES       = _mdata.get('cip_names', {})
 except:
-    KEYWORD_MAP = {}
-    CIP_NAMES   = {}
+    KEYWORD_MAP      = {}
+    KEYWORD_PREFIXES = {}
+    CIP_NAMES        = {}
 
 # ── Career Data Loader (O*NET 30.2 + BLS 2023) ──────────────
 # Source: careers.csv — 1,016 occupations with RIASEC scores
@@ -686,14 +688,43 @@ def run_match(gpa, sat, act, state, size, ctrl, need, env, study_yrs, aid, n, ma
                         if w in keyword:
                             major_cips_filter.update(cips)
                             break
-    # Only filter by major if we actually found CIP codes
-    use_major_filter = len(major_cips_filter) > 0
+    # Only filter by major if student typed something
+    use_major_filter = bool(majors_input and majors_input.strip())
+
+    # Build prefix filters from keyword_prefixes (covers all sub-codes)
+    major_prefixes_filter = set()
+    if use_major_filter:
+        for raw in [x.strip().lower() for x in majors_input.replace(';',',').split(',')]:
+            if not raw: continue
+            # Exact match in prefix map
+            if raw in KEYWORD_PREFIXES:
+                major_prefixes_filter.update(KEYWORD_PREFIXES[raw])
+            else:
+                # Fuzzy: find any key that contains the typed word
+                for key, prefixes in KEYWORD_PREFIXES.items():
+                    if raw in key or key in raw:
+                        major_prefixes_filter.update(prefixes)
+                # Also try exact CIP codes from keyword_map as fallback
+                if raw in KEYWORD_MAP:
+                    for cip in KEYWORD_MAP[raw]:
+                        major_prefixes_filter.add(cip[:5])  # use 5-char prefix
+
+        use_major_filter = bool(major_prefixes_filter)
 
     for s in SCHOOLS:
-        # Filter by major — schools_full.csv now has major_cips column
+        # Filter by major using real IPEDS CIP prefix matching
         if use_major_filter:
-            school_cips = set(str(s.get('major_cips','') or '').split(','))
-            if not major_cips_filter.intersection(school_cips):
+            school_cips = str(s.get('major_cips','') or '')
+            if not school_cips:
+                continue  # school has no program data — skip
+            # Check if any school CIP starts with any of our target prefixes
+            school_cip_list = school_cips.split(',')
+            matched = False
+            for prefix in major_prefixes_filter:
+                if any(c.startswith(prefix) for c in school_cip_list):
+                    matched = True
+                    break
+            if not matched:
                 continue
         state_list = state if isinstance(state, list) else ([state] if state != 'any' else [])
         if state_list and s['state'] not in state_list: continue
