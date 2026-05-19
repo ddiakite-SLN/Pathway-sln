@@ -241,12 +241,14 @@ import json as _json
 try:
     with open('major_keywords.json') as _f:
         _mdata = _json.load(_f)
-    KEYWORD_MAP     = _mdata.get('keyword_map', {})
+    KEYWORD_MAP      = _mdata.get('keyword_map', {})
     KEYWORD_PREFIXES = _mdata.get('keyword_prefixes', {})
-    CIP_NAMES       = _mdata.get('cip_names', {})
+    KEYWORD_ALIASES  = _mdata.get('keyword_aliases', {})
+    CIP_NAMES        = _mdata.get('cip_names', {})
 except:
     KEYWORD_MAP      = {}
     KEYWORD_PREFIXES = {}
+    KEYWORD_ALIASES  = {}
     CIP_NAMES        = {}
 
 # ── Career Data Loader (O*NET 30.2 + BLS 2023) ──────────────
@@ -741,21 +743,34 @@ def run_match(gpa, sat, act, state, size, ctrl, need, env, study_yrs, aid, n, ma
 
     # Build prefix filters from keyword_prefixes (covers all sub-codes)
     major_prefixes_filter = set()
+    _major_suggestions = []  # suggestions to show if no match
     if use_major_filter:
         for raw in [x.strip().lower() for x in majors_input.replace(';',',').split(',')]:
             if not raw: continue
+            # Check aliases first
+            resolved = KEYWORD_ALIASES.get(raw, raw)
             # Exact match in prefix map
-            if raw in KEYWORD_PREFIXES:
+            if resolved in KEYWORD_PREFIXES:
+                major_prefixes_filter.update(KEYWORD_PREFIXES[resolved])
+            elif raw in KEYWORD_PREFIXES:
                 major_prefixes_filter.update(KEYWORD_PREFIXES[raw])
             else:
                 # Fuzzy: find any key that contains the typed word
                 for key, prefixes in KEYWORD_PREFIXES.items():
                     if raw in key or key in raw:
                         major_prefixes_filter.update(prefixes)
-                # Also try exact CIP codes from keyword_map as fallback
+                        _major_suggestions.append(key)
+                # Check aliases fuzzy
+                for alias, target in KEYWORD_ALIASES.items():
+                    if raw in alias or alias in raw:
+                        if target in KEYWORD_PREFIXES:
+                            major_prefixes_filter.update(KEYWORD_PREFIXES[target])
+                            if target not in _major_suggestions:
+                                _major_suggestions.append(target)
+                # Also try keyword_map as fallback
                 if raw in KEYWORD_MAP:
                     for cip in KEYWORD_MAP[raw]:
-                        major_prefixes_filter.add(cip[:5])  # use 5-char prefix
+                        major_prefixes_filter.add(cip[:5])
 
         use_major_filter = bool(major_prefixes_filter)
 
@@ -1646,6 +1661,12 @@ with tab1:
         filter_desc = " · ".join(filter_parts) if filter_parts else "all states"
         if len(m) == 0:
             st.error("🔍 No schools found with your current filters.")
+            # Show major suggestions if typed something we didn't fully recognize
+            if majors_input and majors_input.strip() and _major_suggestions:
+                st.info(f"💡 Did you mean one of these? **{', '.join(sorted(set(_major_suggestions))[:8])}**")
+            elif majors_input and majors_input.strip() and not major_prefixes_filter:
+                st.warning(f"⚠️ We don't have **'{majors_input}'** in our major list yet. Try: " +
+                    ", ".join(sorted(KEYWORD_PREFIXES.keys())[:20]))
             st.markdown("**Try one of these fixes:**")
             c1, c2, c3 = st.columns(3)
             if c1.button("🗺️ Expand to all states", key="fix_states"):
@@ -2026,10 +2047,10 @@ with tab1:
                             except Exception:
                                 pass
                         _web = s.get('web','')
-                        _adm_url = (_web.rstrip('/') + '/admissions') if _web else '#'
+                        _adm_url = s.get('admissions_url') or ((_web.rstrip('/') + '/admissions') if _web else '#')
                         st.markdown(f"**{fit_icons.get(fit,'⚪')} [{s['name']}]({_web or '#'})**{_dist_str}")
-                        if _web:
-                            st.caption(f"[🎓 Apply / Admissions]({_adm_url})  ·  [🌐 Website]({_web})")
+                        if _web or _adm_url:
+                            st.caption(f"[🎓 Apply / Admissions]({_adm_url})  ·  [🌐 Website]({_web or '#'})")
                         env_tags = get_env_fit(s, env_pref, school_size, school_type)
                         env_tag_str = ' · '.join(env_tags[:3]) if env_tags else ''
                         adm_val = s.get('adm'); adm_display = f"{float(adm_val):.1f}% acceptance" if adm_val and adm_val == adm_val else "Acceptance rate N/A"
