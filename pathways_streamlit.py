@@ -1420,7 +1420,7 @@ with st.sidebar:
     only_adm_data = st.checkbox("Only schools with published acceptance rate", value=False, key="filter_adm",
         help="Hides schools that don't publish how many students they accept")
     study_yrs   = st.selectbox("Degree level",["Any","Associate's (2 yr)","Bachelor's or higher (4 yr+)"], key="study_yrs")
-    n_results   = st.select_slider("Number of results",[5,10,15,20],10, key="n_results_slider")
+    n_results   = st.select_slider("🎓 How many schools should we find you?",[5,10,15,20,25,30],10, key="n_results_slider")
 
     st.markdown("### 📍 Distance from You")
     _glat = st.session_state.get("student_lat")
@@ -1929,7 +1929,8 @@ with tab1:
 
             _cuny  = sorted([s for s in matches if s.get('id') in _CUNY_IDS], key=_prog_sort)
             _suny  = sorted([s for s in matches if s.get('id') in _SUNY_IDS], key=_prog_sort)
-            _priv  = sorted([s for s in matches if s.get('id') not in _CUNY_IDS and s.get('id') not in _SUNY_IDS], key=_prog_sort)
+            # Slider controls how many private/other schools show
+            _priv  = sorted([s for s in matches if s.get('id') not in _CUNY_IDS and s.get('id') not in _SUNY_IDS], key=_prog_sort)[:n_results]
 
             col_c, col_s, col_p = st.columns(3)
 
@@ -1981,7 +1982,8 @@ with tab1:
                                key=lambda s: _dist_key(s))
             _others_sorted = sorted(_others, key=lambda s: _dist_key(s))
 
-            matches = _cs_in + _cs_reach + _others_sorted
+            # CUNY/SUNY always show fully — slider controls how many others appear
+            matches = _cs_in + _cs_reach + _others_sorted[:n_results]
 
             fit_icons = {'safety':'🟢','match':'🎯','reach':'⚠️','unknown':'⚪'}
             for s in matches:
