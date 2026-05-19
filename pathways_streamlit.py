@@ -1883,16 +1883,10 @@ with tab1:
             if not st.session_state.get('ran_match'):
                 st.info("👆 Fill in your profile on the left and click **Find My Colleges** first.")
                 st.stop()
-            try:
-                _need_val3 = "full" if income < 50000 else "some"
-                _aid3 = calculate_aid(income, hsize, ny_res, IMMIG_MAP.get(immig, immig), first_gen)
-                matches = run_match(gpa, sat, act, state_val,
-                SIZE_MAP[school_size], CTRL_MAP[school_type],
-                _need_val3, ENV_MAP[env_pref], YRS_MAP[study_yrs], _aid3, 9999,
-                majors_input=majors_input,
-                only_gpa=only_gpa_data, only_adm=only_adm_data)
-            except Exception as _e3:
-                st.error(f"Could not load results: {_e3}")
+            # Use already-computed matches — no need to call run_match again
+            matches = st.session_state.get('matches', [])
+            if not matches:
+                st.info("👆 Click **Find My Colleges** to see results.")
                 st.stop()
             fit_icons = {'safety':'🟢','match':'🎯','reach':'⚠️','unknown':'⚪'}
 
