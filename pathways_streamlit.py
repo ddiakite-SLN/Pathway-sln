@@ -1931,7 +1931,7 @@ with tab1:
                     _raw2 = majors_input.strip().lower().split(',')[0]
                     _pref2 = KEYWORD_PREFIXES.get(_raw2, next((v for k,v in KEYWORD_PREFIXES.items() if _raw2 in k or k in _raw2), []))
                     _c2s = set(p[:2] for p in _pref2)
-                    _cnt = sum(PROGRAM_STRENGTH.get(_sid,{}).get(c,0) for c in _c2s)
+                    _cnt = sum(PROGRAM_COUNTS.get(_sid,{}).get(c,0) for c in _c2s)
                     if _cnt > 0:
                         st.caption(f"📚 {_cnt} graduates/yr in this field")
                 if not in_list:
