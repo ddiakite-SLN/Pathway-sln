@@ -1605,9 +1605,10 @@ if run_btn:
     st.session_state['_last_majors_run'] = majors_input
     state_val = state_pref if state_pref else ['NY']  # default to NY if nothing selected
     need_val  = "full" if income<50000 else "some"
+    # Always get all results so CUNY/SUNY are never cut off
     matches = run_match(gpa, sat, act, state_val,
                         SIZE_MAP[school_size], CTRL_MAP[school_type],
-                        need_val, ENV_MAP[env_pref], YRS_MAP[study_yrs], aid, n_results,
+                        need_val, ENV_MAP[env_pref], YRS_MAP[study_yrs], aid, 9999,
                         majors_input=majors_input,
                         only_gpa=only_gpa_data, only_adm=only_adm_data)
     st.session_state.matches  = matches
@@ -1967,39 +1968,26 @@ with tab1:
 
         else:
             # ── CARD VIEW ────────────────────────────────────────
-            # Get ALL results then smart-sort:
-            # 1. ALL CUNY/SUNY you can get into (safety+match), sorted by fit then distance
-            # 2. All other schools sorted by distance
-            _all_results = run_match(gpa, sat, act, state_val,
-                SIZE_MAP[school_size], CTRL_MAP[school_type],
-                need_val, ENV_MAP[env_pref], YRS_MAP[study_yrs], aid, 9999,
-                majors_input=majors_input,
-                only_gpa=only_gpa_data, only_adm=only_adm_data)
-
+            # Use already-computed matches from session state
+            # Reorder: ALL CUNY/SUNY first (by fit then distance), then others by distance
             def _dist_key(s):
                 d = s.get('distance_mi')
-                return float(d) if d is not None and str(d) not in ('nan','None','') else 9999
+                try: return float(d) if d is not None and str(d) not in ('nan','None','') else 9999
+                except: return 9999
 
             def _fit_rank(s):
                 return {'safety':0,'match':1,'reach':2,'unknown':3}.get(s.get('fit','unknown'),3)
 
-            # Split into CUNY/SUNY vs others
-            _cuny_suny = [s for s in _all_results if s.get('id') in _CUNY_IDS or s.get('id') in _SUNY_IDS]
-            _others    = [s for s in _all_results if s.get('id') not in _CUNY_IDS and s.get('id') not in _SUNY_IDS]
+            _cuny_suny = [s for s in matches if s.get('id') in _CUNY_IDS or s.get('id') in _SUNY_IDS]
+            _others    = [s for s in matches if s.get('id') not in _CUNY_IDS and s.get('id') not in _SUNY_IDS]
 
-            # CUNY/SUNY: show all you can get into (safety+match first, then reach), sort by fit then distance
             _cs_in    = sorted([s for s in _cuny_suny if s.get('fit') in ('safety','match')],
                                key=lambda s: (_fit_rank(s), _dist_key(s)))
             _cs_reach = sorted([s for s in _cuny_suny if s.get('fit') == 'reach'],
                                key=lambda s: _dist_key(s))
-            _cs_all   = _cs_in + _cs_reach
-
-            # Others: sort by distance, cap at n_results
             _others_sorted = sorted(_others, key=lambda s: _dist_key(s))
 
-            # Final list: all CUNY/SUNY + others up to remaining slots
-            _remaining = max(0, n_results - len(_cs_all))
-            matches = _cs_all + _others_sorted[:_remaining]
+            matches = _cs_in + _cs_reach + _others_sorted
 
             fit_icons = {'safety':'🟢','match':'🎯','reach':'⚠️','unknown':'⚪'}
             for s in matches:
